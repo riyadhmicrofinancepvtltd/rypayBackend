@@ -334,10 +334,10 @@ let UsersService = class UsersService {
                 where: { number: phoneNumber, userid: userId },
             });
             if (virtualExist) {
-                return {
+                throw new common_1.BadRequestException({
                     success: false,
                     message: 'Virtual account already created for this number and user.',
-                };
+                });
             }
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
                 headers: {
@@ -361,6 +361,9 @@ let UsersService = class UsersService {
             return data;
         }
         catch (error) {
+            if (error instanceof common_1.BadRequestException) {
+                throw error;
+            }
             const errMessage = error.response?.data || error.message;
             console.error('Error creating virtual account:', errMessage);
             throw new common_1.InternalServerErrorException('Failed to create virtual account');

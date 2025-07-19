@@ -416,10 +416,10 @@ export class UsersService {
         where: { number: phoneNumber, userid: userId },
       });
       if (virtualExist) {
-        return {
+        throw new BadRequestException({
           success: false,
           message: 'Virtual account already created for this number and user.',
-        }
+        });
       }
       
       const response = await firstValueFrom(
@@ -446,6 +446,9 @@ export class UsersService {
       data["success"]=true
       return data
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       const errMessage = error.response?.data || error.message;
       console.error('Error creating virtual account:', errMessage);
       throw new InternalServerErrorException('Failed to create virtual account');
