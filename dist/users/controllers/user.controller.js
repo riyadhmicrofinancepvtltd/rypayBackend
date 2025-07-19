@@ -77,6 +77,10 @@ let UsersController = class UsersController {
         let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber);
         return data;
     }
+    async getVirtualAccount(req) {
+        let data = await this.userService.getVirtualAccount(req.user.sub);
+        return data;
+    }
     async verifyPin(req, pinRequest) {
         const valid = await this.userService.verifyPin(req.user.sub, pinRequest.pin);
         return { valid };
@@ -392,6 +396,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, virtual_account_request_dto_1.VirtualAccountRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "createVirtualAccount", null);
+__decorate([
+    (0, common_1.Get)('get-virtual-account'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getVirtualAccount", null);
 __decorate([
     (0, common_1.Post)('verify-pin'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

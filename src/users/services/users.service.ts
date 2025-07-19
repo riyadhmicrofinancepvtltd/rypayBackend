@@ -399,19 +399,14 @@ export class UsersService {
 
     const busyBoxBaseUrl = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL')
     const token = this.configService.get('BUSY_BOX_PAYOUT_API_TOKEN') || 'HnKFjVswJ8BhXRFzxf8pP6L1fDlhOrpzCs8S+VcGrl7xurg7iur3LfIsxCJE/ttiHm3cJbqxDKbj8fKxSeQIlcKZ/P/i7dnanAqyd1+O4FINU7n+W/QWg/ZBkfdZ0v+JqnnuGI2oXMOv7Z72WpzwnQ==';
-
     const url = `${busyBoxBaseUrl}/collect/va/create`;
-
     const payload = {
       customer_name,
       vaId: accountId,
       email,
       mobile: phoneNumber,
     };
-
     try {
-
-     
       const virtualExist = await this.virtualAccountRepo.findOne({
         where: { number: phoneNumber, userid: userId },
       });
@@ -421,7 +416,6 @@ export class UsersService {
           message: 'Virtual account already created for this number and user.',
         });
       }
-      
       const response = await firstValueFrom(
         this.httpService.post(url, payload, {
           headers: {
@@ -431,9 +425,8 @@ export class UsersService {
         })
       );
       let data = response.data;
-      console.log('✅ BusyBox response:', data);
       const newAccount = this.virtualAccountRepo.create({
-        accountid: data.data.accountId, 
+        accountid: data.data.accountId,
         accountnumber: data.data.accountNumber,
         ifsccode: data.data.ifscCode,
         status: data.data.status || 'ACTIVE',
@@ -441,9 +434,7 @@ export class UsersService {
         number: phoneNumber
       });
       const saved = await this.virtualAccountRepo.save(newAccount);
-      console.log('✅ Saved to DB:', saved);
-     
-      data["success"]=true
+      data["success"] = true
       return data
     } catch (error) {
       if (error instanceof BadRequestException) {
@@ -458,7 +449,15 @@ export class UsersService {
       throw new InternalServerErrorException('Failed to create virtual account');
     }
   }
-
+//getVirtualAccount
+async getVirtualAccount(userId: string): Promise<any> {
+  const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+  console.log("user=====>", user)
+  if (!user) {
+    throw new UnauthorizedException('Virtual account not found');
+  }
+  return user
+}
 
   async verifyPin(userId: string, pin: string): Promise<boolean> {
     const user = await this.userRepository.findOne({ where: { id: userId } });

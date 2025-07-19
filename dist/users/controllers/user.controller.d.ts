@@ -38,6 +38,9 @@ export declare class UsersController {
     createVirtualAccount(req: any, virtualRequest: VirtualAccountRequestDto): Promise<{
         message: string;
     }>;
+    getVirtualAccount(req: any): Promise<{
+        message: string;
+    }>;
     verifyPin(req: any, pinRequest: PinRequestDto): Promise<{
         valid: boolean;
     }>;

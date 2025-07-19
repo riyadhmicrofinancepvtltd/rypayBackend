@@ -346,7 +346,6 @@ let UsersService = class UsersService {
                 },
             }));
             let data = response.data;
-            console.log('✅ BusyBox response:', data);
             const newAccount = this.virtualAccountRepo.create({
                 accountid: data.data.accountId,
                 accountnumber: data.data.accountNumber,
@@ -356,7 +355,6 @@ let UsersService = class UsersService {
                 number: phoneNumber
             });
             const saved = await this.virtualAccountRepo.save(newAccount);
-            console.log('✅ Saved to DB:', saved);
             data["success"] = true;
             return data;
         }
@@ -372,6 +370,14 @@ let UsersService = class UsersService {
             console.error('Error creating virtual account:', errMessage);
             throw new common_1.InternalServerErrorException('Failed to create virtual account');
         }
+    }
+    async getVirtualAccount(userId) {
+        const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+        console.log("user=====>", user);
+        if (!user) {
+            throw new common_1.UnauthorizedException('Virtual account not found');
+        }
+        return user;
     }
     async verifyPin(userId, pin) {
         const user = await this.userRepository.findOne({ where: { id: userId } });

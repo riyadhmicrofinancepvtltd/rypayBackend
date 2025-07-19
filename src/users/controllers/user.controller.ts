@@ -283,6 +283,16 @@ async updateStaticQR(
     let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name,virtualRequest.email,virtualRequest.phoneNumber);
     return data;
   }
+  @Get('get-virtual-account')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getVirtualAccount(
+    @Req() req: any,
+  ): Promise<{ message: string; }> {
+    let data = await this.userService.getVirtualAccount(req.user.sub);
+    return data;
+  }
 
   @Post('verify-pin')
   @UseGuards(JwtAuthGuard)
