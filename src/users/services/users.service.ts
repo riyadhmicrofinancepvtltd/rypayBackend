@@ -438,6 +438,7 @@ export class UsersService {
         ifsccode: data.data.ifscCode,
         status: data.data.status || 'ACTIVE',
         userid: userId,
+        number: phoneNumber
       });
       const saved = await this.virtualAccountRepo.save(newAccount);
       console.log('✅ Saved to DB:', saved);
