@@ -362,7 +362,11 @@ let UsersService = class UsersService {
         }
         catch (error) {
             if (error instanceof common_1.BadRequestException) {
-                throw error;
+                return {
+                    statusCode: 400,
+                    success: false,
+                    message: error.message,
+                };
             }
             const errMessage = error.response?.data || error.message;
             console.error('Error creating virtual account:', errMessage);
