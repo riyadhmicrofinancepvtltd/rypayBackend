@@ -410,6 +410,18 @@ export class UsersService {
     };
 
     try {
+
+     
+      const virtualExist = await this.virtualAccountRepo.findOne({
+        where: { number: phoneNumber, userid: userId },
+      });
+      if (virtualExist) {
+        throw new BadRequestException({
+          success: false,
+          message: 'Virtual account already created for this number and user.',
+        });
+      }
+      
       const response = await firstValueFrom(
         this.httpService.post(url, payload, {
           headers: {

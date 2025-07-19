@@ -42,6 +42,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], VirtualAccount.prototype, "userid", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], VirtualAccount.prototype, "number", void 0);
 exports.VirtualAccount = VirtualAccount = __decorate([
     (0, typeorm_1.Entity)('virtual_accounts')
 ], VirtualAccount);

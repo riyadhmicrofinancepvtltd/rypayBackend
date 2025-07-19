@@ -24,4 +24,7 @@ export class VirtualAccount {
 
     @Column()
     userid: string;
+
+    @Column()
+    number: string;
 }

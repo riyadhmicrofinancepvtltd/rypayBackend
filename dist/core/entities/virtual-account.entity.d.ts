@@ -6,4 +6,5 @@ export declare class VirtualAccount {
     status: string;
     createon: Date;
     userid: string;
+    number: string;
 }

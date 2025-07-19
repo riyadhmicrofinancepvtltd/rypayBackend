@@ -281,7 +281,6 @@ async updateStaticQR(
     @Body() virtualRequest: VirtualAccountRequestDto,
   ): Promise<{ message: string; }> {
     let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name,virtualRequest.email,virtualRequest.phoneNumber);
-   
     return data;
   }
 
