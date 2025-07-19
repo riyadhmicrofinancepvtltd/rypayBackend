@@ -338,15 +338,14 @@ let UsersService = class UsersService {
             }));
             let data = response.data;
             console.log('✅ BusyBox response:', data);
-            const mockAccount = this.virtualAccountRepo.create({
-                accountid: 'MOCK' + Math.floor(100000 + Math.random() * 900000),
-                accountnumber: 'MOCK0000123456',
-                ifsccode: 'MOCKIFSC001',
-                status: 'ACTIVE',
+            const newAccount = this.virtualAccountRepo.create({
+                accountid: data.data.accountId,
+                accountnumber: data.data.accountNumber,
+                ifsccode: data.data.ifscCode,
+                status: data.data.status || 'ACTIVE',
                 userid: userId,
             });
-            console.log('🟡 Prepared Entity:', mockAccount);
-            const saved = await this.virtualAccountRepo.save(mockAccount);
+            const saved = await this.virtualAccountRepo.save(newAccount);
             console.log('✅ Saved to DB:', saved);
             data["success"] = true;
             return data;
