@@ -416,10 +416,10 @@ export class UsersService {
         where: { number: phoneNumber, userid: userId },
       });
       if (virtualExist) {
-        throw new BadRequestException({
+        return {
           success: false,
           message: 'Virtual account already created for this number and user.',
-        });
+        }
       }
       
       const response = await firstValueFrom(

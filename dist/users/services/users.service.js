@@ -334,10 +334,10 @@ let UsersService = class UsersService {
                 where: { number: phoneNumber, userid: userId },
             });
             if (virtualExist) {
-                throw new common_1.BadRequestException({
+                return {
                     success: false,
                     message: 'Virtual account already created for this number and user.',
-                });
+                };
             }
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
                 headers: {
