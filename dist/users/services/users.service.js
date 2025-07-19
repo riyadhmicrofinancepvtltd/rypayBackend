@@ -373,11 +373,20 @@ let UsersService = class UsersService {
     }
     async getVirtualAccount(userId) {
         const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
-        console.log("user=====>", user);
         if (!user) {
             throw new common_1.UnauthorizedException('Virtual account not found');
         }
-        return user;
+        return {
+            success: true,
+            message: "Virtual account fetched successfully",
+            data: {
+                accountId: user.accountid,
+                accountNumber: user.accountnumber,
+                ifscCode: user.ifsccode,
+                status: user.status,
+                createOn: user.createon,
+            }
+        };
     }
     async verifyPin(userId, pin) {
         const user = await this.userRepository.findOne({ where: { id: userId } });

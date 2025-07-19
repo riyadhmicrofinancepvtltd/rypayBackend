@@ -452,11 +452,20 @@ export class UsersService {
 //getVirtualAccount
 async getVirtualAccount(userId: string): Promise<any> {
   const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
-  console.log("user=====>", user)
   if (!user) {
     throw new UnauthorizedException('Virtual account not found');
   }
-  return user
+  return {
+    success: true,
+    message: "Virtual account fetched successfully",
+    data: {
+      accountId: user.accountid,
+      accountNumber: user.accountnumber,
+      ifscCode: user.ifsccode,
+      status: user.status,
+      createOn: user.createon,
+    }
+  }
 }
 
   async verifyPin(userId: string, pin: string): Promise<boolean> {
