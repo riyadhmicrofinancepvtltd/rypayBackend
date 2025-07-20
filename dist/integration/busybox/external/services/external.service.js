@@ -91,6 +91,21 @@ let ExternalService = ExternalService_1 = class ExternalService {
             throw err;
         }
     }
+    async handleBusyBoxPayoutEvents(payload) {
+        try {
+            const transactionModel = {
+                type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
+                additionalData: payload
+            };
+            this.logger.log(payload);
+            return {
+                message: 'Success'
+            };
+        }
+        catch (err) {
+            throw err;
+        }
+    }
     async handleDebitEvents(payload) {
         try {
             const transactionModel = {

@@ -20,4 +20,7 @@ export declare class ExternalController {
     handlePayoutEvents(payload: TransactionDto): Promise<{
         message: string;
     }>;
+    handleBusyBoxPayoutEvents(payload: TransactionDto): Promise<{
+        message: string;
+    }>;
 }

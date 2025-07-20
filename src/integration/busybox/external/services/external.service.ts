@@ -87,6 +87,22 @@ export class ExternalService {
             throw err;
         }
     }
+    async handleBusyBoxPayoutEvents(payload: unknown) {
+        try {
+            const transactionModel = {
+                type: Webhook_Type.Payout,
+                additionalData: payload
+            }
+           // await this.busyBoxWebHookRepo.save(transactionModel);
+            this.logger.log(payload);
+            return {
+                message: 'Success'
+            }
+        } catch (err) {
+            // log message
+            throw err;
+        }
+    }
 
     async handleDebitEvents(payload: TransactionDto) {
         try {

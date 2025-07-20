@@ -44,4 +44,10 @@ export class ExternalController {
     return this.externalService.handlePayoutEvents(payload);
     // webhook processing logic
   }
+
+  @Post('webhooks/busybox')
+  async handleBusyBoxPayoutEvents(@Body() payload: TransactionDto) {
+    return this.externalService.handleBusyBoxPayoutEvents(payload);
+    // webhook processing logic
+  }
 }
