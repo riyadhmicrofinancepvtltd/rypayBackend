@@ -374,7 +374,11 @@ let UsersService = class UsersService {
     async getVirtualAccount(userId) {
         const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
         if (!user) {
-            throw new common_1.UnauthorizedException('Virtual account not found');
+            return {
+                success: false,
+                message: "Virtual account not found",
+                data: null,
+            };
         }
         return {
             success: true,
