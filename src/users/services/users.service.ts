@@ -376,24 +376,12 @@ export class UsersService {
     await this.userRepository.update(userId, { pin: hashedPin });
   }
 
-  // async createVirtualAccount(userId: string, customer_name: string,email: string,phoneNumber: string): Promise<void> {
-  //   const busyBoxAPIURL = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL');
-  //   const accountId = Math.floor(10000000 + Math.random() * 90000000).toString();
-  //   return {
-  //     busyBoxAPIURL,
-  //     accountId,
-  //     customer_name,
-  //     email,
-  //     phoneNumber
-  //   } as any
-
-  //   //await this.userRepository.update(userId, { pin: hashedPin });
-  // }
   async createVirtualAccount(
     userId: string,
     customer_name: string,
     email: string,
-    phoneNumber: string
+    phoneNumber: string,
+    transferPin: string
   ): Promise<any> {
     const accountId = Math.floor(10000000 + Math.random() * 90000000).toString();
 
@@ -424,6 +412,7 @@ export class UsersService {
           },
         })
       );
+      const hashedPin = await bcrypt.hash(transferPin, this.saltRounds);
       let data = response.data;
       const newAccount = this.virtualAccountRepo.create({
         accountid: data.data.accountId,
@@ -431,7 +420,8 @@ export class UsersService {
         ifsccode: data.data.ifscCode,
         status: data.data.status || 'ACTIVE',
         userid: userId,
-        number: phoneNumber
+        number: phoneNumber,
+        transfer_pin: hashedPin
       });
       const saved = await this.virtualAccountRepo.save(newAccount);
       data["success"] = true

@@ -27,4 +27,7 @@ export class VirtualAccount {
 
     @Column()
     number: string;
+
+    @Column()
+    transfer_pin: string;
 }

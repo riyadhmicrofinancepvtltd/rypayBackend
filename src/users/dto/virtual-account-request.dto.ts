@@ -3,6 +3,7 @@ import {
     IsEmail,
     IsNotEmpty,
     IsPhoneNumber,
+    IsString, Matches
   } from 'class-validator';
 
 export class VirtualAccountRequestDto {
@@ -17,4 +18,13 @@ export class VirtualAccountRequestDto {
     @IsNotEmpty()
     @ApiProperty()
     phoneNumber: string;
+
+    @ApiProperty()
+    @IsString()
+  @Matches(/^\d{6}$/, {
+    message: 'transferPin must be exactly 6 digits',
+  })
+  transferPin: string;
+
+    
 }

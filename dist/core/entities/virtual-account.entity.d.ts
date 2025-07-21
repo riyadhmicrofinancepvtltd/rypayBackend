@@ -7,4 +7,5 @@ export declare class VirtualAccount {
     createon: Date;
     userid: string;
     number: string;
+    transfer_pin: string;
 }

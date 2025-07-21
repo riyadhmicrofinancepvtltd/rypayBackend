@@ -74,7 +74,7 @@ let UsersController = class UsersController {
         };
     }
     async createVirtualAccount(req, virtualRequest) {
-        let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber);
+        let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber, virtualRequest.transferPin);
         return data;
     }
     async getVirtualAccount(req) {

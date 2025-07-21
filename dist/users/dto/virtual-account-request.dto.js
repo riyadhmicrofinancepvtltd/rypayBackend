@@ -30,4 +30,12 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], VirtualAccountRequestDto.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Matches)(/^\d{6}$/, {
+        message: 'transferPin must be exactly 6 digits',
+    }),
+    __metadata("design:type", String)
+], VirtualAccountRequestDto.prototype, "transferPin", void 0);
 //# sourceMappingURL=virtual-account-request.dto.js.map
