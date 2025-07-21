@@ -474,7 +474,7 @@ export class UsersService {
     userId: string,
     changeTransferPinDto: ChangeTransferPinDto
   ): Promise<any> {
-    
+    try {
       const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
       if (!user) {
         throw new BadRequestException({
@@ -510,7 +510,20 @@ export class UsersService {
         message: "TransferPin changed successfully",
         data: null,
       };
-  
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        return {
+          statusCode: 400,
+          success: false,
+          message: error.message,
+        };
+      }
+      throw new InternalServerErrorException({
+        statusCode: 500,
+        success: false,
+        message: 'Failed to change transfer pin',
+      });
+    }
   }
 
   async verifyPin(userId: string, pin: string): Promise<boolean> {
