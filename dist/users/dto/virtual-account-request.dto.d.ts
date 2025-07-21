@@ -4,3 +4,7 @@ export declare class VirtualAccountRequestDto {
     phoneNumber: string;
     transferPin: string;
 }
+export declare class ChangeTransferPinDto {
+    oldTransferPin: string;
+    newTransferPin: string;
+}

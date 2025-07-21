@@ -4,6 +4,7 @@ import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { PinRequestDto, UpdateForgotPin } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto";
+import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto, ValidateOTPAfterCardCreationDTO } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
@@ -39,6 +40,9 @@ export declare class UsersController {
         message: string;
     }>;
     getVirtualAccount(req: any): Promise<{
+        message: string;
+    }>;
+    changeTransferPin(req: any, changeTransferPinDto: ChangeTransferPinDto): Promise<{
         message: string;
     }>;
     verifyPin(req: any, pinRequest: PinRequestDto): Promise<{

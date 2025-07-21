@@ -33,6 +33,7 @@ import { KycRequiredDocTypes } from '../constants/kyc-required-doc-types.constan
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UserDocumentResponseDto } from '../dto/user-documents.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
+import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UserMapper } from '../mapper/user-mapper';
@@ -447,28 +448,79 @@ export class UsersService {
       throw new InternalServerErrorException('Failed to create virtual account');
     }
   }
-//getVirtualAccount
-async getVirtualAccount(userId: string): Promise<any> {
-  const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
-  if (!user) {
+  //getVirtualAccount
+  async getVirtualAccount(userId: string): Promise<any> {
+    const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+    if (!user) {
+      return {
+        success: false,
+        message: "Virtual account not found",
+        data: null,
+      };
+    }
     return {
-      success: false,
-      message: "Virtual account not found",
-      data: null,
-    };
-  }
-  return {
-    success: true,
-    message: "Virtual account fetched successfully",
-    data: {
-      accountId: user.accountid,
-      accountNumber: user.accountnumber,
-      ifscCode: user.ifsccode,
-      status: user.status,
-      createOn: user.createon,
+      success: true,
+      message: "Virtual account fetched successfully",
+      data: {
+        accountId: user.accountid,
+        accountNumber: user.accountnumber,
+        ifscCode: user.ifsccode,
+        status: user.status,
+        createOn: user.createon,
+      }
     }
   }
-}
+  async changeTransferPin(
+    userId: string,
+    changeTransferPinDto: ChangeTransferPinDto
+  ): Promise<any> {
+    try {
+      const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+      if (!user) {
+        throw new BadRequestException({
+          statusCode: 400,
+          success: false,
+          message: "Virtual account not found",
+        });
+      }
+      if (!/^\d{6}$/.test(changeTransferPinDto.newTransferPin)) {
+        throw new BadRequestException({
+          statusCode: 400,
+          success: false,
+          message: 'transferPin must be exactly 6 digits',
+        });
+      }
+      const isOldPinCorrect = await bcrypt.compare(
+        changeTransferPinDto.oldTransferPin,
+        user.transfer_pin,
+      );
+      if (!isOldPinCorrect) {
+        throw new BadRequestException({
+          statusCode: 400,
+          success: false,
+          message: 'Old transferPin is not correct',
+        });
+      }
+      const newHashedPin = await bcrypt.hash(changeTransferPinDto.newTransferPin, 10);
+      user.transfer_pin = newHashedPin;
+      await this.virtualAccountRepo.save(user);
+      return {
+        statusCode: 200,
+        success: true,
+        message: "TransferPin changed successfully",
+        data: null,
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException({
+        statusCode: 500,
+        success: false,
+        message: 'Failed to change transfer pin',
+      });
+    }
+  }
 
   async verifyPin(userId: string, pin: string): Promise<boolean> {
     const user = await this.userRepository.findOne({ where: { id: userId } });

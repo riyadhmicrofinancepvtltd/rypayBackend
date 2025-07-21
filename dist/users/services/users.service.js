@@ -401,6 +401,52 @@ let UsersService = class UsersService {
             }
         };
     }
+    async changeTransferPin(userId, changeTransferPinDto) {
+        try {
+            const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+            if (!user) {
+                throw new common_1.BadRequestException({
+                    statusCode: 400,
+                    success: false,
+                    message: "Virtual account not found",
+                });
+            }
+            if (!/^\d{6}$/.test(changeTransferPinDto.newTransferPin)) {
+                throw new common_1.BadRequestException({
+                    statusCode: 400,
+                    success: false,
+                    message: 'transferPin must be exactly 6 digits',
+                });
+            }
+            const isOldPinCorrect = await bcrypt.compare(changeTransferPinDto.oldTransferPin, user.transfer_pin);
+            if (!isOldPinCorrect) {
+                throw new common_1.BadRequestException({
+                    statusCode: 400,
+                    success: false,
+                    message: 'Old transferPin is not correct',
+                });
+            }
+            const newHashedPin = await bcrypt.hash(changeTransferPinDto.newTransferPin, 10);
+            user.transfer_pin = newHashedPin;
+            await this.virtualAccountRepo.save(user);
+            return {
+                statusCode: 200,
+                success: true,
+                message: "TransferPin changed successfully",
+                data: null,
+            };
+        }
+        catch (error) {
+            if (error instanceof common_1.BadRequestException) {
+                throw error;
+            }
+            throw new common_1.InternalServerErrorException({
+                statusCode: 500,
+                success: false,
+                message: 'Failed to change transfer pin',
+            });
+        }
+    }
     async verifyPin(userId, pin) {
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {

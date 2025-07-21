@@ -9,6 +9,7 @@ import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { PinRequestDto, UpdateForgotPin } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
+import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto, ValidateOTPAfterCardCreationDTO } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
@@ -291,6 +292,17 @@ async updateStaticQR(
     @Req() req: any,
   ): Promise<{ message: string; }> {
     let data = await this.userService.getVirtualAccount(req.user.sub);
+    return data;
+  }
+  @Post('change-transfer-pin')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async changeTransferPin(
+    @Req() req: any,
+    @Body() changeTransferPinDto: ChangeTransferPinDto,
+  ): Promise<{ message: string; }> {
+    let data = await this.userService.changeTransferPin(req.user.sub, changeTransferPinDto);
     return data;
   }
 

@@ -23,6 +23,7 @@ const kyc_status_dto_1 = require("../dto/kyc-status.dto");
 const phone_number_exists_dto_1 = require("../dto/phone-number-exists.dto");
 const pin_request_dto_1 = require("../dto/pin-request.dto");
 const virtual_account_request_dto_1 = require("../dto/virtual-account-request.dto");
+const virtual_account_request_dto_2 = require("../dto/virtual-account-request.dto");
 const user_kyc_upload_dto_1 = require("../dto/user-kyc-upload.dto");
 const user_request_dto_1 = require("../dto/user-request.dto");
 const user_response_dto_1 = require("../dto/user-response.dto");
@@ -79,6 +80,10 @@ let UsersController = class UsersController {
     }
     async getVirtualAccount(req) {
         let data = await this.userService.getVirtualAccount(req.user.sub);
+        return data;
+    }
+    async changeTransferPin(req, changeTransferPinDto) {
+        let data = await this.userService.changeTransferPin(req.user.sub, changeTransferPinDto);
         return data;
     }
     async verifyPin(req, pinRequest) {
@@ -406,6 +411,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getVirtualAccount", null);
+__decorate([
+    (0, common_1.Post)('change-transfer-pin'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, virtual_account_request_dto_2.ChangeTransferPinDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "changeTransferPin", null);
 __decorate([
     (0, common_1.Post)('verify-pin'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

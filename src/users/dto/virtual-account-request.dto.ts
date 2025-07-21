@@ -23,3 +23,10 @@ export class VirtualAccountRequestDto {
 
     
 }
+export class ChangeTransferPinDto {
+  @ApiProperty()
+  oldTransferPin: string;
+
+  @ApiProperty()
+  newTransferPin: string;
+}

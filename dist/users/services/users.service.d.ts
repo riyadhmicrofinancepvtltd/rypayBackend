@@ -14,6 +14,7 @@ import { WalletService } from 'src/wallet/services/wallet.service';
 import { DataSource, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
+import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UploadFileService } from './updaload-file.service';
@@ -60,6 +61,7 @@ export declare class UsersService {
     setPin(userId: string, pin: string): Promise<void>;
     createVirtualAccount(userId: string, customer_name: string, email: string, phoneNumber: string, transferPin: string): Promise<any>;
     getVirtualAccount(userId: string): Promise<any>;
+    changeTransferPin(userId: string, changeTransferPinDto: ChangeTransferPinDto): Promise<any>;
     verifyPin(userId: string, pin: string): Promise<boolean>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;
