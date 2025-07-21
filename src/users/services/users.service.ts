@@ -395,6 +395,14 @@ export class UsersService {
       mobile: phoneNumber,
     };
     try {
+      if (!/^\d{6}$/.test(transferPin)) {
+        throw new BadRequestException({
+          statusCode: 400,
+          success: false,
+          message: 'transferPin must be exactly 6 digits',
+        });
+      }
+
       const virtualExist = await this.virtualAccountRepo.findOne({
         where: { number: phoneNumber, userid: userId },
       });
