@@ -263,14 +263,18 @@ export class UsersService {
   async registerUserAndGenerateTokenNew(
     userRequestDto: UserRequestDto,
   ): Promise<UserApiResponseDto> {
+   try{
+    console.log("registerUserAndGenerateTokenNew====>",userRequestDto);
+    return {
+     success: true,
+     message: "Fetched User Data",
+     userRequestDto
+   } as any;
 
-         console.log("registerUserAndGenerateTokenNew====>",userRequestDto);
-         return {
-          success: true,
-          message: "Fetched User Data",
-          userRequestDto
-        } as any;
-    return;
+   }catch(e){
+        console.log("registerUserAndGenerateTokenNew====>",e);
+   }
+       return
     const orgId = this.configService.get('BUSY_BOX_ORG_ID');
     const issueCardDto = UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
     const userResponse = await this.merchantClientService.issueCard(issueCardDto);
