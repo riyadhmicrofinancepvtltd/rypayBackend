@@ -24,7 +24,7 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
             ? exception.getResponse()
             : exception?.message || 'Internal server error';
         this.logger.error(`Error on ${request.method} ${request.url}: ${JSON.stringify(message)}`, exception?.stack);
-        if (request.url == "/user/new-signup") {
+        if (request.url == "/user/new-signup111") {
             response.status(status).json({
                 statusCode: status,
                 success: false,
