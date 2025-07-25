@@ -413,7 +413,7 @@ export class UsersService {
           success: true,
           message: "OTP verified successfully and user registered.",
           user,
-          tokens,
+          accessToken: tokens?.accessToken,
         } as any;
       }
       throw new InternalServerErrorException(["Failed to issue card for the user"]);
