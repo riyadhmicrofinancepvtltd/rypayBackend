@@ -260,6 +260,40 @@ export class UsersService {
     throw new InternalServerErrorException("Failed to issue card for the user");
   }
 
+  async registerUserAndGenerateTokenNew(
+    userRequestDto: UserRequestDto,
+  ): Promise<UserApiResponseDto> {
+
+         console.log("registerUserAndGenerateTokenNew====>",userRequestDto);
+         return {
+          success: true,
+          message: "Fetched User Data",
+          userRequestDto
+        } as any;
+    return;
+    const orgId = this.configService.get('BUSY_BOX_ORG_ID');
+    const issueCardDto = UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
+    const userResponse = await this.merchantClientService.issueCard(issueCardDto);
+    if (userResponse.status === "SUCCESS") {
+      userRequestDto.cardHolderId = userResponse.data.cardHolderId;
+      userRequestDto.userSession = userResponse.sessionId;
+      const user = await this.registerUser(userRequestDto);
+      const tokenPayload = <IAccessTokenUserPayload>{
+        userId: user.userid,
+        phoneNumber: user.phoneNumber,
+        role: user.userRole,
+      };
+      const tokens = await this.tokenService.generateTokens(tokenPayload);
+      return {
+        success: true,
+        message: "Fetched User Data",
+        user,
+        tokens,
+      } as any;
+    }
+    throw new InternalServerErrorException("Failed to issue card for the user");
+  }
+
   async requestAadharOtp(aadharNumber: string) {
     const data = await this.rechargeClient.requestAadharOtp(aadharNumber);
     if (data.status === "SUCCESS") {

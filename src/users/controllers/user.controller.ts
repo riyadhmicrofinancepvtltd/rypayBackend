@@ -44,6 +44,31 @@ export class UsersController {
     return this.userService.registerUserAndGenerateToken(signUpDto);
   }
 
+  @ApiOperation({ summary: 'Endpoint to register the user' })
+  @Post('/new-signup')
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: UserApiResponseDto,
+    description: 'The record has been successfully created.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Forbidden.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request exception',
+  })
+  async registerNew(
+    @Body() signUpDto: UserRequestDto,
+  ): Promise<UserApiResponseDto> {
+    return this.userService.registerUserAndGenerateTokenNew(signUpDto);
+  }
+
+
+
+
+
   @ApiOperation({ summary: 'Endpoint to request the aadhar otp' })
   @Post('/request-aadhar-otp/:aadharNumber')
   @ApiParam({
