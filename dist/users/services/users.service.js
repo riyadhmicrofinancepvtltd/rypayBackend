@@ -220,17 +220,17 @@ let UsersService = class UsersService {
         throw new common_1.InternalServerErrorException("Failed to issue card for the user");
     }
     async registerUserAndGenerateTokenNew(userRequestDto) {
-        try {
-            console.log("registerUserAndGenerateTokenNew====>", userRequestDto);
-            return {
-                success: true,
-                message: "Fetched User Data",
-                userRequestDto
-            };
+        console.log("registerUserAndGenerateTokenNew====>", userRequestDto);
+        if (userRequestDto.userType === user_role_enum_1.UserRole.MERCHANT) {
+            if (!userRequestDto.merchantInfo.shopName) {
+                throw new common_1.BadRequestException("Shop name is required");
+            }
         }
-        catch (e) {
-            console.log("registerUserAndGenerateTokenNew====>", e);
-        }
+        return {
+            success: true,
+            message: "Fetched User Data",
+            userRequestDto
+        };
         return;
         const orgId = this.configService.get('BUSY_BOX_ORG_ID');
         const issueCardDto = user_mapper_1.UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
