@@ -282,7 +282,6 @@ let UsersService = class UsersService {
         throw new common_1.InternalServerErrorException("Failed to issue card for the user");
     }
     async registerUserAndGenerateTokenNew(userRequestDto) {
-        console.log("registerUserAndGenerateTokenNew====>", userRequestDto);
         if (userRequestDto.userType === user_role_enum_1.UserRole.MERCHANT) {
             if (!userRequestDto.merchantInfo.shopName) {
                 throw new common_1.BadRequestException(["Shop name is required"]);
@@ -296,10 +295,18 @@ let UsersService = class UsersService {
         if (userExists) {
             throw new common_1.ConflictException(['User already exists']);
         }
+        const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
+        if (data.status === "SUCCESS") {
+            return {
+                success: true,
+                message: "OTP has been sent successfully to your registered mobile number.",
+                sessionId: data.aadhaarData?.otpSessionId
+            };
+        }
         return {
-            success: true,
-            message: "Fetched User Data",
-            userRequestDto
+            success: false,
+            message: "Failed to send OTP. Please ensure your Aadhar number is valid and try again.",
+            sessionId: null
         };
         return;
         const orgId = this.configService.get('BUSY_BOX_ORG_ID');

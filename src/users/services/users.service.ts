@@ -346,9 +346,6 @@ export class UsersService {
   async registerUserAndGenerateTokenNew(
     userRequestDto: UserRequestDto,
   ): Promise<UserApiResponseDto> {
- 
-    console.log("registerUserAndGenerateTokenNew====>",userRequestDto);
-
     if(userRequestDto.userType === UserRole.MERCHANT){
       if(!userRequestDto.merchantInfo.shopName){
         throw new BadRequestException(["Shop name is required"]);
@@ -363,11 +360,20 @@ export class UsersService {
       throw new ConflictException(['User already exists']);
     }
 
+    const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
+    if (data.status === "SUCCESS") {
+      return {
+        success: true,
+        message: "OTP has been sent successfully to your registered mobile number.",
+        sessionId: data.aadhaarData?.otpSessionId
+      }as any;
+    }
     return {
-     success: true,
-     message: "Fetched User Data",
-     userRequestDto
-   } as any;
+      success: false,
+      message: "Failed to send OTP. Please ensure your Aadhar number is valid and try again.",
+      sessionId: null
+    }as any;
+  
 
      return
     const orgId = this.configService.get('BUSY_BOX_ORG_ID');
