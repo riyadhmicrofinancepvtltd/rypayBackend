@@ -268,7 +268,7 @@ export class UsersService {
 
     if(userRequestDto.userType === UserRole.MERCHANT){
       if(!userRequestDto.merchantInfo.shopName){
-        throw new BadRequestException("Shop name is required");
+        throw new BadRequestException(["Shop name is required"]);
       }
     }
 

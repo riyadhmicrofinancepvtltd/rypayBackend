@@ -223,7 +223,7 @@ let UsersService = class UsersService {
         console.log("registerUserAndGenerateTokenNew====>", userRequestDto);
         if (userRequestDto.userType === user_role_enum_1.UserRole.MERCHANT) {
             if (!userRequestDto.merchantInfo.shopName) {
-                throw new common_1.BadRequestException("Shop name is required");
+                throw new common_1.BadRequestException(["Shop name is required"]);
             }
         }
         return {
