@@ -125,6 +125,68 @@ let UsersService = class UsersService {
             throw err;
         }
     }
+    async registerUserNew(userRequestDto) {
+        console.log(userRequestDto);
+        const queryRunner = this._connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            const newUser = user_mapper_1.UserMapper.mapUserRequestDtoToEntity(userRequestDto);
+            const userExists = await this.userRepository.findOne({
+                where: {
+                    phoneNumber: userRequestDto.phoneNumber,
+                }
+            });
+            const referrer = await this.validateRefferelCode(userRequestDto.referrelCode, queryRunner);
+            if (userExists) {
+                await queryRunner.rollbackTransaction();
+                await queryRunner.release();
+                throw new common_1.ConflictException('User already exists');
+            }
+            const savedUser = this.userRepository.create(newUser);
+            if (!savedUser) {
+                await queryRunner.rollbackTransaction();
+                await queryRunner.release();
+                throw new common_1.BadRequestException('User cannot be created');
+            }
+            await queryRunner.manager.save(savedUser);
+            const wallet = await this.walletService.createWallet({
+                user: savedUser,
+                walletAccountNo: await this.walletService.generateWalletAccountNo()
+            }, queryRunner);
+            const cardInfo = await this.merchantClientService.getCustomerStatus(savedUser.phoneNumber);
+            const cardDetails = cardInfo.data.card_details;
+            const cardDto = {
+                user: savedUser,
+                cardNumber: cardDetails.cardId,
+                status: card_entity_1.CardStatus.InActive
+            };
+            const card = await this.cardService.createCardAndAssignKitNumberToUser(cardDto, queryRunner);
+            if (!wallet || !card) {
+                await queryRunner.rollbackTransaction();
+                await queryRunner.release();
+                throw new common_1.BadRequestException('Wallet creation failed');
+            }
+            await queryRunner.commitTransaction();
+            await this.notificationBridge.add('newUser', savedUser);
+            const userModel = { ...savedUser, card: card };
+            if (referrer) {
+                await this.walletBridge.add('referrel', {
+                    referrer: referrer.id,
+                    refree: savedUser.id
+                });
+            }
+            return this.addProfileIconInUserResponse(savedUser, new user_response_dto_1.UserResponse(userModel));
+        }
+        catch (err) {
+            if (queryRunner.isTransactionActive) {
+                await queryRunner.rollbackTransaction();
+                await queryRunner.release();
+                throw new common_1.InternalServerErrorException(err.message);
+            }
+            throw err;
+        }
+    }
     async validateRefferelCode(referrelCode, queryRunner) {
         let referrer = null;
         if (referrelCode) {
@@ -226,6 +288,14 @@ let UsersService = class UsersService {
                 throw new common_1.BadRequestException(["Shop name is required"]);
             }
         }
+        const userExists = await this.userRepository.findOne({
+            where: {
+                phoneNumber: userRequestDto.phoneNumber,
+            }
+        });
+        if (userExists) {
+            throw new common_1.ConflictException(['User already exists']);
+        }
         return {
             success: true,
             message: "Fetched User Data",
@@ -238,7 +308,7 @@ let UsersService = class UsersService {
         if (userResponse.status === "SUCCESS") {
             userRequestDto.cardHolderId = userResponse.data.cardHolderId;
             userRequestDto.userSession = userResponse.sessionId;
-            const user = await this.registerUser(userRequestDto);
+            const user = await this.registerUserNew(userRequestDto);
             const tokenPayload = {
                 userId: user.userid,
                 phoneNumber: user.phoneNumber,

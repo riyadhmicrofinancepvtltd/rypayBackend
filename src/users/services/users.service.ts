@@ -150,6 +150,89 @@ export class UsersService {
       throw err;
     }
   }
+  async registerUserNew(userRequestDto: UserRequestDto) {
+    console.log(userRequestDto);
+    const queryRunner = this._connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const newUser = UserMapper.mapUserRequestDtoToEntity(userRequestDto);
+
+      const userExists = await this.userRepository.findOne({
+        where: {
+          phoneNumber: userRequestDto.phoneNumber,
+        }
+      });
+
+      const referrer = await this.validateRefferelCode(userRequestDto.referrelCode, queryRunner);
+
+      if (userExists) {
+        await queryRunner.rollbackTransaction();
+
+        await queryRunner.release();
+
+        throw new ConflictException('User already exists');
+      }
+
+      const savedUser = this.userRepository.create(newUser);
+
+      if (!savedUser) {
+        await queryRunner.rollbackTransaction();
+
+        await queryRunner.release();
+
+        throw new BadRequestException('User cannot be created');
+      }
+
+      await queryRunner.manager.save(savedUser);
+
+      const wallet: Wallet = await this.walletService.createWallet(
+        {
+          user: savedUser,
+          walletAccountNo: await this.walletService.generateWalletAccountNo()
+        },
+        queryRunner,
+      );
+      const cardInfo = await this.merchantClientService.getCustomerStatus(savedUser.phoneNumber);
+      const cardDetails = cardInfo.data.card_details;
+      const cardDto = {
+        user: savedUser,
+        cardNumber: cardDetails.cardId,
+        status: CardStatus.InActive
+      };
+      const card = await this.cardService.createCardAndAssignKitNumberToUser(cardDto, queryRunner);
+
+      if (!wallet || !card) {
+        await queryRunner.rollbackTransaction();
+
+        await queryRunner.release();
+
+        throw new BadRequestException('Wallet creation failed');
+      }
+
+      // const user = await this.userRepository.save(newUser);
+      await queryRunner.commitTransaction();
+      await this.notificationBridge.add('newUser', savedUser);
+      const userModel = { ...savedUser, card: card };
+
+      if (referrer) {
+        await this.walletBridge.add('referrel', {
+          referrer: referrer.id,
+          refree: savedUser.id
+        })
+      }
+      return this.addProfileIconInUserResponse(savedUser, new UserResponse(userModel));
+    } catch (err) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+        await queryRunner.release();
+        throw new InternalServerErrorException(err.message);
+      }
+      throw err;
+    }
+  }
+
 
   async validateRefferelCode(referrelCode: string | null, queryRunner: QueryRunner) {
     let referrer: User = null;
@@ -271,6 +354,14 @@ export class UsersService {
         throw new BadRequestException(["Shop name is required"]);
       }
     }
+    const userExists = await this.userRepository.findOne({
+      where: {
+        phoneNumber: userRequestDto.phoneNumber,
+      }
+    });
+    if (userExists) {
+      throw new ConflictException(['User already exists']);
+    }
 
     return {
      success: true,
@@ -285,7 +376,7 @@ export class UsersService {
     if (userResponse.status === "SUCCESS") {
       userRequestDto.cardHolderId = userResponse.data.cardHolderId;
       userRequestDto.userSession = userResponse.sessionId;
-      const user = await this.registerUser(userRequestDto);
+      const user = await this.registerUserNew(userRequestDto);
       const tokenPayload = <IAccessTokenUserPayload>{
         userId: user.userid,
         phoneNumber: user.phoneNumber,
