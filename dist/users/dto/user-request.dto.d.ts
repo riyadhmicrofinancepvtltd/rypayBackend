@@ -14,6 +14,8 @@ export declare class UserRequestCommonDto {
     gender: 'M' | 'F';
     phoneNumber: string;
     fcmToken: string;
+    otp: string;
+    otpSessionId: string;
     dob: string;
     address: AddressRequestDto;
     email: string;

@@ -158,23 +158,7 @@ export class UsersService {
 
     try {
       const newUser = UserMapper.mapUserRequestDtoToEntity(userRequestDto);
-
-      const userExists = await this.userRepository.findOne({
-        where: {
-          phoneNumber: userRequestDto.phoneNumber,
-        }
-      });
-
       const referrer = await this.validateRefferelCode(userRequestDto.referrelCode, queryRunner);
-
-      if (userExists) {
-        await queryRunner.rollbackTransaction();
-
-        await queryRunner.release();
-
-        throw new ConflictException('User already exists');
-      }
-
       const savedUser = this.userRepository.create(newUser);
 
       if (!savedUser) {
@@ -342,12 +326,12 @@ export class UsersService {
     }
     throw new InternalServerErrorException("Failed to issue card for the user");
   }
-
+  //
   async registerUserAndGenerateTokenNew(
     userRequestDto: UserRequestDto,
   ): Promise<UserApiResponseDto> {
-    if(userRequestDto.userType === UserRole.MERCHANT){
-      if(!userRequestDto.merchantInfo.shopName){
+    if (userRequestDto.userType === UserRole.MERCHANT) {
+      if (!userRequestDto.merchantInfo.shopName) {
         throw new BadRequestException(["Shop name is required"]);
       }
     }
@@ -366,16 +350,16 @@ export class UsersService {
         success: true,
         message: "OTP has been sent successfully to your registered mobile number.",
         sessionId: data.aadhaarData?.otpSessionId
-      }as any;
+      } as any;
     }
     return {
       success: false,
       message: "Failed to send OTP. Please ensure your Aadhar number is valid and try again.",
       sessionId: null
-    }as any;
-  
+    } as any;
 
-     return
+
+    return
     const orgId = this.configService.get('BUSY_BOX_ORG_ID');
     const issueCardDto = UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
     const userResponse = await this.merchantClientService.issueCard(issueCardDto);
@@ -397,6 +381,48 @@ export class UsersService {
       } as any;
     }
     throw new InternalServerErrorException("Failed to issue card for the user");
+  }
+
+
+  async aadhaarVerifyOtp(
+    userRequestDto: UserRequestDto,
+  ): Promise<UserApiResponseDto> {
+    if (!userRequestDto.otp) {
+      throw new BadRequestException(["OTP is required"]);
+    }
+    const response = await this.rechargeClient.validateAadharOtp(userRequestDto.aadharNumber, userRequestDto.otp, userRequestDto.otpSessionId);
+    if (response.status === "SUCCESS" && response.transId === "OTP_VERIFIED") {
+      await this.aadharResponseRepo.save(this.aadharResponseRepo.create({
+        aadharNumber: userRequestDto.aadharNumber,
+        aadharResponse: response
+      }));
+      const orgId = this.configService.get('BUSY_BOX_ORG_ID');
+      const issueCardDto = UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
+      const userResponse = await this.merchantClientService.issueCard(issueCardDto);
+      if (userResponse.status === "SUCCESS") {
+        userRequestDto.cardHolderId = userResponse.data.cardHolderId;
+        userRequestDto.userSession = userResponse.sessionId;
+        const user = await this.registerUserNew(userRequestDto);
+        const tokenPayload = <IAccessTokenUserPayload>{
+          userId: user.userid,
+          phoneNumber: user.phoneNumber,
+          role: user.userRole,
+        };
+        const tokens = await this.tokenService.generateTokens(tokenPayload);
+        return {
+          success: true,
+          message: "OTP verified successfully and user registered.",
+          user,
+          tokens,
+        } as any;
+      }
+      throw new InternalServerErrorException(["Failed to issue card for the user"]);
+    } else {
+      return {
+        success: false,
+        message: "OTP verification failed. Please check the OTP and try again.",
+      }as any;
+    }
   }
 
   async requestAadharOtp(aadharNumber: string) {

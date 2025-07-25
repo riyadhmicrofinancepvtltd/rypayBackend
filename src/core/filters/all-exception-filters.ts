@@ -31,7 +31,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       `Error on ${request.method} ${request.url}: ${JSON.stringify(message)}`,
       (exception as any)?.stack,
     );
-    if (request.url == "/user/new-signup") {
+    if (request.url == "/user/new-signup" || request.url == "/user/verify-aadhaar-otp") {
       response.status(status).json({
         statusCode: status,
         success: false,

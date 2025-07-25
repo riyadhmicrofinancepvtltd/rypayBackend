@@ -50,6 +50,7 @@ export declare class UsersService {
     getUserDetail(userId: string): Promise<any>;
     registerUserAndGenerateToken(userRequestDto: UserRequestDto): Promise<UserApiResponseDto>;
     registerUserAndGenerateTokenNew(userRequestDto: UserRequestDto): Promise<UserApiResponseDto>;
+    aadhaarVerifyOtp(userRequestDto: UserRequestDto): Promise<UserApiResponseDto>;
     requestAadharOtp(aadharNumber: string): Promise<{
         message: string;
         sessionId: any;

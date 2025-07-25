@@ -77,6 +77,16 @@ __decorate([
     __metadata("design:type", String)
 ], UserRequestCommonDto.prototype, "fcmToken", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UserRequestCommonDto.prototype, "otp", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UserRequestCommonDto.prototype, "otpSessionId", void 0);
+__decorate([
     (0, class_validator_1.IsDateString)(),
     (0, class_validator_1.IsNotEmpty)(),
     (0, swagger_1.ApiProperty)(),

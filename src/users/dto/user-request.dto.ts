@@ -62,6 +62,14 @@ export class UserRequestCommonDto {
   @IsOptional()
   fcmToken: string;
 
+  @ApiProperty()
+  @IsOptional()
+  otp: string;
+
+  @ApiProperty()
+  @IsOptional()
+  otpSessionId: string;
+
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty()
