@@ -38,6 +38,9 @@ let UsersController = class UsersController {
     async register(signUpDto) {
         return this.userService.registerUserAndGenerateToken(signUpDto);
     }
+    async registerNew(signUpDto) {
+        return this.userService.registerUserAndGenerateTokenNew(signUpDto);
+    }
     async requestAadharOtp(aadharNumber) {
         return this.userService.requestAadharOtp(aadharNumber);
     }
@@ -162,6 +165,27 @@ __decorate([
     __metadata("design:paramtypes", [user_request_dto_1.UserRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "register", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Endpoint to register the user' }),
+    (0, common_1.Post)('/new-signup'),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.CREATED,
+        type: user_response_dto_1.UserApiResponseDto,
+        description: 'The record has been successfully created.',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Forbidden.',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Bad request exception',
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_request_dto_1.UserRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "registerNew", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Endpoint to request the aadhar otp' }),
     (0, common_1.Post)('/request-aadhar-otp/:aadharNumber'),
