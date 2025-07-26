@@ -172,7 +172,7 @@ let UsersService = class UsersService {
             if (queryRunner.isTransactionActive) {
                 await queryRunner.rollbackTransaction();
                 await queryRunner.release();
-                throw new common_1.InternalServerErrorException(err.message);
+                throw new common_1.InternalServerErrorException([err.message]);
             }
             throw err;
         }
@@ -204,7 +204,7 @@ let UsersService = class UsersService {
             relations: ['beneficiaries', 'card', 'address'],
         });
         if (!user) {
-            throw new common_1.ForbiddenException('User not found');
+            throw new common_1.BadRequestException(['User not found']);
         }
         const account = user.beneficiaries?.[0];
         const accountDetails = account ? {

@@ -211,7 +211,7 @@ export class UsersService {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
         await queryRunner.release();
-        throw new InternalServerErrorException(err.message);
+        throw new InternalServerErrorException([err.message]);
       }
       throw err;
     }
@@ -251,7 +251,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new ForbiddenException('User not found');
+      throw new BadRequestException(['User not found']);
     }
     const account = user.beneficiaries?.[0]; // or filter for a "primary" one
 
