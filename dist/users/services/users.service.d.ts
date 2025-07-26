@@ -58,6 +58,7 @@ export declare class UsersService {
     validateAadharOtp(requestBody: ValidateAadharDto): Promise<"Success" | "Failure">;
     registerAdminAndGenerateToken(userRequestDto: UserAdminRequestDto): Promise<UserApiResponseDto>;
     updateUserProfile(userId: string, userRequestDto: UserUpdateRequestDto): Promise<User>;
+    editUserProfile(userId: string, userRequestDto: UserUpdateRequestDto): Promise<User>;
     checkPhoneNumberExists(phoneNumber: string): Promise<PhoneNumberExists>;
     getAllUsers(userId: string, searchQuery: string): Promise<UserResponse[]>;
     addProfileIconInUserResponse(userModel: User, userResponse: UserResponse): Promise<UserResponse>;

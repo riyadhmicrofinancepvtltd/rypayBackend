@@ -381,6 +381,16 @@ let UsersService = class UsersService {
         user.kycVerificationStatus = kyc_verification_status_enum_1.KycVerificationStatus[user.kycVerificationStatus];
         return user;
     }
+    async editUserProfile(userId, userRequestDto) {
+        const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['merchant', 'address'] });
+        if (!user) {
+            throw new common_1.BadRequestException('user not found');
+        }
+        const updatedUserEntity = user_mapper_1.UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
+        await this.userRepository.save(updatedUserEntity);
+        user.kycVerificationStatus = kyc_verification_status_enum_1.KycVerificationStatus[user.kycVerificationStatus];
+        return user;
+    }
     async checkPhoneNumberExists(phoneNumber) {
         if (!phoneNumber) {
             throw new common_1.BadRequestException('Invalid phone number');

@@ -183,6 +183,28 @@ export class UsersController {
     return this.userService.updateUserProfile(userId,updateDto);
   }
 
+  @ApiOperation({ summary: 'Endpoint to update user profile' })
+  @Post('/edit/user/:userId')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: User,
+    description: 'The record has been successfully created.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Forbidden.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request exception',
+  })
+  async EditUser(
+    @Param('userId') userId: string,
+    @Body() updateDto: UserUpdateRequestDto,
+  ): Promise<User> {
+    return this.userService.editUserProfile(userId,updateDto);
+  }
+
   @ApiOperation({ summary: 'Endpoint to get all users' })
   @Post('/list')
   @UseGuards(JwtAuthGuard, AdminGuard)

@@ -25,6 +25,7 @@ export declare class UsersController {
     getUserDetail(req: any): Promise<any>;
     registerAdmin(signUpDto: UserAdminRequestDto): Promise<UserApiResponseDto>;
     updateUser(userId: string, updateDto: UserUpdateRequestDto): Promise<User>;
+    EditUser(userId: string, updateDto: UserUpdateRequestDto): Promise<User>;
     getAllUser(req: any, search: any): Promise<UserResponse[]>;
     checkUserExist(phoneNumber: string): Promise<PhoneNumberExists>;
     updateProfileIcon(file: Express.Multer.File, req: any): Promise<{

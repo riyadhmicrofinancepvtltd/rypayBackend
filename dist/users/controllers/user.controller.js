@@ -62,6 +62,9 @@ let UsersController = class UsersController {
     async updateUser(userId, updateDto) {
         return this.userService.updateUserProfile(userId, updateDto);
     }
+    async EditUser(userId, updateDto) {
+        return this.userService.editUserProfile(userId, updateDto);
+    }
     async getAllUser(req, search) {
         return this.userService.getAllUsers(req.user.sub, search);
     }
@@ -306,6 +309,28 @@ __decorate([
     __metadata("design:paramtypes", [String, user_request_dto_1.UserUpdateRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUser", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Endpoint to update user profile' }),
+    (0, common_1.Post)('/edit/user/:userId'),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        type: user_entity_1.User,
+        description: 'The record has been successfully created.',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Forbidden.',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Bad request exception',
+    }),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_request_dto_1.UserUpdateRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "EditUser", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Endpoint to get all users' }),
     (0, common_1.Post)('/list'),

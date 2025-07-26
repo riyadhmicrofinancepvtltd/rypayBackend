@@ -74,6 +74,36 @@ export class UserMapper {
     }
     return user;
   }
+  static mapUserUpdateRequestDtoToUserEntityNew(user: User, userRequestDto: UserUpdateRequestDto) {
+    if (userRequestDto.address) {
+      const { address1, address2, city, state, pincode } =
+        userRequestDto.address;
+      const address = user.address;
+      address.address1 = address1;
+      address.address2 = address2;
+      address.city = city;
+      address.state = state;
+      address.pincode = pincode;
+      user.address = address;
+    }
+    user.dob = userRequestDto.dob;
+    user.gender = userRequestDto.gender;
+    user.isBlocked = userRequestDto.isBlocked;
+    user.email = userRequestDto.email;
+    user.firstName = userRequestDto.firstName;
+    user.lastName = userRequestDto.lastName;
+    user.aadharNumber = userRequestDto.aadharNumber;
+    user.panNumber = userRequestDto.panNumber;
+    user.kycVerificationStatus = KycVerificationStatus[userRequestDto.kycVerificationStatus] as any;
+    if (userRequestDto.merchantInfo) {
+      const merchantDetails = user.merchant ?? new Merchant();
+      merchantDetails.shopName = userRequestDto.merchantInfo.shopName;
+      merchantDetails.gstNumber = userRequestDto.merchantInfo.gstNumber;
+      merchantDetails.msmeNumber = userRequestDto.merchantInfo.msmeNumber;
+      user.merchant = merchantDetails;
+    }
+    return user;
+  }
 
   static mapUserRequestDtoToMerchantRegistrationDto(userRequestDto: UserRequestDto, orgId: string): CardIssuanceDto {
     return {
