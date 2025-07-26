@@ -390,7 +390,7 @@ let UsersService = class UsersService {
         }
         const updatedUserEntity = user_mapper_1.UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
         await this.userRepository.save(updatedUserEntity);
-        user.kycVerificationStatus = kyc_verification_status_enum_1.KycVerificationStatus[user.kycVerificationStatus];
+        user.kycVerificationStatus = user.kycVerificationStatus;
         return user;
     }
     async checkPhoneNumberExists(phoneNumber) {

@@ -94,7 +94,9 @@ export class UserMapper {
     user.lastName = userRequestDto.lastName;
     user.aadharNumber = userRequestDto.aadharNumber;
     user.panNumber = userRequestDto.panNumber;
-    user.kycVerificationStatus = KycVerificationStatus[userRequestDto.kycVerificationStatus] as any;
+    user.kycVerificationStatus = userRequestDto.kycVerificationStatus;
+
+   // user.kycVerificationStatus = KycVerificationStatus[userRequestDto.kycVerificationStatus] as any;
     if (userRequestDto.merchantInfo) {
       const merchantDetails = user.merchant ?? new Merchant();
       merchantDetails.shopName = userRequestDto.merchantInfo.shopName;

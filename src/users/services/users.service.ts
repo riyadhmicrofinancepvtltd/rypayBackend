@@ -461,7 +461,7 @@ export class UsersService {
     }
     const updatedUserEntity = UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
     await this.userRepository.save(updatedUserEntity);
-    user.kycVerificationStatus = KycVerificationStatus[user.kycVerificationStatus] as any
+    user.kycVerificationStatus = user.kycVerificationStatus
     return user;
   }
   
