@@ -283,7 +283,7 @@ let UsersService = class UsersService {
             }
         });
         if (userExists) {
-            throw new common_1.ConflictException(['User already exists']);
+            throw new common_1.BadRequestException(['User already exists']);
         }
         const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
         if (data.status === "SUCCESS") {
@@ -293,33 +293,7 @@ let UsersService = class UsersService {
                 sessionId: data.aadhaarData?.otpSessionId
             };
         }
-        return {
-            success: false,
-            message: "Failed to send OTP. Please ensure your Aadhar number is valid and try again.",
-            sessionId: null
-        };
-        return;
-        const orgId = this.configService.get('BUSY_BOX_ORG_ID');
-        const issueCardDto = user_mapper_1.UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
-        const userResponse = await this.merchantClientService.issueCard(issueCardDto);
-        if (userResponse.status === "SUCCESS") {
-            userRequestDto.cardHolderId = userResponse.data.cardHolderId;
-            userRequestDto.userSession = userResponse.sessionId;
-            const user = await this.registerUserNew(userRequestDto);
-            const tokenPayload = {
-                userId: user.userid,
-                phoneNumber: user.phoneNumber,
-                role: user.userRole,
-            };
-            const tokens = await this.tokenService.generateTokens(tokenPayload);
-            return {
-                success: true,
-                message: "Fetched User Data",
-                user,
-                tokens,
-            };
-        }
-        throw new common_1.InternalServerErrorException("Failed to issue card for the user");
+        throw new common_1.BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
     }
     async aadhaarVerifyOtp(userRequestDto) {
         if (!userRequestDto.otp) {
@@ -354,10 +328,7 @@ let UsersService = class UsersService {
             throw new common_1.InternalServerErrorException(["Failed to issue card for the user"]);
         }
         else {
-            return {
-                success: false,
-                message: "OTP verification failed. Please check the OTP and try again.",
-            };
+            throw new common_1.BadRequestException(["OTP verification failed. Please check the OTP and try again."]);
         }
     }
     async requestAadharOtp(aadharNumber) {

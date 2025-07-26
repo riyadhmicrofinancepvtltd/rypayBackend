@@ -341,7 +341,7 @@ export class UsersService {
       }
     });
     if (userExists) {
-      throw new ConflictException(['User already exists']);
+      throw new BadRequestException(['User already exists']);
     }
 
     const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
@@ -352,35 +352,7 @@ export class UsersService {
         sessionId: data.aadhaarData?.otpSessionId
       } as any;
     }
-    return {
-      success: false,
-      message: "Failed to send OTP. Please ensure your Aadhar number is valid and try again.",
-      sessionId: null
-    } as any;
-
-
-    return
-    const orgId = this.configService.get('BUSY_BOX_ORG_ID');
-    const issueCardDto = UserMapper.mapUserRequestDtoToMerchantRegistrationDto(userRequestDto, orgId);
-    const userResponse = await this.merchantClientService.issueCard(issueCardDto);
-    if (userResponse.status === "SUCCESS") {
-      userRequestDto.cardHolderId = userResponse.data.cardHolderId;
-      userRequestDto.userSession = userResponse.sessionId;
-      const user = await this.registerUserNew(userRequestDto);
-      const tokenPayload = <IAccessTokenUserPayload>{
-        userId: user.userid,
-        phoneNumber: user.phoneNumber,
-        role: user.userRole,
-      };
-      const tokens = await this.tokenService.generateTokens(tokenPayload);
-      return {
-        success: true,
-        message: "Fetched User Data",
-        user,
-        tokens,
-      } as any;
-    }
-    throw new InternalServerErrorException("Failed to issue card for the user");
+    throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
   }
 
 
@@ -418,10 +390,7 @@ export class UsersService {
       }
       throw new InternalServerErrorException(["Failed to issue card for the user"]);
     } else {
-      return {
-        success: false,
-        message: "OTP verification failed. Please check the OTP and try again.",
-      }as any;
+      throw new BadRequestException(["OTP verification failed. Please check the OTP and try again."]);
     }
   }
 
