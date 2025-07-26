@@ -382,7 +382,9 @@ let UsersService = class UsersService {
         return user;
     }
     async editUserProfile(userId, userRequestDto) {
+        console.log("userRequestDto===>", userRequestDto);
         const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['merchant', 'address'] });
+        console.log("user===>", user);
         if (!user) {
             throw new common_1.BadRequestException('user not found');
         }

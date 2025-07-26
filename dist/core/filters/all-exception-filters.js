@@ -31,8 +31,6 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
                 message: message.message[0],
             });
         }
-        else {
-        }
         response.status(status).json({
             statusCode: status,
             timestamp: new Date().toISOString(),

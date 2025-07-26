@@ -453,7 +453,9 @@ export class UsersService {
   async editUserProfile(userId: string,
     userRequestDto: UserUpdateRequestDto,
   ): Promise<User> {
+    console.log("userRequestDto===>",userRequestDto);
     const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['merchant','address'] });
+    console.log("user===>",user);
     if (!user) {
       throw new BadRequestException('user not found');
     }
