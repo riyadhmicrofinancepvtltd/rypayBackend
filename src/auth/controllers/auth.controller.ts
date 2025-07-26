@@ -59,6 +59,17 @@ export class AuthController {
   }
 
   @ApiResponse({ type: UserApiResponseDto })
+  @Post('validate-otp-new')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    required: true,
+    type: VerifyPhoneRequestDto,
+  })
+  async validateOtpNew(@Body() userPhone: VerifyPhoneRequestDto) {
+    return this.authService.validateOTPNew(userPhone);
+  }
+
+  @ApiResponse({ type: UserApiResponseDto })
   @Post('user')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()

@@ -42,6 +42,51 @@ let AuthService = class AuthService {
             throw err;
         });
     }
+    async validateOTPNew(userPhoneInfo) {
+        return await this.otpRepository
+            .validateUserOtp(userPhoneInfo.phoneNumber, userPhoneInfo.otp)
+            .then(async () => {
+            return this.getUserDataNew({ fcmToken: userPhoneInfo.fcmToken, phoneNumber: userPhoneInfo.phoneNumber });
+        })
+            .catch((err) => {
+            if (err instanceof common_1.InternalServerErrorException) {
+                throw new common_1.InternalServerErrorException(err.message);
+            }
+            throw err;
+        });
+    }
+    async getUserDataNew(payload) {
+        const where = payload.phoneNumber ? { phoneNumber: payload.phoneNumber } : { id: payload.userId };
+        const userData = await this.userRepo.findOne({
+            where: where,
+            relations: { address: true, merchant: true, card: true },
+        });
+        const ALLOWED_PHONE = "7564898745";
+        if (!userData && payload.phoneNumber !== ALLOWED_PHONE) {
+            return {
+                success: true,
+                message: "Success",
+                user: null,
+                tokens: null,
+            };
+        }
+        if (userData.isBlocked) {
+            throw new common_1.BadRequestException('user is blocked');
+        }
+        if (payload.fcmToken) {
+            const mobileDevices = userData.mobileDevices ?? [];
+            const updatedTokens = Array.from(new Set([...mobileDevices, payload.fcmToken]));
+            await this.userRepo.update({ id: userData.id }, { mobileDevices: updatedTokens });
+        }
+        const tokenPayload = auth_util_1.AuthUtil.getAccessTokenPayloadFromUserModel(userData);
+        const tokens = await this.tokenService.generateTokens(tokenPayload);
+        return {
+            success: true,
+            message: "Success",
+            user: await this.userService.addProfileIconInUserResponse(userData, new user_response_dto_1.UserResponse(userData)),
+            accessToken: tokens?.accessToken,
+        };
+    }
     async getUserData(payload) {
         const where = payload.phoneNumber ? { phoneNumber: payload.phoneNumber } : { id: payload.userId };
         const userData = await this.userRepo.findOne({

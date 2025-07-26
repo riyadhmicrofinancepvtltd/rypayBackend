@@ -36,6 +36,9 @@ let AuthController = class AuthController {
     async validateOtp(userPhone) {
         return this.authService.validateOTP(userPhone);
     }
+    async validateOtpNew(userPhone) {
+        return this.authService.validateOTPNew(userPhone);
+    }
     async getUserResponse(req) {
         return this.authService.getUserData({ userId: req.user.sub });
     }
@@ -77,6 +80,19 @@ __decorate([
     __metadata("design:paramtypes", [verify_phone_request_dto_1.VerifyPhoneRequestDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "validateOtp", null);
+__decorate([
+    (0, swagger_1.ApiResponse)({ type: user_response_dto_1.UserApiResponseDto }),
+    (0, common_1.Post)('validate-otp-new'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiBody)({
+        required: true,
+        type: verify_phone_request_dto_1.VerifyPhoneRequestDto,
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [verify_phone_request_dto_1.VerifyPhoneRequestDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "validateOtpNew", null);
 __decorate([
     (0, swagger_1.ApiResponse)({ type: user_response_dto_1.UserApiResponseDto }),
     (0, common_1.Post)('user'),

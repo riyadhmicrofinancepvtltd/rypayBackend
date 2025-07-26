@@ -12,6 +12,22 @@ export declare class AuthService {
     private userRepo;
     constructor(tokenService: TokenService, otpRepository: OtpRepository, userService: UsersService, userRepo: Repository<User>);
     validateOTP(userPhoneInfo: VerifyPhoneRequestDto): Promise<UserApiResponseDto>;
+    validateOTPNew(userPhoneInfo: VerifyPhoneRequestDto): Promise<UserApiResponseDto | {
+        success: boolean;
+        message: string;
+        user: UserResponse;
+        accessToken: string;
+    }>;
+    getUserDataNew(payload: {
+        fcmToken?: string;
+        phoneNumber?: string;
+        userId?: string;
+    }): Promise<UserApiResponseDto | {
+        success: boolean;
+        message: string;
+        user: UserResponse;
+        accessToken: string;
+    }>;
     getUserData(payload: {
         fcmToken?: string;
         phoneNumber?: string;

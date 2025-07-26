@@ -11,6 +11,12 @@ export declare class AuthController {
     constructor(authService: AuthService, otpFlowService: OtpFlowService);
     requestOtp(userPhone: sendOtpRequestDto): Promise<sendOtpResponseDto>;
     validateOtp(userPhone: VerifyPhoneRequestDto): Promise<UserApiResponseDto>;
+    validateOtpNew(userPhone: VerifyPhoneRequestDto): Promise<UserApiResponseDto | {
+        success: boolean;
+        message: string;
+        user: import("src/users/dto/user-response.dto").UserResponse;
+        accessToken: string;
+    }>;
     getUserResponse(req: any): Promise<UserApiResponseDto>;
     refreshAccessToken(refreshTokenDto: RefreshAccessTokenRequestDto): Promise<{
         accessToken: string;
