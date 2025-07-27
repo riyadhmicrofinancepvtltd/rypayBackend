@@ -245,6 +245,11 @@ let UsersService = class UsersService {
                     status: user.card.status,
                     lastFourDigit: user.card.lastFourDigits
                 } : null,
+                merchantInfo: user.merchant ? {
+                    shopName: user.merchant.shopName,
+                    gstNumber: user.merchant.gstNumber,
+                    msmeNumber: user.merchant.msmeNumber,
+                } : null,
                 accountDetails: accountDetails,
                 referrelCode: user.referralCode
             }
