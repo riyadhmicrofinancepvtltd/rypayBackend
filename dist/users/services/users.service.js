@@ -201,8 +201,9 @@ let UsersService = class UsersService {
     async getUserDetail(userId) {
         const user = await this.userRepository.findOne({
             where: { id: userId },
-            relations: ['beneficiaries', 'card', 'address'],
+            relations: ['beneficiaries', 'card', 'address', 'merchant'],
         });
+        console.log("user=======>", user);
         if (!user) {
             throw new common_1.BadRequestException(['User not found']);
         }
@@ -221,6 +222,7 @@ let UsersService = class UsersService {
                 lastName: user.lastName,
                 email: user.email,
                 dob: user.dob,
+                gender: user.gender,
                 userRole: user.role,
                 address: user.address ? {
                     address1: user.address.address1,

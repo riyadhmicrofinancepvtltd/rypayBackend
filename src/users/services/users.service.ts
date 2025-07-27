@@ -247,9 +247,9 @@ export class UsersService {
   async getUserDetail(userId: string): Promise<any> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['beneficiaries', 'card', 'address'],
+      relations: ['beneficiaries', 'card', 'address','merchant'],
     });
-
+console.log("user=======>",user)
     if (!user) {
       throw new BadRequestException(['User not found']);
     }
@@ -271,6 +271,7 @@ export class UsersService {
         lastName: user.lastName,
         email: user.email,
         dob: user.dob,
+        gender: user.gender,
         userRole: user.role,
         address: user.address ? {
           address1: user.address.address1,
