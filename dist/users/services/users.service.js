@@ -327,6 +327,9 @@ let UsersService = class UsersService {
             }
             throw new common_1.InternalServerErrorException(["Failed to issue card for the user"]);
         }
+        else if (response.status == "FAILED") {
+            throw new common_1.BadRequestException([response.resText]);
+        }
         else {
             throw new common_1.BadRequestException(["OTP verification failed. Please check the OTP and try again."]);
         }
@@ -382,9 +385,7 @@ let UsersService = class UsersService {
         return user;
     }
     async editUserProfile(userId, userRequestDto) {
-        console.log("userRequestDto===>", userRequestDto);
         const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['merchant', 'address'] });
-        console.log("user===>", user);
         if (!user) {
             throw new common_1.BadRequestException('user not found');
         }
