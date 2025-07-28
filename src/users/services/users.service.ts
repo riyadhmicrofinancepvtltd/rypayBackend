@@ -252,9 +252,11 @@ export class UsersService {
     }
     user.profileIcon = null; 
     await this.userRepository.save(user);
-    return 'User profile icon removed successfully';
-  }
-  
+    return {
+      success: true,
+      message: 'User profile icon removed successfully',
+  }as any
+}
 
 
   async getUserDetail(userId: string): Promise<any> {
