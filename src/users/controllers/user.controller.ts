@@ -126,6 +126,27 @@ export class UsersController {
     return this.userService.deleteUser(req.user.sub);
   }
 
+
+  @ApiOperation({ summary: 'Endpoint to delete the proile icon' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: UserApiResponseDto,
+    description: 'The image has been successfully deleted.',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'forbidden exception',
+  })
+  async deleteProfileIcon(
+    @Req() req: any
+  ): Promise<string> {
+    return this.userService.deleteProfileIcon(req.user.sub);
+  }
+
+
   @ApiOperation({ summary: 'Get current user details' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)

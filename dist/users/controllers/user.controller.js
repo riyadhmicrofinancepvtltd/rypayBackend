@@ -53,6 +53,9 @@ let UsersController = class UsersController {
     async deleteUser(req) {
         return this.userService.deleteUser(req.user.sub);
     }
+    async deleteProfileIcon(req) {
+        return this.userService.deleteProfileIcon(req.user.sub);
+    }
     async getUserDetail(req) {
         return this.userService.getUserDetail(req.user.sub);
     }
@@ -252,6 +255,25 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "deleteUser", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Endpoint to delete the proile icon' }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)(),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.CREATED,
+        type: user_response_dto_1.UserApiResponseDto,
+        description: 'The image has been successfully deleted.',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'forbidden exception',
+    }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deleteProfileIcon", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Get current user details' }),
     (0, swagger_1.ApiBearerAuth)(),

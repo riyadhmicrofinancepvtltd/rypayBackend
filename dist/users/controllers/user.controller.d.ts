@@ -22,6 +22,7 @@ export declare class UsersController {
     requestAadharOtp(aadharNumber: string): Promise<any>;
     validateAadharOtp(body: ValidateAadharDto): Promise<string>;
     deleteUser(req: any): Promise<string>;
+    deleteProfileIcon(req: any): Promise<string>;
     getUserDetail(req: any): Promise<any>;
     registerAdmin(signUpDto: UserAdminRequestDto): Promise<UserApiResponseDto>;
     updateUser(userId: string, updateDto: UserUpdateRequestDto): Promise<User>;

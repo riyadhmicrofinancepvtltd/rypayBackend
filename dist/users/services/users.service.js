@@ -198,12 +198,20 @@ let UsersService = class UsersService {
         await this.userRepository.save(user);
         return "Success";
     }
+    async deleteProfileIcon(userId) {
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new common_1.ForbiddenException('User does not exist or lacks permissions');
+        }
+        user.profileIcon = null;
+        await this.userRepository.save(user);
+        return 'User profile icon removed successfully';
+    }
     async getUserDetail(userId) {
         const user = await this.userRepository.findOne({
             where: { id: userId },
             relations: ['beneficiaries', 'card', 'address', 'merchant'],
         });
-        console.log("user=======>", user);
         if (!user) {
             throw new common_1.BadRequestException(['User not found']);
         }
@@ -224,6 +232,7 @@ let UsersService = class UsersService {
                 dob: user.dob,
                 gender: user.gender,
                 userRole: user.role,
+                profileIcon: user.profileIcon,
                 address: user.address ? {
                     address1: user.address.address1,
                     address2: user.address.address2,
