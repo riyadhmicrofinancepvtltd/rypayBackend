@@ -130,7 +130,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Endpoint to delete the proile icon' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete()
+  @Delete('/delete-profile-icon')
   @ApiResponse({
     status: HttpStatus.CREATED,
     type: UserApiResponseDto,

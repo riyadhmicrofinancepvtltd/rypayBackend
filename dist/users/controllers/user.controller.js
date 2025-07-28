@@ -259,7 +259,7 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Endpoint to delete the proile icon' }),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Delete)(),
+    (0, common_1.Delete)('/delete-profile-icon'),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.CREATED,
         type: user_response_dto_1.UserApiResponseDto,
