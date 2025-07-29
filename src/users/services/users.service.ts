@@ -482,16 +482,18 @@ export class UsersService {
     const updatedUserEntity = UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
     await this.userRepository.save(updatedUserEntity);
     user.kycVerificationStatus = user.kycVerificationStatus
-    console.log("user===merchant===>", user.merchant);
-    console.log("user======>", user);
-
+    const fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+ 
      const { merchant, ...rest } = user;
 
   return {
     success: true,
     message: 'User profile updated successfully',
-    ...rest,
-    merchantInfo: merchant,
+    user:{
+      ...rest,
+      profileUrl: fileInfo.url,
+      merchantInfo: merchant,
+    }
   }as any;
   }
   
