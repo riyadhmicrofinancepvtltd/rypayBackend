@@ -475,13 +475,15 @@ export class UsersService {
   async editUserProfile(userId: string,
     userRequestDto: UserUpdateRequestDto,
   ): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['merchant','address'] });
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['beneficiaries', 'card', 'address', 'merchant'], });
     if (!user) {
       throw new BadRequestException('user not found');
     }
     const updatedUserEntity = UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
     await this.userRepository.save(updatedUserEntity);
     user.kycVerificationStatus = user.kycVerificationStatus
+
+    console.log("user======>", user);
     return user;
   }
   
