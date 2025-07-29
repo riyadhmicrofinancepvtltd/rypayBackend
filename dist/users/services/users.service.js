@@ -224,6 +224,7 @@ let UsersService = class UsersService {
             ifscCode: account.ifscCode,
             nameInBank: account.nameInBank,
         } : null;
+        const fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
         return {
             success: true,
             message: 'Fetched User Data',
@@ -235,7 +236,7 @@ let UsersService = class UsersService {
                 dob: user.dob,
                 gender: user.gender,
                 userRole: user.role,
-                profileIcon: user.profileIcon,
+                profileUrl: fileInfo.url,
                 address: user.address ? {
                     address1: user.address.address1,
                     address2: user.address.address2,
@@ -346,12 +347,7 @@ let UsersService = class UsersService {
             }
             throw new common_1.InternalServerErrorException(["Failed to issue card for the user"]);
         }
-        else if (response.status == "FAILED") {
-            throw new common_1.BadRequestException([response.resText]);
-        }
-        else {
-            throw new common_1.BadRequestException(["OTP verification failed. Please check the OTP and try again."]);
-        }
+        throw new common_1.BadRequestException(["Try Again after sometime."]);
     }
     async requestAadharOtp(aadharNumber) {
         const data = await this.rechargeClient.requestAadharOtp(aadharNumber);
