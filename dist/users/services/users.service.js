@@ -409,7 +409,13 @@ let UsersService = class UsersService {
         user.kycVerificationStatus = user.kycVerificationStatus;
         console.log("user===merchant===>", user.merchant);
         console.log("user======>", user);
-        return user;
+        const { merchant, ...rest } = user;
+        return {
+            success: true,
+            message: 'User profile updated successfully',
+            ...rest,
+            merchantInfo: merchant,
+        };
     }
     async checkPhoneNumberExists(phoneNumber) {
         if (!phoneNumber) {
