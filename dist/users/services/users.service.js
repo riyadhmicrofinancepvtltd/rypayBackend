@@ -407,6 +407,7 @@ let UsersService = class UsersService {
         const updatedUserEntity = user_mapper_1.UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
         await this.userRepository.save(updatedUserEntity);
         user.kycVerificationStatus = user.kycVerificationStatus;
+        console.log("user===merchant===>", user.merchant);
         console.log("user======>", user);
         return user;
     }
