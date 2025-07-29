@@ -275,7 +275,10 @@ export class UsersService {
       nameInBank: account.nameInBank,
       //upi: account.upi
     } : null;
-    const fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+    let fileInfo = null;
+    if(user.profileIcon) {
+       fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+    }
     return {
       success: true,
       message: 'Fetched User Data',
@@ -287,7 +290,7 @@ export class UsersService {
         dob: user.dob,
         gender: user.gender,
         userRole: user.role,
-        profileUrl: fileInfo.url,
+        profileUrl: fileInfo?fileInfo?.url:null,
         address: user.address ? {
           address1: user.address.address1,
           address2: user.address.address2,
@@ -482,7 +485,11 @@ export class UsersService {
     const updatedUserEntity = UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
     await this.userRepository.save(updatedUserEntity);
     user.kycVerificationStatus = user.kycVerificationStatus
-    const fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+    let fileInfo = null;
+    if(user.profileIcon) {
+       fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+    }
+   
  
      const { merchant, ...rest } = user;
 
@@ -491,7 +498,7 @@ export class UsersService {
     message: 'User profile updated successfully',
     user:{
       ...rest,
-      profileUrl: fileInfo.url,
+      profileUrl: fileInfo?fileInfo.url:null,
       merchantInfo: merchant,
     }
   }as any;
