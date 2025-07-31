@@ -485,7 +485,7 @@ export class UsersService {
     const updatedUserEntity = UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
     await this.userRepository.save(updatedUserEntity);
     user.kycVerificationStatus = user.kycVerificationStatus
-    const kycStatusString = KycVerificationStatus[user.kycVerificationStatus];
+    const kycStatusString = KycVerificationStatus[0];
     console.log("kycStatusString==>",kycStatusString)
     let fileInfo = null;
     if(user.profileIcon) {
