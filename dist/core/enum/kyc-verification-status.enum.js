@@ -7,5 +7,6 @@ var KycVerificationStatus;
     KycVerificationStatus[KycVerificationStatus["REQUESTED"] = 1] = "REQUESTED";
     KycVerificationStatus[KycVerificationStatus["COMPLETED"] = 2] = "COMPLETED";
     KycVerificationStatus[KycVerificationStatus["REJECTED"] = 3] = "REJECTED";
+    KycVerificationStatus[KycVerificationStatus["VERIFIED"] = 4] = "VERIFIED";
 })(KycVerificationStatus || (exports.KycVerificationStatus = KycVerificationStatus = {}));
 //# sourceMappingURL=kyc-verification-status.enum.js.map

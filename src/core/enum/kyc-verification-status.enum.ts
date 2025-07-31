@@ -3,4 +3,5 @@ export enum KycVerificationStatus {
   REQUESTED,
   COMPLETED,
   REJECTED,
+  VERIFIED
 }

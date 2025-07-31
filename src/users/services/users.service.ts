@@ -484,7 +484,7 @@ export class UsersService {
     }
     const updatedUserEntity = UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
     await this.userRepository.save(updatedUserEntity);
-    user.kycVerificationStatus = user.kycVerificationStatus
+    user.kycVerificationStatus = KycVerificationStatus[user.kycVerificationStatus] as any;
     let fileInfo = null;
     if(user.profileIcon) {
        fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
