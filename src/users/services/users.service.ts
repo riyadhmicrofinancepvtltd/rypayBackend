@@ -591,22 +591,11 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
-    // try {
-    //   console.log("otp",otp);
-    //   await this.otpRepository.validateUserOtpAppLockPin(user.phoneNumber, otp);
-    //   console.log("pin",pin);
-    //   await this.setAppLockPin(userId, pin);
-    //   console.log("user",user);
-    //   return {
-    //     message: "Pin Changed successfully!!!"
-    //   }
-    // } catch {
-    //   throw new BadRequestException(['Failed to validate OTP']);
-    // }
+    
      return await this.otpRepository
           .validateUserOtpAppLockPin(user.phoneNumber, otp)
           .then(async () => {
-            return { message: "Otp verified successfully and pin changed successfully" };
+            return {success:true, message: "Otp verified successfully and pin changed successfully" };
           })
           .catch((err) => {
             if (err instanceof InternalServerErrorException) {

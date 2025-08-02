@@ -50,6 +50,7 @@ export declare class UsersController {
         valid: boolean;
     }>;
     verifyAppLockPinOtp(req: any, body: UpdateForgotPin): Promise<{
+        success: boolean;
         message: string;
     }>;
     createVirtualAccount(req: any, virtualRequest: VirtualAccountRequestDto): Promise<{

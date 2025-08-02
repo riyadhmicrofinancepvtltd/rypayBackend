@@ -501,7 +501,7 @@ let UsersService = class UsersService {
         return await this.otpRepository
             .validateUserOtpAppLockPin(user.phoneNumber, otp)
             .then(async () => {
-            return { message: "Otp verified successfully and pin changed successfully" };
+            return { success: true, message: "Otp verified successfully and pin changed successfully" };
         })
             .catch((err) => {
             if (err instanceof common_1.InternalServerErrorException) {
