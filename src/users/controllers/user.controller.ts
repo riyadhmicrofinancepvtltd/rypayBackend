@@ -391,6 +391,47 @@ async updateStaticQR(
       message: 'pin verified successfully'
      }as any
   }
+  @Post('change-app-lock-pin')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async changeAppLockPin(
+    @Req() req: any,
+    @Body() pinRequest: PinRequestDto,
+  ): Promise<{ valid: boolean; }> {
+    const valid = await this.userService.changeAppLockPin(req.user.sub, pinRequest.pin);
+    return { 
+      success: true,
+      message: 'pin verified successfully'
+     }as any
+  }
+  // @Post('verify-app-lock-pin-otp')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @HttpCode(HttpStatus.OK)
+  // async verifyAppLockPinOtp(
+  //   @Req() req: any,
+  //   @Body() pinRequest: PinRequestDto,
+  // ): Promise<{ valid: boolean; }> {
+  //   const valid = await this.userService.verifyAppLockPinOtp(req.user.sub, pinRequest.pin);
+  //   return { 
+  //     success: true,
+  //     message: 'pin verified successfully'
+  //    }as any
+  // }
+
+  @Post('verify-app-lock-pin-otp')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'updates pin' })
+  @ApiResponse({ status: 200, description: 'Code verified successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid code or expired.' })
+  async verifyAppLockPinOtp(@Req() req: any, @Body() body: UpdateForgotPin) {
+      return await this.userService.verifyAppLockPinOtp(req.user.sub, body.otp, body.newPin);
+  }
+
+
+
 
   @Post('create-virtual-account')
   @UseGuards(JwtAuthGuard)

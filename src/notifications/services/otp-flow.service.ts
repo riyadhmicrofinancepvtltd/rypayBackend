@@ -53,4 +53,24 @@ export class OtpFlowService {
         } as sendOtpResponseDto;
       });
   }
+  async requestOtpAppLockPin(phoneNumber: string, pin: string ) {
+   
+    /*
+      send SMS message service code comes here
+    */
+    await this.sendOtp(phoneNumber, pin);
+    let otpRecord = this.otpRepository.upsertOtpInfo(phoneNumber, pin);
+    return otpRecord
+      .then(() => {
+        return {
+          success: true,
+          message: 'success',
+        } as sendOtpResponseDto;
+      })
+      .catch((err) => {
+        return {
+          message: err.message,
+        } as sendOtpResponseDto;
+      });
+  }
 }

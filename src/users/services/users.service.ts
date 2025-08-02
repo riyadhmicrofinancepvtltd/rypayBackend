@@ -579,6 +579,29 @@ export class UsersService {
     return bcrypt.compare(pin, user.pin);
   }
 
+  async changeAppLockPin(userId: string,pin: string) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException(['User not found']);
+    }
+    await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber, pin)
+  }
+  async verifyAppLockPinOtp(userId: string, otp: string, pin: string) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException('user not found');
+    }
+    try {
+      await this.otpRepository.validateUserOtpAppLockPin(user.phoneNumber, otp);
+      await this.setAppLockPin(userId, pin);
+      return {
+        message: "Pin Changed successfully!!!"
+      }
+    } catch {
+      throw new BadRequestException('Failed to validate OTP');
+    }
+
+  }
 
   async createVirtualAccount(
     userId: string,

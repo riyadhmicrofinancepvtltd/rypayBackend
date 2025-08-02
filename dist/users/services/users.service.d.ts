@@ -66,6 +66,10 @@ export declare class UsersService {
     setPin(userId: string, pin: string): Promise<void>;
     setAppLockPin(userId: string, pin: string): Promise<void>;
     verifyAppLockPin(userId: string, pin: string): Promise<boolean>;
+    changeAppLockPin(userId: string, pin: string): Promise<void>;
+    verifyAppLockPinOtp(userId: string, otp: string, pin: string): Promise<{
+        message: string;
+    }>;
     createVirtualAccount(userId: string, customer_name: string, email: string, phoneNumber: string, transferPin: string): Promise<any>;
     getVirtualAccount(userId: string): Promise<any>;
     changeTransferPin(userId: string, changeTransferPinDto: ChangeTransferPinDto): Promise<any>;

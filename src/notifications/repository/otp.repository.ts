@@ -52,6 +52,26 @@ export class OtpRepository {
     }
     throw new BadRequestException(OTPValidateStatus.INVALID);
   }
+  async validateUserOtpAppLockPin(phoneNumber: string, otp: string) {
+    const record = await this.findByPhoneNumber(phoneNumber);
+    if (!record) {
+      throw new NotFoundException([OTPValidateStatus.NOT_FOUND]);
+    }
+    const isExpired = this.isTimePassedOut(record.expiryTime);
+    if (isExpired || record.isUsed ) {
+      throw new BadRequestException([OTPValidateStatus.EXPIRED]);
+    }
+    
+    if (record.otpValue === otp) {
+      await this.updateOTPUsedRecord(record);
+      return {
+        message: OTPValidateStatus.VALID,
+      };
+    }
+    throw new BadRequestException([OTPValidateStatus.INVALID]);
+  }
+
+
   async validateUserOtpNew(phoneNumber: string, otp: string) {
     const record = await this.findByPhoneNumber(phoneNumber);
     if (!record) {

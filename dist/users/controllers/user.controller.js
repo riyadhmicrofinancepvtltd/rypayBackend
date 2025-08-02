@@ -103,6 +103,16 @@ let UsersController = class UsersController {
             message: 'pin verified successfully'
         };
     }
+    async changeAppLockPin(req, pinRequest) {
+        const valid = await this.userService.changeAppLockPin(req.user.sub, pinRequest.pin);
+        return {
+            success: true,
+            message: 'pin verified successfully'
+        };
+    }
+    async verifyAppLockPinOtp(req, body) {
+        return await this.userService.verifyAppLockPinOtp(req.user.sub, body.otp, body.newPin);
+    }
     async createVirtualAccount(req, virtualRequest) {
         let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber, virtualRequest.transferPin);
         return data;
@@ -524,6 +534,30 @@ __decorate([
     __metadata("design:paramtypes", [Object, pin_request_dto_1.PinRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "verifyAppLockPin", null);
+__decorate([
+    (0, common_1.Post)('change-app-lock-pin'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.PinRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "changeAppLockPin", null);
+__decorate([
+    (0, common_1.Post)('verify-app-lock-pin-otp'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'updates pin' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Code verified successfully.' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid code or expired.' }),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.UpdateForgotPin]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "verifyAppLockPinOtp", null);
 __decorate([
     (0, common_1.Post)('create-virtual-account'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

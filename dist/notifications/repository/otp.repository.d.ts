@@ -8,6 +8,9 @@ export declare class OtpRepository {
     validateUserOtp(phoneNumber: string, otp: string): Promise<{
         message: OTPValidateStatus;
     }>;
+    validateUserOtpAppLockPin(phoneNumber: string, otp: string): Promise<{
+        message: OTPValidateStatus;
+    }>;
     validateUserOtpNew(phoneNumber: string, otp: string): Promise<{
         message: OTPValidateStatus;
     }>;

@@ -486,6 +486,29 @@ let UsersService = class UsersService {
         }
         return bcrypt.compare(pin, user.pin);
     }
+    async changeAppLockPin(userId, pin) {
+        const user = await this.findUserById(userId);
+        if (!user) {
+            throw new common_1.BadRequestException(['User not found']);
+        }
+        await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber, pin);
+    }
+    async verifyAppLockPinOtp(userId, otp, pin) {
+        const user = await this.findUserById(userId);
+        if (!user) {
+            throw new common_1.BadRequestException('user not found');
+        }
+        try {
+            await this.otpRepository.validateUserOtpAppLockPin(user.phoneNumber, otp);
+            await this.setAppLockPin(userId, pin);
+            return {
+                message: "Pin Changed successfully!!!"
+            };
+        }
+        catch {
+            throw new common_1.BadRequestException('Failed to validate OTP');
+        }
+    }
     async createVirtualAccount(userId, customer_name, email, phoneNumber, transferPin) {
         const accountId = Math.floor(10000000 + Math.random() * 90000000).toString();
         const busyBoxBaseUrl = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL');

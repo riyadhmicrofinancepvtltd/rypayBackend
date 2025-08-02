@@ -56,6 +56,22 @@ let OtpFlowService = class OtpFlowService {
             };
         });
     }
+    async requestOtpAppLockPin(phoneNumber, pin) {
+        await this.sendOtp(phoneNumber, pin);
+        let otpRecord = this.otpRepository.upsertOtpInfo(phoneNumber, pin);
+        return otpRecord
+            .then(() => {
+            return {
+                success: true,
+                message: 'success',
+            };
+        })
+            .catch((err) => {
+            return {
+                message: err.message,
+            };
+        });
+    }
 };
 exports.OtpFlowService = OtpFlowService;
 exports.OtpFlowService = OtpFlowService = __decorate([
