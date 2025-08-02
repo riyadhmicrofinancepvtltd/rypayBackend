@@ -589,16 +589,19 @@ export class UsersService {
   async verifyAppLockPinOtp(userId: string, otp: string, pin: string) {
     const user = await this.findUserById(userId);
     if (!user) {
-      throw new BadRequestException('user not found');
+      throw new BadRequestException(['user not found']);
     }
     try {
+      console.log("otp",otp);
       await this.otpRepository.validateUserOtpAppLockPin(user.phoneNumber, otp);
+      console.log("pin",pin);
       await this.setAppLockPin(userId, pin);
+      console.log("user",user);
       return {
         message: "Pin Changed successfully!!!"
       }
     } catch {
-      throw new BadRequestException('Failed to validate OTP');
+      throw new BadRequestException(['Failed to validate OTP']);
     }
 
   }
