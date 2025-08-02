@@ -498,19 +498,17 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.BadRequestException(['user not found']);
         }
-        try {
-            console.log("otp", otp);
-            await this.otpRepository.validateUserOtpAppLockPin(user.phoneNumber, otp);
-            console.log("pin", pin);
-            await this.setAppLockPin(userId, pin);
-            console.log("user", user);
-            return {
-                message: "Pin Changed successfully!!!"
-            };
-        }
-        catch {
-            throw new common_1.BadRequestException(['Failed to validate OTP']);
-        }
+        return await this.otpRepository
+            .validateUserOtpAppLockPin(user.phoneNumber, otp)
+            .then(async () => {
+            return { message: "Otp verified successfully and pin changed successfully" };
+        })
+            .catch((err) => {
+            if (err instanceof common_1.InternalServerErrorException) {
+                throw new common_1.InternalServerErrorException([err.message]);
+            }
+            throw err;
+        });
     }
     async createVirtualAccount(userId, customer_name, email, phoneNumber, transferPin) {
         const accountId = Math.floor(10000000 + Math.random() * 90000000).toString();
