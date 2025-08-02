@@ -38,6 +38,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       "/user",
       "/auth/validate-otp-new",
       "/user/verify-app-lock-pin",
+      "/user/change-app-lock-pin",
+      "/user/verify-app-lock-pin-otp",
     ];
     
     if (openUrls.includes(request.url)) {
