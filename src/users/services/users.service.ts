@@ -570,6 +570,14 @@ export class UsersService {
     const hashedPin = await bcrypt.hash(pin, this.saltRounds);
     await this.userRepository.update(userId, { pin: hashedPin });
   }
+  //verifyAppLockPin
+  async verifyAppLockPin(userId: string, pin: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException(['User not found']);
+    }
+    return bcrypt.compare(pin, user.pin);
+  }
 
 
   async createVirtualAccount(

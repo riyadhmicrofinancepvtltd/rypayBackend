@@ -374,6 +374,18 @@ async updateStaticQR(
     }as any
   }
 
+  @Post('verify-app-lock-pin')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async verifyAppLockPin(
+    @Req() req: any,
+    @Body() pinRequest: PinRequestDto,
+  ): Promise<{ valid: boolean; }> {
+    const valid = await this.userService.verifyAppLockPin(req.user.sub, pinRequest.pin);
+    return { valid };
+  }
+
   @Post('create-virtual-account')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

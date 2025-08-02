@@ -43,6 +43,9 @@ export declare class UsersController {
     setAppLockPin(req: any, pinRequest: PinRequestDto): Promise<{
         message: string;
     }>;
+    verifyAppLockPin(req: any, pinRequest: PinRequestDto): Promise<{
+        valid: boolean;
+    }>;
     createVirtualAccount(req: any, virtualRequest: VirtualAccountRequestDto): Promise<{
         message: string;
     }>;

@@ -24,7 +24,15 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
             ? exception.getResponse()
             : exception?.message || 'Internal server error';
         this.logger.error(`Error on ${request.method} ${request.url}: ${JSON.stringify(message)}`, exception?.stack);
-        if (request.url == "/user/new-signup" || request.url == "/user/verify-aadhaar-otp" || request.url == "/user" || request.url == "/auth/validate-otp-new") {
+        const openUrls = [
+            "/user/set-app-lock-pin",
+            "/user/new-signup",
+            "/user/verify-aadhaar-otp",
+            "/user",
+            "/auth/validate-otp-new",
+            "/user/verify-app-lock-pin",
+        ];
+        if (openUrls.includes(request.url)) {
             response.status(status).json({
                 statusCode: status,
                 success: false,

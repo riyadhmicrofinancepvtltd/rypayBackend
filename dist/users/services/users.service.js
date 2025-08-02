@@ -479,6 +479,13 @@ let UsersService = class UsersService {
         const hashedPin = await bcrypt.hash(pin, this.saltRounds);
         await this.userRepository.update(userId, { pin: hashedPin });
     }
+    async verifyAppLockPin(userId, pin) {
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.UnauthorizedException(['User not found']);
+        }
+        return bcrypt.compare(pin, user.pin);
+    }
     async createVirtualAccount(userId, customer_name, email, phoneNumber, transferPin) {
         const accountId = Math.floor(10000000 + Math.random() * 90000000).toString();
         const busyBoxBaseUrl = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL');
