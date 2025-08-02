@@ -8,6 +8,9 @@ export declare class OtpRepository {
     validateUserOtp(phoneNumber: string, otp: string): Promise<{
         message: OTPValidateStatus;
     }>;
+    validateUserOtpNew(phoneNumber: string, otp: string): Promise<{
+        message: OTPValidateStatus;
+    }>;
     updateOTPUsedRecord(record: OtpInfo): Promise<OtpInfo>;
     findByPhoneNumber(phoneNumber: string): Promise<OtpInfo>;
     isTimePassedOut(date: Date): boolean;

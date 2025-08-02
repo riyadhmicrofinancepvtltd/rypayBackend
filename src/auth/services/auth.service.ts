@@ -43,13 +43,13 @@ export class AuthService {
   }
   async validateOTPNew(userPhoneInfo: VerifyPhoneRequestDto) {
     return await this.otpRepository
-      .validateUserOtp(userPhoneInfo.phoneNumber, userPhoneInfo.otp)
+      .validateUserOtpNew(userPhoneInfo.phoneNumber, userPhoneInfo.otp)
       .then(async () => {
         return this.getUserDataNew({ fcmToken: userPhoneInfo.fcmToken, phoneNumber: userPhoneInfo.phoneNumber })
       })
       .catch((err) => {
         if (err instanceof InternalServerErrorException) {
-          throw new InternalServerErrorException(err.message);
+          throw new InternalServerErrorException([err.message]);
         }
         throw err;
       });
@@ -70,7 +70,7 @@ export class AuthService {
       };
     }
     if (userData.isBlocked) {
-      throw new BadRequestException('user is blocked');
+      throw new BadRequestException(['user is blocked']);
     }
     if (payload.fcmToken) {
       const mobileDevices = userData.mobileDevices ?? [];

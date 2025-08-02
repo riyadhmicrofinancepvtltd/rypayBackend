@@ -31,13 +31,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       `Error on ${request.method} ${request.url}: ${JSON.stringify(message)}`,
       (exception as any)?.stack,
     );
-    if (request.url == "/user/new-signup" || request.url == "/user/verify-aadhaar-otp" || request.url == "/user") {
+    if (request.url == "/user/new-signup" || request.url == "/user/verify-aadhaar-otp" || request.url == "/user" || request.url == "/auth/validate-otp-new") {
       response.status(status).json({
         statusCode: status,
         success: false,
         message:message.message[0],
       });
-    }  response.status(status).json({
+    }  
+    response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,

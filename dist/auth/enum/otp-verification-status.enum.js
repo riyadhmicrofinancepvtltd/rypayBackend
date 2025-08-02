@@ -6,6 +6,6 @@ var OTPValidateStatus;
     OTPValidateStatus["NOT_FOUND"] = "Record Not Found";
     OTPValidateStatus["EXPIRED"] = "OTP Expired";
     OTPValidateStatus["VALID"] = "Valid OTP";
-    OTPValidateStatus["INVALID"] = "Please enter correct number";
+    OTPValidateStatus["INVALID"] = "Invalid OTP";
 })(OTPValidateStatus || (exports.OTPValidateStatus = OTPValidateStatus = {}));
 //# sourceMappingURL=otp-verification-status.enum.js.map

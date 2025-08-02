@@ -44,13 +44,13 @@ let AuthService = class AuthService {
     }
     async validateOTPNew(userPhoneInfo) {
         return await this.otpRepository
-            .validateUserOtp(userPhoneInfo.phoneNumber, userPhoneInfo.otp)
+            .validateUserOtpNew(userPhoneInfo.phoneNumber, userPhoneInfo.otp)
             .then(async () => {
             return this.getUserDataNew({ fcmToken: userPhoneInfo.fcmToken, phoneNumber: userPhoneInfo.phoneNumber });
         })
             .catch((err) => {
             if (err instanceof common_1.InternalServerErrorException) {
-                throw new common_1.InternalServerErrorException(err.message);
+                throw new common_1.InternalServerErrorException([err.message]);
             }
             throw err;
         });
@@ -71,7 +71,7 @@ let AuthService = class AuthService {
             };
         }
         if (userData.isBlocked) {
-            throw new common_1.BadRequestException('user is blocked');
+            throw new common_1.BadRequestException(['user is blocked']);
         }
         if (payload.fcmToken) {
             const mobileDevices = userData.mobileDevices ?? [];
