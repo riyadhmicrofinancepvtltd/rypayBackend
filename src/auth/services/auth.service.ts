@@ -60,7 +60,7 @@ export class AuthService {
       where: where,
       relations: { address: true, merchant: true, card: true },
     });
-    const ALLOWED_PHONE = "7564898745";
+    const ALLOWED_PHONE = "8630221258";
     if (!userData && payload.phoneNumber !== ALLOWED_PHONE) {
       return <UserApiResponseDto>{
         success: true,
@@ -94,7 +94,7 @@ export class AuthService {
       where: where,
       relations: { address: true, merchant: true, card: true },
     });
-    const ALLOWED_PHONE = "7564898745";
+    const ALLOWED_PHONE = "8630221258";
     if (!userData && payload.phoneNumber !== ALLOWED_PHONE) {
       return <UserApiResponseDto>{
         success: true,

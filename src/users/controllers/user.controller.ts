@@ -359,6 +359,21 @@ async updateStaticQR(
     };
   }
 
+  @Post('set-app-lock-pin')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async setAppLockPin(
+    @Req() req: any,
+    @Body() pinRequest: PinRequestDto,
+  ): Promise<{ message: string; }> {
+    await this.userService.setAppLockPin(req.user.sub, pinRequest.pin);
+    return {
+      success: true,
+      message: 'pin created successfully'
+    }as any
+  }
+
   @Post('create-virtual-account')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

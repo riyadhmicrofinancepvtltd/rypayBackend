@@ -486,7 +486,6 @@ export class UsersService {
     await this.userRepository.save(updatedUserEntity);
     //user.kycVerificationStatus =  KycVerificationStatus[user.kycVerificationStatus];
     const kycStatusString = KycVerificationStatus[user.kycVerificationStatus];
-    console.log("kycStatusString==>",kycStatusString)
     let fileInfo = null;
     if(user.profileIcon) {
        fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
@@ -566,6 +565,12 @@ export class UsersService {
     const hashedPin = await bcrypt.hash(pin, this.saltRounds);
     await this.userRepository.update(userId, { pin: hashedPin });
   }
+
+  async setAppLockPin(userId: string, pin: string): Promise<void> {
+    const hashedPin = await bcrypt.hash(pin, this.saltRounds);
+    await this.userRepository.update(userId, { pin: hashedPin });
+  }
+
 
   async createVirtualAccount(
     userId: string,

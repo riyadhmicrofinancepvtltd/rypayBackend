@@ -61,7 +61,7 @@ let AuthService = class AuthService {
             where: where,
             relations: { address: true, merchant: true, card: true },
         });
-        const ALLOWED_PHONE = "7564898745";
+        const ALLOWED_PHONE = "8630221258";
         if (!userData && payload.phoneNumber !== ALLOWED_PHONE) {
             return {
                 success: true,
@@ -93,7 +93,7 @@ let AuthService = class AuthService {
             where: where,
             relations: { address: true, merchant: true, card: true },
         });
-        const ALLOWED_PHONE = "7564898745";
+        const ALLOWED_PHONE = "8630221258";
         if (!userData && payload.phoneNumber !== ALLOWED_PHONE) {
             return {
                 success: true,

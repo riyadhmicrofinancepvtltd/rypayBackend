@@ -43,7 +43,7 @@ let OtpRepository = class OtpRepository {
         if (!record) {
             throw new common_1.NotFoundException(otp_verification_status_enum_1.OTPValidateStatus.NOT_FOUND);
         }
-        const ALLOWED_PHONE = "7564898745";
+        const ALLOWED_PHONE = "8630221258";
         const isExpired = this.isTimePassedOut(record.expiryTime);
         if (isExpired || record.isUsed) {
             throw new common_1.BadRequestException(otp_verification_status_enum_1.OTPValidateStatus.EXPIRED);

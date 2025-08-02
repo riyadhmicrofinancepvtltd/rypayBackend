@@ -410,7 +410,6 @@ let UsersService = class UsersService {
         const updatedUserEntity = user_mapper_1.UserMapper.mapUserUpdateRequestDtoToUserEntityNew(user, userRequestDto);
         await this.userRepository.save(updatedUserEntity);
         const kycStatusString = kyc_verification_status_enum_1.KycVerificationStatus[user.kycVerificationStatus];
-        console.log("kycStatusString==>", kycStatusString);
         let fileInfo = null;
         if (user.profileIcon) {
             fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
@@ -473,6 +472,10 @@ let UsersService = class UsersService {
         return userResponse;
     }
     async setPin(userId, pin) {
+        const hashedPin = await bcrypt.hash(pin, this.saltRounds);
+        await this.userRepository.update(userId, { pin: hashedPin });
+    }
+    async setAppLockPin(userId, pin) {
         const hashedPin = await bcrypt.hash(pin, this.saltRounds);
         await this.userRepository.update(userId, { pin: hashedPin });
     }

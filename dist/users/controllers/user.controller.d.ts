@@ -40,6 +40,9 @@ export declare class UsersController {
     setPin(req: any, pinRequest: PinRequestDto): Promise<{
         message: string;
     }>;
+    setAppLockPin(req: any, pinRequest: PinRequestDto): Promise<{
+        message: string;
+    }>;
     createVirtualAccount(req: any, virtualRequest: VirtualAccountRequestDto): Promise<{
         message: string;
     }>;
