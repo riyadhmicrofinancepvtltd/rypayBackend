@@ -95,7 +95,13 @@ let UsersController = class UsersController {
     }
     async verifyAppLockPin(req, pinRequest) {
         const valid = await this.userService.verifyAppLockPin(req.user.sub, pinRequest.pin);
-        return { valid };
+        if (!valid) {
+            throw new common_1.BadRequestException(['Invalid pin']);
+        }
+        return {
+            success: true,
+            message: 'pin verified successfully'
+        };
     }
     async createVirtualAccount(req, virtualRequest) {
         let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber, virtualRequest.transferPin);

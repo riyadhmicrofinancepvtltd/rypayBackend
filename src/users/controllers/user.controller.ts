@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get,BadRequestException, HttpCode, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
@@ -383,7 +383,13 @@ async updateStaticQR(
     @Body() pinRequest: PinRequestDto,
   ): Promise<{ valid: boolean; }> {
     const valid = await this.userService.verifyAppLockPin(req.user.sub, pinRequest.pin);
-    return { valid };
+    if(!valid) {
+      throw new BadRequestException(['Invalid pin']);
+    }
+    return { 
+      success: true,
+      message: 'pin verified successfully'
+     }as any
   }
 
   @Post('create-virtual-account')
