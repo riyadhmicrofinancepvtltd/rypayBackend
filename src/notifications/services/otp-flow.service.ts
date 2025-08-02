@@ -53,13 +53,18 @@ export class OtpFlowService {
         } as sendOtpResponseDto;
       });
   }
-  async requestOtpAppLockPin(phoneNumber: string, pin: string ) {
-   
+  async requestOtpAppLockPin(phoneNumber: string ) {
+    const otpLength = this.configService.get('OTP_LENGTH');
+    const generatedOtp = otpGenerator.generate(otpLength, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
     /*
       send SMS message service code comes here
     */
-    await this.sendOtp(phoneNumber, pin);
-    let otpRecord = this.otpRepository.upsertOtpInfo(phoneNumber, pin);
+    await this.sendOtp(phoneNumber, generatedOtp);
+    let otpRecord = this.otpRepository.upsertOtpInfo(phoneNumber, generatedOtp);
     return otpRecord
       .then(() => {
         return {

@@ -107,7 +107,7 @@ let UsersController = class UsersController {
         const valid = await this.userService.changeAppLockPin(req.user.sub, pinRequest.pin);
         return {
             success: true,
-            message: 'pin verified successfully'
+            message: 'Success'
         };
     }
     async verifyAppLockPinOtp(req, body) {

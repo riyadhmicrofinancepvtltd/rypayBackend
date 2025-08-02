@@ -402,23 +402,10 @@ async updateStaticQR(
     const valid = await this.userService.changeAppLockPin(req.user.sub, pinRequest.pin);
     return { 
       success: true,
-      message: 'pin verified successfully'
+      message: 'Success'
      }as any
   }
-  // @Post('verify-app-lock-pin-otp')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth()
-  // @HttpCode(HttpStatus.OK)
-  // async verifyAppLockPinOtp(
-  //   @Req() req: any,
-  //   @Body() pinRequest: PinRequestDto,
-  // ): Promise<{ valid: boolean; }> {
-  //   const valid = await this.userService.verifyAppLockPinOtp(req.user.sub, pinRequest.pin);
-  //   return { 
-  //     success: true,
-  //     message: 'pin verified successfully'
-  //    }as any
-  // }
+  
 
   @Post('verify-app-lock-pin-otp')
   @ApiBearerAuth()

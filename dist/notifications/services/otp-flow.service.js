@@ -56,9 +56,15 @@ let OtpFlowService = class OtpFlowService {
             };
         });
     }
-    async requestOtpAppLockPin(phoneNumber, pin) {
-        await this.sendOtp(phoneNumber, pin);
-        let otpRecord = this.otpRepository.upsertOtpInfo(phoneNumber, pin);
+    async requestOtpAppLockPin(phoneNumber) {
+        const otpLength = this.configService.get('OTP_LENGTH');
+        const generatedOtp = otpGenerator.generate(otpLength, {
+            lowerCaseAlphabets: false,
+            upperCaseAlphabets: false,
+            specialChars: false,
+        });
+        await this.sendOtp(phoneNumber, generatedOtp);
+        let otpRecord = this.otpRepository.upsertOtpInfo(phoneNumber, generatedOtp);
         return otpRecord
             .then(() => {
             return {

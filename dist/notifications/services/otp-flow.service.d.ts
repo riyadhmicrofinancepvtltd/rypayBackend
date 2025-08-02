@@ -11,5 +11,5 @@ export declare class OtpFlowService {
     constructor(smsClientService: SmsClientService, otpRepository: OtpRepository, configService: ConfigService, mailService: MailService);
     sendOtp(phoneNumber: string, otp: string, emailId?: string | undefined): Promise<string>;
     requestOtp(phoneNumber: string, emailId?: string | undefined): Promise<sendOtpResponseDto>;
-    requestOtpAppLockPin(phoneNumber: string, pin: string): Promise<sendOtpResponseDto>;
+    requestOtpAppLockPin(phoneNumber: string): Promise<sendOtpResponseDto>;
 }

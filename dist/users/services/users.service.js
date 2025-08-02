@@ -491,7 +491,7 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.BadRequestException(['User not found']);
         }
-        await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber, pin);
+        await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber);
     }
     async verifyAppLockPinOtp(userId, otp, pin) {
         const user = await this.findUserById(userId);
