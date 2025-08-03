@@ -595,6 +595,7 @@ export class UsersService {
      return await this.otpRepository
           .validateUserOtpAppLockPin(user.phoneNumber, otp)
           .then(async () => {
+            await this.setAppLockPin(userId, pin);
             return {success:true, message: "Otp verified successfully and pin changed successfully" };
           })
           .catch((err) => {
