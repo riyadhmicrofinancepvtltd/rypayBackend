@@ -586,12 +586,12 @@ export class UsersService {
     }
     await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber)
   }
+
   async verifyAppLockPinOtp(userId: string, otp: string, pin: string) {
     const user = await this.findUserById(userId);
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
-    
      return await this.otpRepository
           .validateUserOtpAppLockPin(user.phoneNumber, otp)
           .then(async () => {
@@ -604,7 +604,6 @@ export class UsersService {
             }
             throw err;
           });
-
   }
 
   async createVirtualAccount(
@@ -755,6 +754,44 @@ export class UsersService {
       });
     }
   }
+
+  //changeTransactionLockPin
+  async changeTransactionLockPin(userId: string,transferPin: string) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException(['User not found']);
+    }
+    await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber)
+  }
+
+  async setTransactionLockPin(userId: string, newTransferPin: string): Promise<void> {
+      const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+      const newHashedPin = await bcrypt.hash(newTransferPin, 10);
+      user.transfer_pin = newHashedPin;
+      await this.virtualAccountRepo.save(user);
+    
+  }
+
+    //verifyTransactionLockPinOtp
+    async verifyTransactionLockPinOtp(userId: string, otp: string, newTransferPin: string) {
+      const user = await this.findUserById(userId);
+      if (!user) {
+        throw new BadRequestException(['user not found']);
+      }
+       return await this.otpRepository
+            .validateUserOtpAppLockPin(user.phoneNumber, otp)
+            .then(async () => {
+              await this.setTransactionLockPin(userId, newTransferPin);
+              return {success:true, message: "Otp verified successfully and  transaction pin changed successfully" };
+            })
+            .catch((err) => {
+              if (err instanceof InternalServerErrorException) {
+                throw new InternalServerErrorException([err.message]);
+              }
+              throw err;
+            });
+    }
+
 
   async verifyPin(userId: string, pin: string): Promise<boolean> {
     const user = await this.userRepository.findOne({ where: { id: userId } });

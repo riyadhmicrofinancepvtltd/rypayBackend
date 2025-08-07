@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin,TransactionPinRequestDto,UpdateTransactionPinDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -344,6 +344,30 @@ async updateStaticQR(
   return this.userService.updateStaticQR(userId, merchantId, file);
 }
 
+@Post('change-transaction-pin')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@HttpCode(HttpStatus.OK)
+async changeTransactionLockPin(
+  @Req() req: any,
+  @Body() pinRequest: TransactionPinRequestDto,
+): Promise<{ valid: boolean; }> {
+  const valid = await this.userService.changeTransactionLockPin(req.user.sub, pinRequest.transferPin);
+  return { 
+    success: true,
+    message: 'Success'
+   }as any
+}
+@Post('verify-transaction-pin-otp')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@ApiOperation({ summary: 'updates pin' })
+@ApiResponse({ status: 200, description: 'Code verified successfully.' })
+@ApiResponse({ status: 400, description: 'Invalid code or expired.' })
+async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransactionPinDto) {
+    return await this.userService.verifyTransactionLockPinOtp(req.user.sub, body.otp, body.newTransferPin);
+}
+
 
   @Post('set-pin')
   @UseGuards(JwtAuthGuard)
@@ -416,7 +440,6 @@ async updateStaticQR(
   async verifyAppLockPinOtp(@Req() req: any, @Body() body: UpdateForgotPin) {
       return await this.userService.verifyAppLockPinOtp(req.user.sub, body.otp, body.newPin);
   }
-
 
 
 

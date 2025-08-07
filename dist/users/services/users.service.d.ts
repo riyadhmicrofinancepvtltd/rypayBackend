@@ -74,6 +74,12 @@ export declare class UsersService {
     createVirtualAccount(userId: string, customer_name: string, email: string, phoneNumber: string, transferPin: string): Promise<any>;
     getVirtualAccount(userId: string): Promise<any>;
     changeTransferPin(userId: string, changeTransferPinDto: ChangeTransferPinDto): Promise<any>;
+    changeTransactionLockPin(userId: string, transferPin: string): Promise<void>;
+    setTransactionLockPin(userId: string, newTransferPin: string): Promise<void>;
+    verifyTransactionLockPinOtp(userId: string, otp: string, newTransferPin: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     verifyPin(userId: string, pin: string): Promise<boolean>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;

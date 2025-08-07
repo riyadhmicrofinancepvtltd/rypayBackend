@@ -57,7 +57,6 @@ let OtpRepository = class OtpRepository {
         throw new common_1.BadRequestException(otp_verification_status_enum_1.OTPValidateStatus.INVALID);
     }
     async validateUserOtpAppLockPin(phoneNumber, otp) {
-        console.log("phoneNumber", phoneNumber);
         const record = await this.findByPhoneNumber(phoneNumber);
         if (!record) {
             throw new common_1.NotFoundException([otp_verification_status_enum_1.OTPValidateStatus.NOT_FOUND]);

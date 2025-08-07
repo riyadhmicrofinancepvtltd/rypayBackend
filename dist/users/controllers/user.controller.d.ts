@@ -2,7 +2,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto";
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -36,6 +36,13 @@ export declare class UsersController {
     updateStaticQR(userId: string, file: Express.Multer.File, merchantId: string): Promise<{
         message: string;
         fileUrl: string;
+    }>;
+    changeTransactionLockPin(req: any, pinRequest: TransactionPinRequestDto): Promise<{
+        valid: boolean;
+    }>;
+    verifyTransactionLockPinOtp(req: any, body: UpdateTransactionPinDto): Promise<{
+        success: boolean;
+        message: string;
     }>;
     setPin(req: any, pinRequest: PinRequestDto): Promise<{
         message: string;

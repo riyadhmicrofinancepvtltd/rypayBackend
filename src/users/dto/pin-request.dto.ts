@@ -15,3 +15,18 @@ export class UpdateForgotPin {
     @ApiProperty()
     otp: string;
 }
+
+export class TransactionPinRequestDto {
+    @ApiProperty()
+    @Length(6,6)
+    transferPin: string;
+}
+
+export class UpdateTransactionPinDto {
+    @ApiProperty()
+    @Length(6,6)
+    newTransferPin: string;
+
+    @ApiProperty()
+    otp: string;
+}

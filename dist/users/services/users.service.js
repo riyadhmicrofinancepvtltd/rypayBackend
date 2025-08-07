@@ -644,6 +644,37 @@ let UsersService = class UsersService {
             });
         }
     }
+    async changeTransactionLockPin(userId, transferPin) {
+        const user = await this.findUserById(userId);
+        if (!user) {
+            throw new common_1.BadRequestException(['User not found']);
+        }
+        await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber);
+    }
+    async setTransactionLockPin(userId, newTransferPin) {
+        const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+        const newHashedPin = await bcrypt.hash(newTransferPin, 10);
+        user.transfer_pin = newHashedPin;
+        await this.virtualAccountRepo.save(user);
+    }
+    async verifyTransactionLockPinOtp(userId, otp, newTransferPin) {
+        const user = await this.findUserById(userId);
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        return await this.otpRepository
+            .validateUserOtpAppLockPin(user.phoneNumber, otp)
+            .then(async () => {
+            await this.setTransactionLockPin(userId, newTransferPin);
+            return { success: true, message: "Otp verified successfully and  transaction pin changed successfully" };
+        })
+            .catch((err) => {
+            if (err instanceof common_1.InternalServerErrorException) {
+                throw new common_1.InternalServerErrorException([err.message]);
+            }
+            throw err;
+        });
+    }
     async verifyPin(userId, pin) {
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
