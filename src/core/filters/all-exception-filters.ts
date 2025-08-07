@@ -41,7 +41,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       "/user/change-app-lock-pin",
       "/user/verify-app-lock-pin-otp",
       "/user/change-transaction-pin",
-      "verify-transaction-pin-otp",
+      "/user/verify-transaction-pin-otp",
     ];
 
     if (openUrls.includes(request.url)) {
