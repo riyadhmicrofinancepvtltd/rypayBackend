@@ -201,11 +201,11 @@ let UsersService = class UsersService {
     async deleteUserNew(userId, pin, reason) {
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
-            throw new common_1.UnauthorizedException(['User not found']);
+            throw new common_1.BadRequestException(['User not found']);
         }
         const valid = await bcrypt.compare(pin, user.pin);
         if (!valid) {
-            throw new common_1.UnauthorizedException(['Invalid lock pin']);
+            throw new common_1.BadRequestException(['Invalid lock pin']);
         }
         user.reason = reason;
         user.isBlocked = true;

@@ -252,13 +252,13 @@ export class UsersService {
   ): Promise<{ success: boolean; message: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new UnauthorizedException(['User not found']);
+      throw new BadRequestException(['User not found']);
     }
   
     // 🔧 Must use await here
     const valid = await bcrypt.compare(pin, user.pin);
     if (!valid) {
-      throw new UnauthorizedException(['Invalid lock pin']);
+      throw new BadRequestException(['Invalid lock pin']);
     }
   
     user.reason = reason;
