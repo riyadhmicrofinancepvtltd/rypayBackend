@@ -57,7 +57,7 @@ class deleteUserAccountDto {
 exports.deleteUserAccountDto = deleteUserAccountDto;
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.Length)(6, 6),
+    (0, class_validator_1.Length)(4, 4),
     __metadata("design:type", String)
 ], deleteUserAccountDto.prototype, "lockPin", void 0);
 __decorate([

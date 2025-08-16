@@ -33,7 +33,7 @@ export class UpdateTransactionPinDto {
 
 export class deleteUserAccountDto {
     @ApiProperty()
-    @Length(6,6)
+    @Length(4,4)
     lockPin: string;
 
     @ApiProperty()
