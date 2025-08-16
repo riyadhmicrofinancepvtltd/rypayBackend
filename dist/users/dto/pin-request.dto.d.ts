@@ -12,3 +12,7 @@ export declare class UpdateTransactionPinDto {
     newTransferPin: string;
     otp: string;
 }
+export declare class deleteUserAccountDto {
+    lockPin: string;
+    reason: string;
+}

@@ -47,6 +47,10 @@ export declare class UsersService {
     registerUserNew(userRequestDto: UserRequestDto): Promise<UserResponse>;
     validateRefferelCode(referrelCode: string | null, queryRunner: QueryRunner): Promise<User>;
     deleteUser(userId: string): Promise<string>;
+    deleteUserNew(userId: string, pin: string, reason: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     deleteProfileIcon(userId: string): Promise<string>;
     getUserDetail(userId: string): Promise<any>;
     registerUserAndGenerateToken(userRequestDto: UserRequestDto): Promise<UserApiResponseDto>;

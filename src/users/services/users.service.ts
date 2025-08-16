@@ -245,24 +245,50 @@ export class UsersService {
     return "Success";
   }
 
+  async deleteUserNew(
+    userId: string,
+    pin: string,
+    reason: string,
+  ): Promise<{ success: boolean; message: string }> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException(['User not found']);
+    }
+  
+    // 🔧 Must use await here
+    const valid = await bcrypt.compare(pin, user.pin);
+    if (!valid) {
+      throw new UnauthorizedException(['Invalid lock pin']);
+    }
+  
+    user.reason = reason;
+    user.isBlocked = true;
+    await this.userRepository.save(user);
+  
+    return {
+      success: true,
+      message: 'User account deleted successfully',
+    };
+  }
+  
   async deleteProfileIcon(userId: string): Promise<string> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new ForbiddenException('User does not exist or lacks permissions');
     }
-    user.profileIcon = null; 
+    user.profileIcon = null;
     await this.userRepository.save(user);
     return {
       success: true,
       message: 'User profile icon removed successfully',
-  }as any
-}
+    } as any
+  }
 
 
   async getUserDetail(userId: string): Promise<any> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['beneficiaries', 'card', 'address','merchant'],
+      relations: ['beneficiaries', 'card', 'address', 'merchant'],
     });
     if (!user) {
       throw new BadRequestException(['User not found']);
@@ -276,8 +302,8 @@ export class UsersService {
       //upi: account.upi
     } : null;
     let fileInfo = null;
-    if(user.profileIcon) {
-       fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+    if (user.profileIcon) {
+      fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
     }
     return {
       success: true,
@@ -290,7 +316,7 @@ export class UsersService {
         dob: user.dob,
         gender: user.gender,
         userRole: user.role,
-        profileUrl: fileInfo?fileInfo?.url:null,
+        profileUrl: fileInfo ? fileInfo?.url : null,
         address: user.address ? {
           address1: user.address.address1,
           address2: user.address.address2,
@@ -413,10 +439,10 @@ export class UsersService {
         } as any;
       }
       throw new InternalServerErrorException(["Failed to issue card for the user"]);
-    } 
-   
+    }
+
     throw new BadRequestException(["Try Again after sometime."]);
-    
+
   }
 
   async requestAadharOtp(aadharNumber: string) {
@@ -487,25 +513,25 @@ export class UsersService {
     //user.kycVerificationStatus =  KycVerificationStatus[user.kycVerificationStatus];
     const kycStatusString = KycVerificationStatus[user.kycVerificationStatus];
     let fileInfo = null;
-    if(user.profileIcon) {
-       fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
+    if (user.profileIcon) {
+      fileInfo = await this.uploadFileService.getPresignedSignedUrl(user.profileIcon);
     }
-   
- 
-     const { merchant, ...rest } = user;
 
-  return {
-    success: true,
-    message: 'User profile updated successfully',
-    user:{
-      ...rest,
-      profileUrl: fileInfo?fileInfo.url:null,
-      merchantInfo: merchant,
-      kycVerificationStatus: kycStatusString, 
-    }
-  }as any;
+
+    const { merchant, ...rest } = user;
+
+    return {
+      success: true,
+      message: 'User profile updated successfully',
+      user: {
+        ...rest,
+        profileUrl: fileInfo ? fileInfo.url : null,
+        merchantInfo: merchant,
+        kycVerificationStatus: kycStatusString,
+      }
+    } as any;
   }
-  
+
 
   async checkPhoneNumberExists(phoneNumber: string) {
     if (!phoneNumber) {
@@ -579,7 +605,7 @@ export class UsersService {
     return bcrypt.compare(pin, user.pin);
   }
 
-  async changeAppLockPin(userId: string,pin: string) {
+  async changeAppLockPin(userId: string, pin: string) {
     const user = await this.findUserById(userId);
     if (!user) {
       throw new BadRequestException(['User not found']);
@@ -592,18 +618,18 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
-     return await this.otpRepository
-          .validateUserOtpAppLockPin(user.phoneNumber, otp)
-          .then(async () => {
-            await this.setAppLockPin(userId, pin);
-            return {success:true, message: "Otp verified successfully and pin changed successfully" };
-          })
-          .catch((err) => {
-            if (err instanceof InternalServerErrorException) {
-              throw new InternalServerErrorException([err.message]);
-            }
-            throw err;
-          });
+    return await this.otpRepository
+      .validateUserOtpAppLockPin(user.phoneNumber, otp)
+      .then(async () => {
+        await this.setAppLockPin(userId, pin);
+        return { success: true, message: "Otp verified successfully and pin changed successfully" };
+      })
+      .catch((err) => {
+        if (err instanceof InternalServerErrorException) {
+          throw new InternalServerErrorException([err.message]);
+        }
+        throw err;
+      });
   }
 
   async createVirtualAccount(
@@ -756,7 +782,7 @@ export class UsersService {
   }
 
   //changeTransactionLockPin
-  async changeTransactionLockPin(userId: string,transferPin: string) {
+  async changeTransactionLockPin(userId: string, transferPin: string) {
     const user = await this.findUserById(userId);
     if (!user) {
       throw new BadRequestException(['User not found']);
@@ -765,32 +791,32 @@ export class UsersService {
   }
 
   async setTransactionLockPin(userId: string, newTransferPin: string): Promise<void> {
-      const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
-      const newHashedPin = await bcrypt.hash(newTransferPin, 10);
-      user.transfer_pin = newHashedPin;
-      await this.virtualAccountRepo.save(user);
-    
+    const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+    const newHashedPin = await bcrypt.hash(newTransferPin, 10);
+    user.transfer_pin = newHashedPin;
+    await this.virtualAccountRepo.save(user);
+
   }
 
-    //verifyTransactionLockPinOtp
-    async verifyTransactionLockPinOtp(userId: string, otp: string, newTransferPin: string) {
-      const user = await this.findUserById(userId);
-      if (!user) {
-        throw new BadRequestException(['user not found']);
-      }
-       return await this.otpRepository
-            .validateUserOtpAppLockPin(user.phoneNumber, otp)
-            .then(async () => {
-              await this.setTransactionLockPin(userId, newTransferPin);
-              return {success:true, message: "Otp verified successfully and  transaction pin changed successfully" };
-            })
-            .catch((err) => {
-              if (err instanceof InternalServerErrorException) {
-                throw new InternalServerErrorException([err.message]);
-              }
-              throw err;
-            });
+  //verifyTransactionLockPinOtp
+  async verifyTransactionLockPinOtp(userId: string, otp: string, newTransferPin: string) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException(['user not found']);
     }
+    return await this.otpRepository
+      .validateUserOtpAppLockPin(user.phoneNumber, otp)
+      .then(async () => {
+        await this.setTransactionLockPin(userId, newTransferPin);
+        return { success: true, message: "Otp verified successfully and  transaction pin changed successfully" };
+      })
+      .catch((err) => {
+        if (err instanceof InternalServerErrorException) {
+          throw new InternalServerErrorException([err.message]);
+        }
+        throw err;
+      });
+  }
 
 
   async verifyPin(userId: string, pin: string): Promise<boolean> {

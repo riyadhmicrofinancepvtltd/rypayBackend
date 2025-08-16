@@ -78,6 +78,8 @@ export class User {
 
   @Column({ name: 'role' })
   role: UserRole;
+  @Column({ name: 'reason' })
+  reason: string;
 
   @OneToOne(() => Address, (add) => add.id, { cascade: true })
   @JoinColumn({ name: 'address_id' })

@@ -30,3 +30,12 @@ export class UpdateTransactionPinDto {
     @ApiProperty()
     otp: string;
 }
+
+export class deleteUserAccountDto {
+    @ApiProperty()
+    @Length(6,6)
+    lockPin: string;
+
+    @ApiProperty()
+    reason: string;
+}

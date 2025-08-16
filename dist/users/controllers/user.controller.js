@@ -53,6 +53,9 @@ let UsersController = class UsersController {
     async deleteUser(req) {
         return this.userService.deleteUser(req.user.sub);
     }
+    async deleteUserNew(req, pinRequest) {
+        return await this.userService.deleteUserNew(req.user.sub, pinRequest.lockPin, pinRequest.reason);
+    }
     async deleteProfileIcon(req) {
         return this.userService.deleteProfileIcon(req.user.sub);
     }
@@ -292,6 +295,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "deleteUser", null);
+__decorate([
+    (0, common_1.Post)('delete-user'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.deleteUserAccountDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deleteUserNew", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Endpoint to delete the proile icon' }),
     (0, swagger_1.ApiBearerAuth)(),

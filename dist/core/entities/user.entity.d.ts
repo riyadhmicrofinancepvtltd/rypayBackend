@@ -27,6 +27,7 @@ export declare class User {
     lastName: string;
     dob: string;
     role: UserRole;
+    reason: string;
     address: Address;
     card: Card;
     orders: Order[];

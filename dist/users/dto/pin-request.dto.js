@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateTransactionPinDto = exports.TransactionPinRequestDto = exports.UpdateForgotPin = exports.PinRequestDto = void 0;
+exports.deleteUserAccountDto = exports.UpdateTransactionPinDto = exports.TransactionPinRequestDto = exports.UpdateForgotPin = exports.PinRequestDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class PinRequestDto {
@@ -52,4 +52,16 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], UpdateTransactionPinDto.prototype, "otp", void 0);
+class deleteUserAccountDto {
+}
+exports.deleteUserAccountDto = deleteUserAccountDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.Length)(6, 6),
+    __metadata("design:type", String)
+], deleteUserAccountDto.prototype, "lockPin", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], deleteUserAccountDto.prototype, "reason", void 0);
 //# sourceMappingURL=pin-request.dto.js.map

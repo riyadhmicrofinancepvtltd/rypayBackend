@@ -198,6 +198,23 @@ let UsersService = class UsersService {
         await this.userRepository.save(user);
         return "Success";
     }
+    async deleteUserNew(userId, pin, reason) {
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.UnauthorizedException(['User not found']);
+        }
+        const valid = await bcrypt.compare(pin, user.pin);
+        if (!valid) {
+            throw new common_1.UnauthorizedException(['Invalid lock pin']);
+        }
+        user.reason = reason;
+        user.isBlocked = true;
+        await this.userRepository.save(user);
+        return {
+            success: true,
+            message: 'User account deleted successfully',
+        };
+    }
     async deleteProfileIcon(userId) {
         const user = await this.userRepository.findOneBy({ id: userId });
         if (!user) {

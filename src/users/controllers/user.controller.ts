@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get,BadRequestException, HttpCode, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, BadRequestException, HttpCode, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin,TransactionPinRequestDto,UpdateTransactionPinDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -126,6 +126,22 @@ export class UsersController {
     return this.userService.deleteUser(req.user.sub);
   }
 
+  @Post('delete-user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async deleteUserNew(
+    @Req() req: any,
+    @Body() pinRequest: deleteUserAccountDto,
+  ): Promise<{ success: boolean; message: string }> {
+    return await this.userService.deleteUserNew(
+      req.user.sub,
+      pinRequest.lockPin,
+      pinRequest.reason,
+    );
+  }
+
+
 
   @ApiOperation({ summary: 'Endpoint to delete the proile icon' })
   @ApiBearerAuth()
@@ -201,7 +217,7 @@ export class UsersController {
     @Param('userId') userId: string,
     @Body() updateDto: UserUpdateRequestDto,
   ): Promise<User> {
-    return this.userService.updateUserProfile(userId,updateDto);
+    return this.userService.updateUserProfile(userId, updateDto);
   }
 
   @ApiOperation({ summary: 'Endpoint to update user profile' })
@@ -223,13 +239,13 @@ export class UsersController {
     @Param('userId') userId: string,
     @Body() updateDto: UserUpdateRequestDto,
   ): Promise<User> {
-    return this.userService.editUserProfile(userId,updateDto);
+    return this.userService.editUserProfile(userId, updateDto);
   }
 
   @ApiOperation({ summary: 'Endpoint to get all users' })
   @Post('/list')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @ApiResponse({ 
+  @ApiResponse({
     status: HttpStatus.OK,
     type: [UserResponse],
     description: 'The record has been successfully retrieved.',
@@ -253,7 +269,7 @@ export class UsersController {
   @Post('/exist/:phoneNumber')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiResponse({ 
+  @ApiResponse({
     status: HttpStatus.OK,
     type: PhoneNumberExists,
     description: 'Returns if phone number exist.',
@@ -281,17 +297,17 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-      description: 'File to upload and user ID',
-      type: 'multipart/form-data',
-      schema: {
-          type: 'object',
-          properties: {
-              file: {
-                  type: 'string',
-                  format: 'binary',
-              }
-          },
+    description: 'File to upload and user ID',
+    type: 'multipart/form-data',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        }
       },
+    },
   })
   async updateProfileIcon(@UploadedFile(new ParseFilePipe({
     validators: [
@@ -302,71 +318,71 @@ export class UsersController {
     ],
     fileIsRequired: true,
   })) file: Express.Multer.File, @Req() req: any) {
-      return this.userService.updateProfileIcon(req.user.sub, file);
+    return this.userService.updateProfileIcon(req.user.sub, file);
   }
 
-@Put('update-static-qr/:userId')
-@UseInterceptors(FileInterceptor('file'))
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, AdminGuard)
-@ApiOperation({ summary: 'Update static QR' })
-@ApiResponse({ status: 200, description: 'Static QR uploaded successfully.' })
-@ApiResponse({ status: 400, description: 'Bad Request.' })
-@ApiConsumes('multipart/form-data')
-@ApiBody({
-  description: 'File to upload, user ID, and merchant ID',
-  schema: {
-    type: 'object',
-    properties: {
-      file: {
-        type: 'string',
-        format: 'binary',
-      },
-      merchantId: {
-        type: 'string',
+  @Put('update-static-qr/:userId')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiOperation({ summary: 'Update static QR' })
+  @ApiResponse({ status: 200, description: 'Static QR uploaded successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'File to upload, user ID, and merchant ID',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        merchantId: {
+          type: 'string',
+        },
       },
     },
-  },
-})
-async updateStaticQR(
-  @Param('userId') userId: string,
-  @UploadedFile(new ParseFilePipe({
-    validators: [
-      new MaxFileSizeValidator({
-        maxSize: 10 * 1024 * 1024, // 10MB
-        message: 'File is too large. Max file size is 10MB',
-      }),
-    ],
-    fileIsRequired: true,
-  })) file: Express.Multer.File,
-  @Body('merchantId') merchantId: string
-) {
-  return this.userService.updateStaticQR(userId, merchantId, file);
-}
+  })
+  async updateStaticQR(
+    @Param('userId') userId: string,
+    @UploadedFile(new ParseFilePipe({
+      validators: [
+        new MaxFileSizeValidator({
+          maxSize: 10 * 1024 * 1024, // 10MB
+          message: 'File is too large. Max file size is 10MB',
+        }),
+      ],
+      fileIsRequired: true,
+    })) file: Express.Multer.File,
+    @Body('merchantId') merchantId: string
+  ) {
+    return this.userService.updateStaticQR(userId, merchantId, file);
+  }
 
-@Post('change-transaction-pin')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
-@HttpCode(HttpStatus.OK)
-async changeTransactionLockPin(
-  @Req() req: any,
-  @Body() pinRequest: TransactionPinRequestDto,
-): Promise<{ valid: boolean; }> {
-  const valid = await this.userService.changeTransactionLockPin(req.user.sub, pinRequest.transferPin);
-  return { 
-    success: true,
-    message: 'Success'
-   }as any
-}
-@Post('verify-transaction-pin-otp')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
-@ApiOperation({ summary: 'updates pin' })
-@ApiResponse({ status: 200, description: 'Code verified successfully.' })
-@ApiResponse({ status: 400, description: 'Invalid code or expired.' })
-async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransactionPinDto) {
+  @Post('change-transaction-pin')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async changeTransactionLockPin(
+    @Req() req: any,
+    @Body() pinRequest: TransactionPinRequestDto,
+  ): Promise<{ valid: boolean; }> {
+    const valid = await this.userService.changeTransactionLockPin(req.user.sub, pinRequest.transferPin);
+    return {
+      success: true,
+      message: 'Success'
+    } as any
+  }
+  @Post('verify-transaction-pin-otp')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'updates pin' })
+  @ApiResponse({ status: 200, description: 'Code verified successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid code or expired.' })
+  async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransactionPinDto) {
     return await this.userService.verifyTransactionLockPinOtp(req.user.sub, body.otp, body.newTransferPin);
-}
+  }
 
 
   @Post('set-pin')
@@ -395,7 +411,7 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
     return {
       success: true,
       message: 'pin created successfully'
-    }as any
+    } as any
   }
 
   @Post('verify-app-lock-pin')
@@ -407,13 +423,13 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
     @Body() pinRequest: PinRequestDto,
   ): Promise<{ valid: boolean; }> {
     const valid = await this.userService.verifyAppLockPin(req.user.sub, pinRequest.pin);
-    if(!valid) {
+    if (!valid) {
       throw new BadRequestException(['Invalid pin']);
     }
-    return { 
+    return {
       success: true,
       message: 'pin verified successfully'
-     }as any
+    } as any
   }
   @Post('change-app-lock-pin')
   @UseGuards(JwtAuthGuard)
@@ -424,12 +440,12 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
     @Body() pinRequest: PinRequestDto,
   ): Promise<{ valid: boolean; }> {
     const valid = await this.userService.changeAppLockPin(req.user.sub, pinRequest.pin);
-    return { 
+    return {
       success: true,
       message: 'Success'
-     }as any
+    } as any
   }
-  
+
 
   @Post('verify-app-lock-pin-otp')
   @ApiBearerAuth()
@@ -438,7 +454,7 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
   @ApiResponse({ status: 200, description: 'Code verified successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid code or expired.' })
   async verifyAppLockPinOtp(@Req() req: any, @Body() body: UpdateForgotPin) {
-      return await this.userService.verifyAppLockPinOtp(req.user.sub, body.otp, body.newPin);
+    return await this.userService.verifyAppLockPinOtp(req.user.sub, body.otp, body.newPin);
   }
 
 
@@ -451,7 +467,7 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
     @Req() req: any,
     @Body() virtualRequest: VirtualAccountRequestDto,
   ): Promise<{ message: string; }> {
-    let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name,virtualRequest.email,virtualRequest.phoneNumber,virtualRequest.transferPin);
+    let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber, virtualRequest.transferPin);
     return data;
   }
   @Get('get-virtual-account')
@@ -488,15 +504,15 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
     return { valid };
   }
 
-    @Post('reset-pin')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: 'Request PIN reset' })
-    @ApiResponse({ status: 200, description: 'Verification code sent to user.' })
-    @ApiResponse({ status: 400, description: 'Bad Request.' })
-    async requestResetPin(@Req() req: any) {
-        await this.userService.sendVerificationCode(req.user.sub);
-        return { message: 'Verification code sent to your email.' };
+  @Post('reset-pin')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Request PIN reset' })
+  @ApiResponse({ status: 200, description: 'Verification code sent to user.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  async requestResetPin(@Req() req: any) {
+    await this.userService.sendVerificationCode(req.user.sub);
+    return { message: 'Verification code sent to your email.' };
   }
 
   @Post('forgot/update-pin')
@@ -506,7 +522,7 @@ async verifyTransactionLockPinOtp(@Req() req: any, @Body() body: UpdateTransacti
   @ApiResponse({ status: 200, description: 'Code verified successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid code or expired.' })
   async updateForgotPin(@Req() req: any, @Body() body: UpdateForgotPin) {
-      return await this.userService.verifyCodeAndUpdateUserPin(req.user.sub, body.otp, body.newPin);
+    return await this.userService.verifyCodeAndUpdateUserPin(req.user.sub, body.otp, body.newPin);
   }
 
 

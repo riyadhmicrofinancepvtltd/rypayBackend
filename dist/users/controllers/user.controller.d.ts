@@ -2,7 +2,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto";
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -22,6 +22,10 @@ export declare class UsersController {
     requestAadharOtp(aadharNumber: string): Promise<any>;
     validateAadharOtp(body: ValidateAadharDto): Promise<string>;
     deleteUser(req: any): Promise<string>;
+    deleteUserNew(req: any, pinRequest: deleteUserAccountDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     deleteProfileIcon(req: any): Promise<string>;
     getUserDetail(req: any): Promise<any>;
     registerAdmin(signUpDto: UserAdminRequestDto): Promise<UserApiResponseDto>;
