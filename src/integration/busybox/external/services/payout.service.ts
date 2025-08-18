@@ -225,7 +225,8 @@ export class PayoutService {
     async verifyUpi(verifyDto: VerifyUpiRequestDTO) {
         console.log("verifyDto====>",verifyDto);
         const payload: IVerifyUPIRequestDTO = {
-            upi_vpa: verifyDto.upiId
+           // upi_vpa: verifyDto.upiId,
+            vpa: verifyDto.upiId
         }
         const data = await this.payloutClientService.verifyUpi(payload)
         console.log("data====>",data);
