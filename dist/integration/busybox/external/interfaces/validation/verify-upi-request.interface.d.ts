@@ -1,3 +1,3 @@
 export declare class IVerifyUPIRequestDTO {
-    vpa: string;
+    account_number: string;
 }
