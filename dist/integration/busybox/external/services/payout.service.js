@@ -206,7 +206,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
     async verifyUpi(verifyDto) {
         console.log("verifyDto====>", verifyDto);
         const payload = {
-            account_number: verifyDto.upiId
+            upi_vpa: verifyDto.upiId
         };
         const data = await this.payloutClientService.verifyUpi(payload);
         console.log("data====>", data);
