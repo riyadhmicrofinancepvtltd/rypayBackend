@@ -223,10 +223,12 @@ export class PayoutService {
     }
 
     async verifyUpi(verifyDto: VerifyUpiRequestDTO) {
+        console.log("verifyDto====>",verifyDto);
         const payload: IVerifyUPIRequestDTO = {
             upi_vpa: verifyDto.upiId
         }
         const data = await this.payloutClientService.verifyUpi(payload)
+        console.log("data====>",data);
         if (data.resp_code === "S0200") {
             return <VerifyAccountResponseDTO>{
                 message: data.message,

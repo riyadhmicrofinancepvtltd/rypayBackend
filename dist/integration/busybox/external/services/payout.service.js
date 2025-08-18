@@ -204,10 +204,12 @@ let PayoutService = PayoutService_1 = class PayoutService {
         throw new common_1.BadRequestException(data.message);
     }
     async verifyUpi(verifyDto) {
+        console.log("verifyDto====>", verifyDto);
         const payload = {
             upi_vpa: verifyDto.upiId
         };
         const data = await this.payloutClientService.verifyUpi(payload);
+        console.log("data====>", data);
         if (data.resp_code === "S0200") {
             return {
                 message: data.message,

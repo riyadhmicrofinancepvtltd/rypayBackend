@@ -63,6 +63,9 @@ let PayoutClientService = class PayoutClientService {
     }
     async verifyUpi(data) {
         const config = await this.accessTokenService.getHeaderConfig(true);
+        console.log("verifyUpi data====>", data);
+        let url = `${this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL')}/verify/upi`;
+        console.log("url====>", url);
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL')}/verify/upi`, data, config));
             return response.data;
