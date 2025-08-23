@@ -699,6 +699,22 @@ let UsersService = class UsersService {
         }
         return bcrypt.compare(pin, user.pin);
     }
+    async verifyToContact(userId, phoneNumber) {
+        const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber });
+        if (!user) {
+            throw new common_1.UnauthorizedException('This phone number is not registered');
+        }
+        return {
+            success: true,
+            message: 'User found',
+            user: {
+                userId: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber,
+            }
+        };
+    }
     async validateUserCardAssignment(userId, otp) {
         const user = await this.findUserById(userId);
         const response = await this.merchantClientService.verifyRegistrationOtp({

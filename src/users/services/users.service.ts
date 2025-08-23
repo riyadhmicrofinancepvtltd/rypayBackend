@@ -827,6 +827,24 @@ export class UsersService {
     return bcrypt.compare(pin, user.pin);
   }
 
+  async verifyToContact(userId: string, phoneNumber: string) {
+    const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber } );
+    if (!user) {
+      throw new UnauthorizedException('This phone number is not registered');
+    }
+    return {
+      success: true,
+      message: 'User found',
+      user: {
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+    }
+  }
+
+  }
+
   async validateUserCardAssignment(userId: string, otp: string) {
     const user = await this.findUserById(userId);
     const response = await this.merchantClientService.verifyRegistrationOtp({

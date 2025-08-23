@@ -39,3 +39,7 @@ export class deleteUserAccountDto {
     @ApiProperty()
     reason: string;
 }
+
+export class ToContactRequestDto {
+   phoneNumber: string;
+}

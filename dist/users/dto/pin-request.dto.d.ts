@@ -16,3 +16,6 @@ export declare class deleteUserAccountDto {
     lockPin: string;
     reason: string;
 }
+export declare class ToContactRequestDto {
+    phoneNumber: string;
+}

@@ -85,6 +85,16 @@ export declare class UsersService {
         message: string;
     }>;
     verifyPin(userId: string, pin: string): Promise<boolean>;
+    verifyToContact(userId: string, phoneNumber: string): Promise<{
+        success: boolean;
+        message: string;
+        user: {
+            userId: string;
+            firstName: string;
+            lastName: string;
+            phoneNumber: string;
+        };
+    }>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;
     handleKycEvent(cardHolderId: string, kycStatus: string): Promise<void>;

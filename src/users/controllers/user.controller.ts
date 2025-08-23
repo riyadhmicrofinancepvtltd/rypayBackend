@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -513,6 +513,19 @@ export class UsersController {
   async requestResetPin(@Req() req: any) {
     await this.userService.sendVerificationCode(req.user.sub);
     return { message: 'Verification code sent to your email.' };
+  }
+
+
+  @Post('verify-to-contact')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async verifyToContact(
+    @Req() req: any,
+    @Body() pinRequest: ToContactRequestDto,
+  ) {
+    return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
+   
   }
 
   @Post('forgot/update-pin')
