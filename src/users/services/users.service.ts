@@ -830,7 +830,7 @@ export class UsersService {
   async verifyToContact(userId: string, phoneNumber: string) {
     const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber } );
     if (!user) {
-      throw new UnauthorizedException('This phone number is not registered');
+      throw new BadRequestException('This phone number is not registered');
     }
     return {
       success: true,

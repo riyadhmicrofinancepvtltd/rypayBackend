@@ -702,7 +702,7 @@ let UsersService = class UsersService {
     async verifyToContact(userId, phoneNumber) {
         const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber });
         if (!user) {
-            throw new common_1.UnauthorizedException('This phone number is not registered');
+            throw new common_1.BadRequestException('This phone number is not registered');
         }
         return {
             success: true,
