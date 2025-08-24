@@ -731,12 +731,19 @@ let UsersService = class UsersService {
             let wallet;
             if (userFrom) {
                 wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+                if (wallet.balance >= amount) {
+                    wallet.balance = wallet.balance - amount;
+                    await this.walletRepository.save(wallet);
+                }
+                else {
+                    throw new common_1.BadRequestException(['Insufficient balance']);
+                }
             }
             let walletTo;
             if (userTo) {
                 walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-                wallet.balance = walletTo.balance + amount;
-                await this.walletRepository.save(wallet);
+                walletTo.balance = walletTo.balance + amount;
+                await this.walletRepository.save(walletTo);
             }
             return {
                 success: true,

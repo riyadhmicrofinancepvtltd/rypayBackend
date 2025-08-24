@@ -63,7 +63,7 @@ export class UsersService {
     private readonly walletBridge: WalletBridge,
     private readonly notificationBridge: NotificationBridge,
     @InjectRepository(User) private userRepository: Repository<User>,
-     @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
+    @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
     @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
     @InjectRepository(AadharResponse) private aadharResponseRepo: Repository<AadharResponse>,
     @InjectRepository(UserDocument) private documentRepository: Repository<UserDocument>,
@@ -851,50 +851,57 @@ export class UsersService {
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
     }
-    if(paymentMode==="number"){
+    if (paymentMode === "number") {
       const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
       if (!userTo) {
         throw new BadRequestException(['Rypay account not found']);
       }
-      const userFrom = await this.userRepository.findOne({ where: { id: userId }});
+      const userFrom = await this.userRepository.findOne({ where: { id: userId } });
       let wallet;
-     if (userFrom) {
-      wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+      if (userFrom) {
+        wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+        if (wallet.balance >= amount) {
+          wallet.balance = wallet.balance - amount
+          await this.walletRepository.save(wallet);
+        }else{
+          throw new BadRequestException(['Insufficient balance']);
+        }
+
       }
-     let walletTo
-      if(userTo){
+      let walletTo
+      if (userTo) {
         walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-        wallet.balance = walletTo.balance + amount 
-        await this.walletRepository.save(wallet);
+        walletTo.balance = walletTo.balance + amount
+        await this.walletRepository.save(walletTo);
       }
-      
+
       return {
         success: true,
         message: 'User found',
-        wallet:{
+        wallet: {
           walletId: wallet.id,
           walletAccountNo: wallet.walletAccountNo,
           balance: wallet.balance,
         },
-        walletTo:{
+        walletTo: {
           walletId: walletTo.id,
           walletAccountNo: walletTo.walletAccountNo,
           balance: walletTo.balance,
         },
-        userFrom:{
+        userFrom: {
           userId: userFrom.id,
           firstName: userFrom.firstName,
           lastName: userFrom.lastName,
           phoneNumber: userFrom.phoneNumber,
         },
-        userTo:{
+        userTo: {
           userId: userTo.id,
           firstName: userTo.firstName,
           lastName: userTo.lastName,
           phoneNumber: userTo.phoneNumber,
+        }
+      }
     }
-    }
-  }
 
   }
 
