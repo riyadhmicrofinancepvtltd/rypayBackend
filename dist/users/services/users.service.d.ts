@@ -100,6 +100,13 @@ export declare class UsersService {
     sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string): Promise<{
         success: boolean;
         message: string;
+        wallet?: undefined;
+        walletTo?: undefined;
+        userFrom?: undefined;
+        userTo?: undefined;
+    } | {
+        success: boolean;
+        message: string;
         wallet: {
             walletId: any;
             walletAccountNo: any;

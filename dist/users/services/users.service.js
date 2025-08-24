@@ -736,7 +736,10 @@ let UsersService = class UsersService {
                     await this.walletRepository.save(wallet);
                 }
                 else {
-                    throw new common_1.BadRequestException(['Insufficient balance']);
+                    return {
+                        success: false,
+                        message: 'Insufficient balance',
+                    };
                 }
             }
             let walletTo;

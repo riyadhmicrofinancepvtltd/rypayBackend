@@ -864,7 +864,10 @@ export class UsersService {
           wallet.balance = wallet.balance - amount
           await this.walletRepository.save(wallet);
         }else{
-          throw new BadRequestException(['Insufficient balance']);
+          return {
+            success: false,
+            message: 'Insufficient balance',
+          }
         }
 
       }
