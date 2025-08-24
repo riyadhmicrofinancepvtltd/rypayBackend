@@ -100,35 +100,6 @@ export declare class UsersService {
     sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string): Promise<{
         success: boolean;
         message: string;
-        wallet?: undefined;
-        walletTo?: undefined;
-        userFrom?: undefined;
-        userTo?: undefined;
-    } | {
-        success: boolean;
-        message: string;
-        wallet: {
-            walletId: any;
-            walletAccountNo: any;
-            balance: any;
-        };
-        walletTo: {
-            walletId: any;
-            walletAccountNo: any;
-            balance: any;
-        };
-        userFrom: {
-            userId: string;
-            firstName: string;
-            lastName: string;
-            phoneNumber: string;
-        };
-        userTo: {
-            userId: string;
-            firstName: string;
-            lastName: string;
-            phoneNumber: string;
-        };
     }>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;

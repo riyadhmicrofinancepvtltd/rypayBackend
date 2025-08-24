@@ -728,52 +728,35 @@ let UsersService = class UsersService {
                 throw new common_1.BadRequestException(['Rypay account not found']);
             }
             const userFrom = await this.userRepository.findOne({ where: { id: userId } });
-            let wallet;
-            if (userFrom) {
-                wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
-                if (wallet.balance >= amount) {
-                    wallet.balance = wallet.balance - amount;
-                    await this.walletRepository.save(wallet);
+            return await this.otpRepository
+                .validateUserOtpAppLockPin(userFrom.phoneNumber, transactionPIN)
+                .then(async () => {
+                if (userFrom) {
+                    let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+                    if (wallet.balance >= amount) {
+                        wallet.balance = wallet.balance - amount;
+                        await this.walletRepository.save(wallet);
+                    }
+                    else {
+                        return {
+                            success: false,
+                            message: 'Insufficient balance',
+                        };
+                    }
                 }
-                else {
-                    return {
-                        success: false,
-                        message: 'Insufficient balance',
-                    };
+                if (userTo) {
+                    let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
+                    walletTo.balance = walletTo.balance + amount;
+                    await this.walletRepository.save(walletTo);
                 }
-            }
-            let walletTo;
-            if (userTo) {
-                walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-                walletTo.balance = walletTo.balance + amount;
-                await this.walletRepository.save(walletTo);
-            }
-            return {
-                success: true,
-                message: 'User found',
-                wallet: {
-                    walletId: wallet.id,
-                    walletAccountNo: wallet.walletAccountNo,
-                    balance: wallet.balance,
-                },
-                walletTo: {
-                    walletId: walletTo.id,
-                    walletAccountNo: walletTo.walletAccountNo,
-                    balance: walletTo.balance,
-                },
-                userFrom: {
-                    userId: userFrom.id,
-                    firstName: userFrom.firstName,
-                    lastName: userFrom.lastName,
-                    phoneNumber: userFrom.phoneNumber,
-                },
-                userTo: {
-                    userId: userTo.id,
-                    firstName: userTo.firstName,
-                    lastName: userTo.lastName,
-                    phoneNumber: userTo.phoneNumber,
+                return { success: true, message: "Money sent successfully." };
+            })
+                .catch((err) => {
+                if (err instanceof common_1.InternalServerErrorException) {
+                    throw new common_1.InternalServerErrorException([err.message]);
                 }
-            };
+                throw err;
+            });
         }
     }
     async validateUserCardAssignment(userId, otp) {

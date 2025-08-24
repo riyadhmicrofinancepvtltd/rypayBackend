@@ -92,35 +92,6 @@ export declare class UsersController {
     sendMoney(req: any, pinRequest: SendMoneyRequestDto): Promise<{
         success: boolean;
         message: string;
-        wallet?: undefined;
-        walletTo?: undefined;
-        userFrom?: undefined;
-        userTo?: undefined;
-    } | {
-        success: boolean;
-        message: string;
-        wallet: {
-            walletId: any;
-            walletAccountNo: any;
-            balance: any;
-        };
-        walletTo: {
-            walletId: any;
-            walletAccountNo: any;
-            balance: any;
-        };
-        userFrom: {
-            userId: string;
-            firstName: string;
-            lastName: string;
-            phoneNumber: string;
-        };
-        userTo: {
-            userId: string;
-            firstName: string;
-            lastName: string;
-            phoneNumber: string;
-        };
     }>;
     updateForgotPin(req: any, body: UpdateForgotPin): Promise<{
         message: string;
