@@ -857,35 +857,32 @@ export class UsersService {
         throw new BadRequestException(['Rypay account not found']);
       }
       const userFrom = await this.userRepository.findOne({ where: { id: userId } });
-      return await this.otpRepository
-      .validateUserOtpAppLockPin(userFrom.phoneNumber, transactionPIN)
-      .then(async () => {
-        if (userFrom) {
-          let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
-          if (wallet.balance >= amount) {
-            wallet.balance = wallet.balance - amount
-            await this.walletRepository.save(wallet);
-          }else{
-            return {
-              success: false,
-              message: 'Insufficient balance',
-            }
+      const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+      const isOldPinCorrect = await bcrypt.compare(
+        transactionPIN,
+        virtualAccount.transfer_pin,
+      );
+      if (!isOldPinCorrect) {
+        throw new BadRequestException(['Incorrect PIN. Please try again.']);
+      }
+      if (userFrom) {
+        let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+        if (wallet.balance >= amount) {
+          wallet.balance = wallet.balance - amount
+          await this.walletRepository.save(wallet);
+        }else{
+          return {
+            success: false,
+            message: 'Insufficient balance',
           }
         }
-        if (userTo) {
-          let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-          walletTo.balance = walletTo.balance + amount
-          await this.walletRepository.save(walletTo);
-        }
-        return { success: true, message: "Money sent successfully." };
-      })
-      .catch((err) => {
-        if (err instanceof InternalServerErrorException) {
-          throw new InternalServerErrorException([err.message]);
-        }
-        throw err;
-      });
-
+      }
+      if (userTo) {
+        let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
+        walletTo.balance = walletTo.balance + amount
+        await this.walletRepository.save(walletTo);
+      }
+      return { success: true, message: "Money sent successfully." };
     }
 
   }
