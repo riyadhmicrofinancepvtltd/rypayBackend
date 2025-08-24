@@ -67,8 +67,23 @@ export class WalletService {
     }
     return user;
   }
-
+//createWallet
   private async findWalletByUserId(userId: string) {
+    const wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+    if (!wallet) {
+      throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
+    }
+    return wallet;
+  }
+
+  private async findWalletByUserIdFrom(userId: string) {
+    const wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+    if (!wallet) {
+      throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
+    }
+    return wallet;
+  }
+  private async findWalletByUserIdTo(userId: string) {
     const wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
     if (!wallet) {
       throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);

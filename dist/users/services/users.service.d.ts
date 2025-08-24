@@ -95,6 +95,22 @@ export declare class UsersService {
             phoneNumber: string;
         };
     }>;
+    sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string): Promise<{
+        success: boolean;
+        message: string;
+        userFrom: {
+            userId: string;
+            firstName: string;
+            lastName: string;
+            phoneNumber: string;
+        };
+        userTo: {
+            userId: string;
+            firstName: string;
+            lastName: string;
+            phoneNumber: string;
+        };
+    }>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;
     handleKycEvent(cardHolderId: string, kycStatus: string): Promise<void>;

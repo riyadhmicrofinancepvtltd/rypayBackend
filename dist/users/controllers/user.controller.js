@@ -149,6 +149,9 @@ let UsersController = class UsersController {
     async verifyToContact(req, pinRequest) {
         return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
     }
+    async sendMoney(req, pinRequest) {
+        return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number);
+    }
     async updateForgotPin(req, body) {
         return await this.userService.verifyCodeAndUpdateUserPin(req.user.sub, body.otp, body.newPin);
     }
@@ -675,6 +678,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, pin_request_dto_1.ToContactRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "verifyToContact", null);
+__decorate([
+    (0, common_1.Post)('send-money'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.SendMoneyRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "sendMoney", null);
 __decorate([
     (0, common_1.Post)('forgot/update-pin'),
     (0, swagger_1.ApiBearerAuth)(),

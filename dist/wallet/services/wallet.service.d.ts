@@ -24,6 +24,8 @@ export declare class WalletService {
     private handleTransaction;
     private findUserById;
     private findWalletByUserId;
+    private findWalletByUserIdFrom;
+    private findWalletByUserIdTo;
     private updateWalletBalance;
     createWallet(createWalletDto: CreateWalletDto, queryRunner: QueryRunner): Promise<Wallet>;
     getOne(query: FindOptionsWhere<Wallet>): Promise<Wallet>;

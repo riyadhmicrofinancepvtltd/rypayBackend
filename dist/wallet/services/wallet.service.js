@@ -74,6 +74,20 @@ let WalletService = class WalletService {
         }
         return wallet;
     }
+    async findWalletByUserIdFrom(userId) {
+        const wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+        if (!wallet) {
+            throw new common_1.HttpException('Wallet not found', common_1.HttpStatus.NOT_FOUND);
+        }
+        return wallet;
+    }
+    async findWalletByUserIdTo(userId) {
+        const wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+        if (!wallet) {
+            throw new common_1.HttpException('Wallet not found', common_1.HttpStatus.NOT_FOUND);
+        }
+        return wallet;
+    }
     async updateWalletBalance(wallet, amount, queryRunner, isCredit) {
         const balance = Number.parseFloat(wallet.balance?.toString());
         wallet.balance = isCredit ? balance + amount : balance - amount;

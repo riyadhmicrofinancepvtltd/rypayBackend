@@ -254,23 +254,23 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException(['User not found']);
     }
-  
+
     // 🔧 Must use await here
     const valid = await bcrypt.compare(pin, user.pin);
     if (!valid) {
       throw new BadRequestException(['Invalid lock pin']);
     }
-  
+
     user.reason = reason;
     user.isBlocked = true;
     await this.userRepository.save(user);
-  
+
     return {
       success: true,
       message: 'User account deleted successfully',
     };
   }
-  
+
   async deleteProfileIcon(userId: string): Promise<string> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
@@ -828,9 +828,9 @@ export class UsersService {
   }
 
   async verifyToContact(userId: string, phoneNumber: string) {
-    const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber } );
+    const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber });
     if (!user) {
-      throw new BadRequestException(['This phone number is not registered']);
+      throw new BadRequestException(['Rypay account not found ']);
     }
     return {
       success: true,
@@ -840,6 +840,39 @@ export class UsersService {
         firstName: user.firstName,
         lastName: user.lastName,
         phoneNumber: user.phoneNumber,
+      }
+    }
+
+  }
+  //req.user.sub, pinRequest.PaymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number
+  async sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string) {
+    let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
+    if (!enumKey) {
+      throw new BadRequestException(['Invalid payment mode']);
+    }
+    if(paymentMode==="number"){
+      const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
+      if (!userTo) {
+        throw new BadRequestException(['Rypay account not found']);
+      }
+      const userFrom = await this.userRepository.findOne({ where: { id: userId }});
+     
+      
+      return {
+        success: true,
+        message: 'User found',
+        userFrom:{
+          userId: userFrom.id,
+          firstName: userFrom.firstName,
+          lastName: userFrom.lastName,
+          phoneNumber: userFrom.phoneNumber,
+        },
+        userTo:{
+          userId: userTo.id,
+          firstName: userTo.firstName,
+          lastName: userTo.lastName,
+          phoneNumber: userTo.phoneNumber,
+    }
     }
   }
 

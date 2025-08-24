@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -525,6 +525,17 @@ export class UsersController {
     @Body() pinRequest: ToContactRequestDto,
   ) {
     return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
+  }
+
+  @Post('send-money')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async sendMoney(
+    @Req() req: any,
+    @Body() pinRequest: SendMoneyRequestDto,
+  ) {
+    return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number);
    
   }
 

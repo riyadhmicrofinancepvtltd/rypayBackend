@@ -702,7 +702,7 @@ let UsersService = class UsersService {
     async verifyToContact(userId, phoneNumber) {
         const user = await this.userRepository.findOneBy({ phoneNumber: phoneNumber });
         if (!user) {
-            throw new common_1.BadRequestException(['This phone number is not registered']);
+            throw new common_1.BadRequestException(['Rypay account not found ']);
         }
         return {
             success: true,
@@ -714,6 +714,35 @@ let UsersService = class UsersService {
                 phoneNumber: user.phoneNumber,
             }
         };
+    }
+    async sendMoney(userId, paymentMode, amount, transactionPIN, number) {
+        let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
+        if (!enumKey) {
+            throw new common_1.BadRequestException(['Invalid payment mode']);
+        }
+        if (paymentMode === "number") {
+            const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
+            if (!userTo) {
+                throw new common_1.BadRequestException(['Rypay account not found']);
+            }
+            const userFrom = await this.userRepository.findOne({ where: { id: userId } });
+            return {
+                success: true,
+                message: 'User found',
+                userFrom: {
+                    userId: userFrom.id,
+                    firstName: userFrom.firstName,
+                    lastName: userFrom.lastName,
+                    phoneNumber: userFrom.phoneNumber,
+                },
+                userTo: {
+                    userId: userTo.id,
+                    firstName: userTo.firstName,
+                    lastName: userTo.lastName,
+                    phoneNumber: userTo.phoneNumber,
+                }
+            };
+        }
     }
     async validateUserCardAssignment(userId, otp) {
         const user = await this.findUserById(userId);

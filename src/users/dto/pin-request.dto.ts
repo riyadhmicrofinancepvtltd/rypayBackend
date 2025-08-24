@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Length } from "class-validator";
+import { IsEnum } from 'class-validator';
+import { PaymentMode } from 'src/core/enum/payment-mode.enum';
 
 export class PinRequestDto {
     @ApiProperty()
@@ -43,3 +45,22 @@ export class deleteUserAccountDto {
 export class ToContactRequestDto {
    phoneNumber: string;
 }
+
+export class SendMoneyRequestDto {
+    @ApiProperty()
+    paymentMode: string;
+
+    @ApiProperty()
+    amount: number;
+
+    @ApiProperty()
+    transactionPIN: string;
+
+    @ApiProperty()    
+    number: string;
+
+ }
+
+
+
+ 

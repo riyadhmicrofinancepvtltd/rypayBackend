@@ -36,7 +36,8 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
             "/user/change-transaction-pin",
             "/user/verify-transaction-pin-otp",
             "/user/delete-user",
-            "/user/verify-to-contact"
+            "/user/verify-to-contact",
+            "/user/send-money"
         ];
         if (openUrls.includes(request.url)) {
             response.status(status).json({

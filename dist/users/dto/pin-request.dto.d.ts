@@ -19,3 +19,9 @@ export declare class deleteUserAccountDto {
 export declare class ToContactRequestDto {
     phoneNumber: string;
 }
+export declare class SendMoneyRequestDto {
+    paymentMode: string;
+    amount: number;
+    transactionPIN: string;
+    number: string;
+}
