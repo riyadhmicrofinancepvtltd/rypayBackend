@@ -5,6 +5,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
+import { Wallet} from 'src/core/entities/wallet.entity';
 import { IntegrationModule } from 'src/integration/integration.module';
 import { ConfigModule } from '@nestjs/config';
 import { WalletModule } from 'src/wallet/wallet.module';
@@ -26,7 +27,7 @@ import { NotificationBridge } from 'src/notifications/services/notification-brid
 @Module({
   imports: [AuthModule,
     BullModule.registerQueue({name: 'notification'}),
-     HttpModule, IntegrationModule, CardsModule, WalletModule, ConfigModule, forwardRef(() => WalletModule), TypeOrmModule.forFeature([User,VirtualAccount, UserDocument, OtpInfo, AadharResponse])],
+     HttpModule, IntegrationModule, CardsModule, WalletModule, ConfigModule, forwardRef(() => WalletModule), TypeOrmModule.forFeature([User,VirtualAccount,Wallet, UserDocument, OtpInfo, AadharResponse])],
   providers: [UsersService, ConfigService, NotificationBridge, UploadFileService, OtpFlowService, SmsClientService, MailService, OtpRepository],
   controllers: [UsersController],
   exports: [UsersService, UploadFileService],
