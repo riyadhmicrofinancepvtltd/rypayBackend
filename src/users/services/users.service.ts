@@ -63,7 +63,7 @@ export class UsersService {
     private readonly walletBridge: WalletBridge,
     private readonly notificationBridge: NotificationBridge,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
+    // @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
     @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
     @InjectRepository(AadharResponse) private aadharResponseRepo: Repository<AadharResponse>,
     @InjectRepository(UserDocument) private documentRepository: Repository<UserDocument>,
@@ -857,19 +857,19 @@ export class UsersService {
         throw new BadRequestException(['Rypay account not found']);
       }
       const userFrom = await this.userRepository.findOne({ where: { id: userId }});
-      let wallet;
-     if (userFrom) {
-      wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
-      }
+    //   let wallet;
+    //  if (userFrom) {
+    //   wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+    //   }
       
       return {
         success: true,
         message: 'User found',
-        wallet:{
-          walletId: wallet.id,
-          walletAccountNo: wallet.walletAccountNo,
-          balance: wallet.balance,
-        },
+        // wallet:{
+        //   walletId: wallet.id,
+        //   walletAccountNo: wallet.walletAccountNo,
+        //   balance: wallet.balance,
+        // },
         userFrom:{
           userId: userFrom.id,
           firstName: userFrom.firstName,

@@ -25,7 +25,6 @@ const card_entity_1 = require("../../core/entities/card.entity");
 const document_entity_1 = require("../../core/entities/document.entity");
 const user_entity_1 = require("../../core/entities/user.entity");
 const virtual_account_entity_1 = require("../../core/entities/virtual-account.entity");
-const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
 const user_role_enum_1 = require("../../core/enum/user-role.enum");
 const hash_util_1 = require("../../core/utils/hash.util");
@@ -44,7 +43,7 @@ const recharge_client_service_1 = require("../../integration/a1topup/external-sy
 const aadhar_verification_entity_1 = require("../../core/entities/aadhar-verification.entity");
 const notification_bridge_1 = require("../../notifications/services/notification-bridge");
 let UsersService = class UsersService {
-    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, aadharResponseRepo, documentRepository) {
+    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, virtualAccountRepo, aadharResponseRepo, documentRepository) {
         this.tokenService = tokenService;
         this.httpService = httpService;
         this.configService = configService;
@@ -59,7 +58,6 @@ let UsersService = class UsersService {
         this.walletBridge = walletBridge;
         this.notificationBridge = notificationBridge;
         this.userRepository = userRepository;
-        this.walletRepository = walletRepository;
         this.virtualAccountRepo = virtualAccountRepo;
         this.aadharResponseRepo = aadharResponseRepo;
         this.documentRepository = documentRepository;
@@ -728,18 +726,9 @@ let UsersService = class UsersService {
                 throw new common_1.BadRequestException(['Rypay account not found']);
             }
             const userFrom = await this.userRepository.findOne({ where: { id: userId } });
-            let wallet;
-            if (userFrom) {
-                wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
-            }
             return {
                 success: true,
                 message: 'User found',
-                wallet: {
-                    walletId: wallet.id,
-                    walletAccountNo: wallet.walletAccountNo,
-                    balance: wallet.balance,
-                },
                 userFrom: {
                     userId: userFrom.id,
                     firstName: userFrom.firstName,
@@ -1001,10 +990,9 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(13, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __param(14, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallet)),
-    __param(15, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
-    __param(16, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
-    __param(17, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
+    __param(14, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
+    __param(15, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
+    __param(16, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
     __metadata("design:paramtypes", [token_service_1.TokenService,
         axios_1.HttpService,
         config_1.ConfigService,
@@ -1018,7 +1006,6 @@ exports.UsersService = UsersService = __decorate([
         recharge_client_service_1.RechargeClientService,
         wallet_queue_1.WalletBridge,
         notification_bridge_1.NotificationBridge,
-        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

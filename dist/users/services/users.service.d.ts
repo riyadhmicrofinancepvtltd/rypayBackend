@@ -5,7 +5,6 @@ import { CardsService } from 'src/cards/services/cards.service';
 import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
-import { Wallet } from 'src/core/entities/wallet.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { MerchantClientService } from 'src/integration/busybox/external-system-client/merchant-client.service';
 import { OtpRepository } from 'src/notifications/repository/otp.repository';
@@ -39,12 +38,11 @@ export declare class UsersService {
     private readonly walletBridge;
     private readonly notificationBridge;
     private userRepository;
-    private walletRepository;
     private virtualAccountRepo;
     private aadharResponseRepo;
     private documentRepository;
     private readonly saltRounds;
-    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
+    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, virtualAccountRepo: Repository<VirtualAccount>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
     registerUser(userRequestDto: UserRequestDto): Promise<UserResponse>;
     registerUserNew(userRequestDto: UserRequestDto): Promise<UserResponse>;
     validateRefferelCode(referrelCode: string | null, queryRunner: QueryRunner): Promise<User>;
@@ -100,11 +98,6 @@ export declare class UsersService {
     sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string): Promise<{
         success: boolean;
         message: string;
-        wallet: {
-            walletId: any;
-            walletAccountNo: any;
-            balance: any;
-        };
         userFrom: {
             userId: string;
             firstName: string;

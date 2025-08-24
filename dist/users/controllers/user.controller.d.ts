@@ -92,11 +92,6 @@ export declare class UsersController {
     sendMoney(req: any, pinRequest: SendMoneyRequestDto): Promise<{
         success: boolean;
         message: string;
-        wallet: {
-            walletId: any;
-            walletAccountNo: any;
-            balance: any;
-        };
         userFrom: {
             userId: string;
             firstName: string;
