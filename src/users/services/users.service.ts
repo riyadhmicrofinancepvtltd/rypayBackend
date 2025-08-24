@@ -861,6 +861,12 @@ export class UsersService {
      if (userFrom) {
       wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
       }
+     let walletTo
+      if(userTo){
+        walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
+        wallet.balance = walletTo.balance + amount 
+        await this.walletRepository.save(wallet);
+      }
       
       return {
         success: true,
@@ -869,6 +875,11 @@ export class UsersService {
           walletId: wallet.id,
           walletAccountNo: wallet.walletAccountNo,
           balance: wallet.balance,
+        },
+        walletTo:{
+          walletId: walletTo.id,
+          walletAccountNo: walletTo.walletAccountNo,
+          balance: walletTo.balance,
         },
         userFrom:{
           userId: userFrom.id,

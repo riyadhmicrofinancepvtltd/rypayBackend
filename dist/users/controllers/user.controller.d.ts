@@ -97,6 +97,11 @@ export declare class UsersController {
             walletAccountNo: any;
             balance: any;
         };
+        walletTo: {
+            walletId: any;
+            walletAccountNo: any;
+            balance: any;
+        };
         userFrom: {
             userId: string;
             firstName: string;
