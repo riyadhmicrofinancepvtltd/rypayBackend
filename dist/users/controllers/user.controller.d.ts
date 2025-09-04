@@ -90,6 +90,10 @@ export declare class UsersController {
         };
     }>;
     sendMoney(req: any, pinRequest: SendMoneyRequestDto): Promise<{
+        referenceId: string;
+        amount: number;
+        message: string;
+    } | {
         success: boolean;
         message: string;
     }>;

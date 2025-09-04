@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { TokenService } from 'src/auth/services/token.service';
 import { CardsService } from 'src/cards/services/cards.service';
+import { PayoutService } from 'src/integration/busybox/external/services/payout.service';
 import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
@@ -31,6 +32,7 @@ export declare class UsersService {
     private walletService;
     private merchantClientService;
     private cardService;
+    private payoutService;
     private _connection;
     private uploadFileService;
     private otpFlowService;
@@ -44,7 +46,7 @@ export declare class UsersService {
     private aadharResponseRepo;
     private documentRepository;
     private readonly saltRounds;
-    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
+    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, payoutService: PayoutService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
     registerUser(userRequestDto: UserRequestDto): Promise<UserResponse>;
     registerUserNew(userRequestDto: UserRequestDto): Promise<UserResponse>;
     validateRefferelCode(referrelCode: string | null, queryRunner: QueryRunner): Promise<User>;
@@ -97,7 +99,11 @@ export declare class UsersService {
             phoneNumber: string;
         };
     }>;
-    sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string): Promise<{
+    sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string, upiId: string, upiUserName: string, message: string): Promise<{
+        referenceId: string;
+        amount: number;
+        message: string;
+    } | {
         success: boolean;
         message: string;
     }>;

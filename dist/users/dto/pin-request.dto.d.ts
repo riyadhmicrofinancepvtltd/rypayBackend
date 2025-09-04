@@ -24,4 +24,7 @@ export declare class SendMoneyRequestDto {
     amount: number;
     transactionPIN: string;
     number: string;
+    upiId: string;
+    upiUserName: string;
+    message: string;
 }

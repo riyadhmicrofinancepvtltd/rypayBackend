@@ -184,6 +184,52 @@ let PayoutService = PayoutService_1 = class PayoutService {
             message: description
         };
     }
+    async payoutUPINew(userId, requestDto) {
+        const serviceUsed = 'UPI';
+        await this.validatePayout(userId, requestDto.amount, serviceUsed);
+        const requestBody = {
+            account_number: requestDto.upiId,
+            amount: requestDto.amount,
+            mobile: requestDto.mobile,
+            mode: serviceUsed
+        };
+        const response = (await this.payloutClientService.payoutUsingUPI(requestBody));
+        if (response.status === 'FAILURE') {
+            throw new common_1.BadRequestException(response.message);
+        }
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        const maskedAccount = (0, hash_util_1.maskAccount)(requestBody.account_number);
+        const description = requestDto.message ? requestDto.message : external_constant_1.PayoutDescription.replace('{maskedAccount}', maskedAccount);
+        const orderId = (0, hash_util_1.generateRef)(12);
+        const order = {
+            order_id: orderId,
+            order_type: order_entity_1.OrderType.UPI_PAYOUT,
+            gateway_response: '',
+            amount: requestDto.amount,
+            status: order_entity_1.OrderStatus.PENDING,
+            transaction_id: response.stan?.toString(),
+            user: user,
+            description: description,
+            payment_method: 'WALLET',
+            respectiveUserName: requestDto.upiUserName,
+            ifscNumber: null,
+            paymentMode: serviceUsed,
+            accountId: requestDto.upiId
+        };
+        const SavedOrder = this.orderRepository.create(order);
+        this.orderRepository.save(SavedOrder);
+        await this.walletService.processRechargePayment({ amount: requestDto.amount,
+            receiverId: requestDto.upiId,
+            serviceUsed: serviceUsed,
+            description: description,
+            status: transactions_entity_1.TransactionStatus.PENDING,
+            reference: orderId }, userId);
+        return {
+            referenceId: SavedOrder.order_id,
+            amount: +response.amount,
+            message: description
+        };
+    }
     async verifyAccount(verifyDto) {
         const payload = {
             account_number: verifyDto.accountNumber,

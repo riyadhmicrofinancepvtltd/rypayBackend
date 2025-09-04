@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Length } from "class-validator";
+import { Length,IsOptional } from "class-validator";
 import { IsEnum } from 'class-validator';
 import { PaymentMode } from 'src/core/enum/payment-mode.enum';
 
@@ -58,6 +58,20 @@ export class SendMoneyRequestDto {
 
     @ApiProperty()    
     number: string;
+
+
+    @ApiProperty()
+    @IsOptional()
+    upiId: string;
+
+    @ApiProperty()
+    @IsOptional()
+    upiUserName: string
+
+    
+    @ApiProperty()
+    @IsOptional()
+    message: string
 
  }
 

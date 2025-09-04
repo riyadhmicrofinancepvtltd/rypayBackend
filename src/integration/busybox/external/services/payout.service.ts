@@ -194,7 +194,56 @@ export class PayoutService {
              description: description,
              status: TransactionStatus.PENDING,
              reference: orderId }, userId);
+        return {
+            referenceId: SavedOrder.order_id,
+            amount: +response.amount,
+            message: description
+        }
+    }
 
+
+    async payoutUPINew(userId: string, requestDto: UPIPayoutPayload) {
+        const serviceUsed = 'UPI';
+        await this.validatePayout(userId, requestDto.amount, serviceUsed);
+        const requestBody: IUPIPayoutRequestBody = {
+            account_number: requestDto.upiId,
+            amount: requestDto.amount,
+            mobile: requestDto.mobile,
+            mode: serviceUsed
+        }
+        const response = (await this.payloutClientService.payoutUsingUPI(requestBody));
+
+        if (response.status === 'FAILURE') {
+            throw new BadRequestException(response.message)
+        }
+        const user = await this.userRepository.findOne({where: {id: userId}});
+        const maskedAccount = maskAccount(requestBody.account_number);
+        const description = requestDto.message ? requestDto.message : PayoutDescription.replace('{maskedAccount}', maskedAccount);
+        const orderId = generateRef(12);
+        const order = {
+            order_id: orderId,
+            order_type: OrderType.UPI_PAYOUT,
+            gateway_response: '',
+            amount: requestDto.amount,
+            status: OrderStatus.PENDING,
+            transaction_id: response.stan?.toString(),
+            user: user,
+            description: description,
+            payment_method: 'WALLET',
+            respectiveUserName: requestDto.upiUserName,
+            ifscNumber: null,
+            paymentMode: serviceUsed,
+            accountId: requestDto.upiId
+        }
+        const SavedOrder = this.orderRepository.create(order);
+        this.orderRepository.save(SavedOrder);
+
+        await this.walletService.processRechargePayment({amount: requestDto.amount,
+             receiverId: requestDto.upiId,
+             serviceUsed: serviceUsed,
+             description: description,
+             status: TransactionStatus.PENDING,
+             reference: orderId }, userId);
         return {
             referenceId: SavedOrder.order_id,
             amount: +response.amount,

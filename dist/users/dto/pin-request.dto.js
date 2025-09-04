@@ -86,4 +86,19 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], SendMoneyRequestDto.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "upiId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "upiUserName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "message", void 0);
 //# sourceMappingURL=pin-request.dto.js.map

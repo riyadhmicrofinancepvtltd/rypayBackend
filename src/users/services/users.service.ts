@@ -15,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { IAccessTokenUserPayload } from 'src/auth/interfaces/user-token-request-payload.interface';
 import { TokenService } from 'src/auth/services/token.service';
 import { CardsService } from 'src/cards/services/cards.service';
+import  { PayoutService } from 'src/integration/busybox/external/services/payout.service';
 import { CardStatus } from 'src/core/entities/card.entity';
 import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
@@ -55,6 +56,7 @@ export class UsersService {
     private walletService: WalletService,
     private merchantClientService: MerchantClientService,
     private cardService: CardsService,
+    private payoutService: PayoutService,
     private _connection: DataSource,
     private uploadFileService: UploadFileService,
     private otpFlowService: OtpFlowService,
@@ -845,8 +847,7 @@ export class UsersService {
     }
 
   }
-  //req.user.sub, pinRequest.PaymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number
-  async sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string) {
+  async sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string, upiId: string, upiUserName: string, message: string) {
     let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
@@ -863,7 +864,10 @@ export class UsersService {
         virtualAccount.transfer_pin,
       );
       if (!isOldPinCorrect) {
-        throw new BadRequestException(['Incorrect PIN. Please try again.']);
+        return {
+          success: false,
+          message: 'Incorrect PIN. Please try again.',
+        }
       }
       if (userFrom) {
         let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
@@ -884,8 +888,31 @@ export class UsersService {
       }
       return { success: true, message: "Money sent successfully." };
     }
+    if(paymentMode === "upi"){
+      const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+      const isOldPinCorrect = await bcrypt.compare(
+        transactionPIN,
+        virtualAccount.transfer_pin,
+      );
+      if (!isOldPinCorrect) {
+        return {
+          success: false,
+          message: 'Incorrect PIN. Please try again.',
+        }
+      }
+      let payload ={
+        upiId:upiId,
+        amount:amount,
+        mobile:number,
+        upiUserName:upiUserName,
+        message:message
+      }as any
+      const data = await this.payoutService.payoutUPINew(userId, payload);
+      return data;
+    }
 
   }
+
 
   async validateUserCardAssignment(userId: string, otp: string) {
     const user = await this.findUserById(userId);

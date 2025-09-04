@@ -21,6 +21,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const bcrypt = require("bcrypt");
 const token_service_1 = require("../../auth/services/token.service");
 const cards_service_1 = require("../../cards/services/cards.service");
+const payout_service_1 = require("../../integration/busybox/external/services/payout.service");
 const card_entity_1 = require("../../core/entities/card.entity");
 const document_entity_1 = require("../../core/entities/document.entity");
 const user_entity_1 = require("../../core/entities/user.entity");
@@ -44,13 +45,14 @@ const recharge_client_service_1 = require("../../integration/a1topup/external-sy
 const aadhar_verification_entity_1 = require("../../core/entities/aadhar-verification.entity");
 const notification_bridge_1 = require("../../notifications/services/notification-bridge");
 let UsersService = class UsersService {
-    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, aadharResponseRepo, documentRepository) {
+    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, payoutService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, aadharResponseRepo, documentRepository) {
         this.tokenService = tokenService;
         this.httpService = httpService;
         this.configService = configService;
         this.walletService = walletService;
         this.merchantClientService = merchantClientService;
         this.cardService = cardService;
+        this.payoutService = payoutService;
         this._connection = _connection;
         this.uploadFileService = uploadFileService;
         this.otpFlowService = otpFlowService;
@@ -717,7 +719,7 @@ let UsersService = class UsersService {
             }
         };
     }
-    async sendMoney(userId, paymentMode, amount, transactionPIN, number) {
+    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message) {
         let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
         if (!enumKey) {
             throw new common_1.BadRequestException(['Invalid payment mode']);
@@ -731,7 +733,10 @@ let UsersService = class UsersService {
             const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
             if (!isOldPinCorrect) {
-                throw new common_1.BadRequestException(['Incorrect PIN. Please try again.']);
+                return {
+                    success: false,
+                    message: 'Incorrect PIN. Please try again.',
+                };
             }
             if (userFrom) {
                 let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
@@ -752,6 +757,25 @@ let UsersService = class UsersService {
                 await this.walletRepository.save(walletTo);
             }
             return { success: true, message: "Money sent successfully." };
+        }
+        if (paymentMode === "upi") {
+            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+            const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
+            if (!isOldPinCorrect) {
+                return {
+                    success: false,
+                    message: 'Incorrect PIN. Please try again.',
+                };
+            }
+            let payload = {
+                upiId: upiId,
+                amount: amount,
+                mobile: number,
+                upiUserName: upiUserName,
+                message: message
+            };
+            const data = await this.payoutService.payoutUPINew(userId, payload);
+            return data;
         }
     }
     async validateUserCardAssignment(userId, otp) {
@@ -999,17 +1023,18 @@ let UsersService = class UsersService {
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(13, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __param(14, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallet)),
-    __param(15, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
-    __param(16, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
-    __param(17, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
+    __param(14, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(15, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallet)),
+    __param(16, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
+    __param(17, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
+    __param(18, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
     __metadata("design:paramtypes", [token_service_1.TokenService,
         axios_1.HttpService,
         config_1.ConfigService,
         wallet_service_1.WalletService,
         merchant_client_service_1.MerchantClientService,
         cards_service_1.CardsService,
+        payout_service_1.PayoutService,
         typeorm_2.DataSource,
         updaload_file_service_1.UploadFileService,
         otp_flow_service_1.OtpFlowService,

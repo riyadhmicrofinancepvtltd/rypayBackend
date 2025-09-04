@@ -31,6 +31,11 @@ export declare class PayoutService {
         amount: number;
         message: string;
     }>;
+    payoutUPINew(userId: string, requestDto: UPIPayoutPayload): Promise<{
+        referenceId: string;
+        amount: number;
+        message: string;
+    }>;
     verifyAccount(verifyDto: VerifyAccountRequestDTO): Promise<VerifyAccountResponseDTO>;
     verifyUpi(verifyDto: VerifyUpiRequestDTO): Promise<VerifyAccountResponseDTO>;
 }
