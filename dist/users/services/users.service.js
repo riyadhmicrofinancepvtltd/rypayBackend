@@ -775,6 +775,9 @@ let UsersService = class UsersService {
                 message: message
             };
             const data = await this.payoutService.payoutUPINew(userId, payload);
+            if (data?.referenceId) {
+                return { success: true, message: "Money sent successfully." };
+            }
             return data;
         }
     }

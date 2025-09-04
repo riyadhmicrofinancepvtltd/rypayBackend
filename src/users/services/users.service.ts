@@ -908,6 +908,9 @@ export class UsersService {
         message:message
       }as any
       const data = await this.payoutService.payoutUPINew(userId, payload);
+      if(data?.referenceId){
+        return { success: true, message: "Money sent successfully." };
+      }
       return data;
     }
 
