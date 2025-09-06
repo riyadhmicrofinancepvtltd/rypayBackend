@@ -805,7 +805,12 @@ let UsersService = class UsersService {
                 'Authorization': `Basic ${authKey}`,
             },
         }));
-        return response.data;
+        return {
+            success: true,
+            message: "Order created successfully",
+            orderId: response.data.data.orderId,
+            payment_url: response.data.data.payment_url,
+        };
     }
     async validateUserCardAssignment(userId, otp) {
         const user = await this.findUserById(userId);

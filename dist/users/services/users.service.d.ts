@@ -108,7 +108,12 @@ export declare class UsersService {
         success: boolean;
         message: string;
     }>;
-    createOrder(userId: string, pinRequest: CreateOrderRequestDto): Promise<any>;
+    createOrder(userId: string, pinRequest: CreateOrderRequestDto): Promise<{
+        success: boolean;
+        message: string;
+        orderId: any;
+        payment_url: any;
+    }>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;
     handleKycEvent(cardHolderId: string, kycStatus: string): Promise<void>;

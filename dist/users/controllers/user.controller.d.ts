@@ -97,7 +97,12 @@ export declare class UsersController {
         success: boolean;
         message: string;
     }>;
-    createOrder(req: any, pinRequest: CreateOrderRequestDto): Promise<any>;
+    createOrder(req: any, pinRequest: CreateOrderRequestDto): Promise<{
+        success: boolean;
+        message: string;
+        orderId: any;
+        payment_url: any;
+    }>;
     updateForgotPin(req: any, body: UpdateForgotPin): Promise<{
         message: string;
     }>;

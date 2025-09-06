@@ -947,7 +947,12 @@ export class UsersService {
       )
     );
 
-    return response.data;
+    return {
+      success: true,
+      message: "Order created successfully",
+      orderId:response.data.data.orderId,
+      payment_url:response.data.data.payment_url,
+    };
 
   }
 
