@@ -549,7 +549,7 @@ export class UsersController {
     return await this.userService.createOrder(req.user.sub,pinRequest);
   }
 
-  @Post('check-payment-status')
+  @Post('verify-payment')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)

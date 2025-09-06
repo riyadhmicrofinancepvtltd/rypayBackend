@@ -707,7 +707,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "createOrder", null);
 __decorate([
-    (0, common_1.Post)('check-payment-status'),
+    (0, common_1.Post)('verify-payment'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
