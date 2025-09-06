@@ -152,6 +152,9 @@ let UsersController = class UsersController {
     async sendMoney(req, pinRequest) {
         return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message);
     }
+    async createOrder(req, pinRequest) {
+        return await this.userService.createOrder(req.user.sub, pinRequest);
+    }
     async updateForgotPin(req, body) {
         return await this.userService.verifyCodeAndUpdateUserPin(req.user.sub, body.otp, body.newPin);
     }
@@ -689,6 +692,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, pin_request_dto_1.SendMoneyRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "sendMoney", null);
+__decorate([
+    (0, common_1.Post)('create-order-request'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.CreateOrderRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "createOrder", null);
 __decorate([
     (0, common_1.Post)('forgot/update-pin'),
     (0, swagger_1.ApiBearerAuth)(),

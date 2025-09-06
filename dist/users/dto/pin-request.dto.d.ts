@@ -28,3 +28,10 @@ export declare class SendMoneyRequestDto {
     upiUserName: string;
     message: string;
 }
+export declare class CreateOrderRequestDto {
+    amount: number;
+    note: string;
+    customer_name: string;
+    customer_mobile: string;
+    customer_email: string;
+}

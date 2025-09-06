@@ -781,6 +781,32 @@ let UsersService = class UsersService {
             return data;
         }
     }
+    async createOrder(userId, pinRequest) {
+        const user = await this.findUserById(userId);
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const upiBaseUrl = this.configService.get('UPI_BASE_URL') || "https://api.upitranzact.com/v1";
+        const authKey = this.configService.get('UPI_AUTH_KEY') || 'dXR6X2xpdmVfMTE2N2I4MmU1NjBlMjY1MTo0NjY2ZTY2ZmQ1OWEzOWQ1OWQ3MWJrag==';
+        const mid = this.configService.get('UPI_MID') || 'SSRSOLUTIO';
+        const url = `${upiBaseUrl}/payments/createOrderRequest`;
+        const payload = {
+            mid: mid,
+            amount: pinRequest.amount,
+            redirect_url: "https://api.riyadhmicrofinance.com?status=paymentSuccess",
+            note: pinRequest.note,
+            customer_name: pinRequest.customer_name,
+            customer_email: pinRequest.customer_email,
+            customer_mobile: pinRequest.customer_mobile,
+        };
+        const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${authKey}`,
+            },
+        }));
+        return response.data;
+    }
     async validateUserCardAssignment(userId, otp) {
         const user = await this.findUserById(userId);
         const response = await this.merchantClientService.verifyRegistrationOtp({

@@ -17,6 +17,7 @@ import { DataSource, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
+import { CreateOrderRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UploadFileService } from './updaload-file.service';
@@ -107,6 +108,7 @@ export declare class UsersService {
         success: boolean;
         message: string;
     }>;
+    createOrder(userId: string, pinRequest: CreateOrderRequestDto): Promise<any>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;
     handleKycEvent(cardHolderId: string, kycStatus: string): Promise<void>;

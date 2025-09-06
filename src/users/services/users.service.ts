@@ -15,7 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { IAccessTokenUserPayload } from 'src/auth/interfaces/user-token-request-payload.interface';
 import { TokenService } from 'src/auth/services/token.service';
 import { CardsService } from 'src/cards/services/cards.service';
-import  { PayoutService } from 'src/integration/busybox/external/services/payout.service';
+import { PayoutService } from 'src/integration/busybox/external/services/payout.service';
 import { CardStatus } from 'src/core/entities/card.entity';
 import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
@@ -35,6 +35,7 @@ import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UserDocumentResponseDto } from '../dto/user-documents.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
+import { CreateOrderRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UserMapper } from '../mapper/user-mapper';
@@ -874,7 +875,7 @@ export class UsersService {
         if (wallet.balance >= amount) {
           wallet.balance = wallet.balance - amount
           await this.walletRepository.save(wallet);
-        }else{
+        } else {
           return {
             success: false,
             message: 'Insufficient balance',
@@ -888,7 +889,7 @@ export class UsersService {
       }
       return { success: true, message: "Money sent successfully." };
     }
-    if(paymentMode === "upi"){
+    if (paymentMode === "upi") {
       const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
       const isOldPinCorrect = await bcrypt.compare(
         transactionPIN,
@@ -900,15 +901,15 @@ export class UsersService {
           message: 'Incorrect PIN. Please try again.',
         }
       }
-      let payload ={
-        upiId:upiId,
-        amount:amount,
-        mobile:number,
-        upiUserName:upiUserName,
-        message:message
-      }as any
+      let payload = {
+        upiId: upiId,
+        amount: amount,
+        mobile: number,
+        upiUserName: upiUserName,
+        message: message
+      } as any
       const data = await this.payoutService.payoutUPINew(userId, payload);
-      if(data?.referenceId){
+      if (data?.referenceId) {
         return { success: true, message: "Money sent successfully." };
       }
       return data;
@@ -916,6 +917,39 @@ export class UsersService {
 
   }
 
+  async createOrder(userId: string, pinRequest: CreateOrderRequestDto) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException(['user not found']);
+    }
+    const upiBaseUrl = this.configService.get('UPI_BASE_URL') || "https://api.upitranzact.com/v1";
+    const authKey = this.configService.get('UPI_AUTH_KEY') || 'dXR6X2xpdmVfMTE2N2I4MmU1NjBlMjY1MTo0NjY2ZTY2ZmQ1OWEzOWQ1OWQ3MWJrag==';
+    const mid = this.configService.get('UPI_MID') || 'SSRSOLUTIO';
+    const url = `${upiBaseUrl}/payments/createOrderRequest`;
+
+    const payload = {
+      mid: mid,
+      amount: pinRequest.amount,
+      redirect_url: "https://api.riyadhmicrofinance.com?status=paymentSuccess",
+      note: pinRequest.note,
+      customer_name: pinRequest.customer_name,
+      customer_email: pinRequest.customer_email,
+      customer_mobile: pinRequest.customer_mobile,
+    };
+    const response = await firstValueFrom(
+      this.httpService.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${authKey}`,
+        },
+      },
+
+      )
+    );
+
+    return response.data;
+
+  }
 
   async validateUserCardAssignment(userId: string, otp: string) {
     const user = await this.findUserById(userId);
