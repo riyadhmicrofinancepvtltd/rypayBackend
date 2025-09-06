@@ -102,6 +102,13 @@ export declare class UsersController {
         message: string;
         orderId: any;
         payment_url: any;
+        data?: undefined;
+    } | {
+        success: boolean;
+        message: string;
+        data: any;
+        orderId?: undefined;
+        payment_url?: undefined;
     }>;
     updateForgotPin(req: any, body: UpdateForgotPin): Promise<{
         message: string;

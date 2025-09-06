@@ -113,6 +113,13 @@ export declare class UsersService {
         message: string;
         orderId: any;
         payment_url: any;
+        data?: undefined;
+    } | {
+        success: boolean;
+        message: string;
+        data: any;
+        orderId?: undefined;
+        payment_url?: undefined;
     }>;
     validateUserCardAssignment(userId: string, otp: string): Promise<import("src/core/entities/card.entity").Card>;
     updateUserKycStatus(userId: string, updateKycStatus: keyof typeof KycVerificationStatus): Promise<string>;

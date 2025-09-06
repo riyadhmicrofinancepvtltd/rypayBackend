@@ -805,11 +805,18 @@ let UsersService = class UsersService {
                 'Authorization': `Basic ${authKey}`,
             },
         }));
+        if (response.data.statusCode == "200") {
+            return {
+                success: true,
+                message: "Order created successfully",
+                orderId: response.data.data.orderId,
+                payment_url: response.data.data.payment_url,
+            };
+        }
         return {
-            success: true,
-            message: "Order created successfully",
-            orderId: response.data.data.orderId,
-            payment_url: response.data.data.payment_url,
+            success: false,
+            message: "Failed to create order",
+            data: response.data
         };
     }
     async validateUserCardAssignment(userId, otp) {
