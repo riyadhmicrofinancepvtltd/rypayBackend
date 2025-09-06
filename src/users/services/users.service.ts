@@ -35,7 +35,7 @@ import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UserDocumentResponseDto } from '../dto/user-documents.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
-import { CreateOrderRequestDto } from '../dto/pin-request.dto';
+import { CreateOrderRequestDto,PaymentStatusRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UserMapper } from '../mapper/user-mapper';
@@ -959,6 +959,46 @@ export class UsersService {
       success: false,
       message: "Failed to create order",
       data:response.data
+    };
+    
+
+  }
+
+  async checkPaymentStatus(userId: string, statusRequest: PaymentStatusRequestDto) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException(['user not found']);
+    }
+    const upiBaseUrl = this.configService.get('UPI_BASE_URL') || "https://api.upitranzact.com/v1";
+    const authKey = this.configService.get('UPI_AUTH_KEY') || 'dXR6X2xpdmVfMTE2N2I4MmU1NjBlMjY1MTo0NjY2ZTY2ZmQ1OWEzOWQ1OWQ3MWJrag==';
+    const mid = this.configService.get('UPI_MID') || 'SSRSOLUTIO';
+    const url = `${upiBaseUrl}/payments/checkPaymentStatus`;
+
+    const payload = {
+      mid: mid,
+      order_id: statusRequest.order_id,
+    };
+    const response = await firstValueFrom(
+      this.httpService.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${authKey}`,
+        },
+      },
+
+      )
+    );
+
+    if(response.data.txnStatus == "SUCCESS"){
+      return {
+        success: true,
+        message: "Payment status checked successfully",
+        data:response.data
+      };
+    }
+    return {
+      success: false,
+      message: response.data.msg,
     };
     
 

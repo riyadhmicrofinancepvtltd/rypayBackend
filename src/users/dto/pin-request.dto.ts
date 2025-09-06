@@ -93,6 +93,10 @@ export class SendMoneyRequestDto {
     customer_email: string;
  }
 
+ export class PaymentStatusRequestDto {
+    @ApiProperty()
+    order_id: string;
+ }
 
 
  

@@ -2,7 +2,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto, ToContactRequestDto, SendMoneyRequestDto, CreateOrderRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto, ToContactRequestDto, SendMoneyRequestDto, CreateOrderRequestDto, PaymentStatusRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto";
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -109,6 +109,15 @@ export declare class UsersController {
         data: any;
         orderId?: undefined;
         payment_url?: undefined;
+    }>;
+    checkPaymentStatus(req: any, statusRequest: PaymentStatusRequestDto): Promise<{
+        success: boolean;
+        message: string;
+        data: any;
+    } | {
+        success: boolean;
+        message: any;
+        data?: undefined;
     }>;
     updateForgotPin(req: any, body: UpdateForgotPin): Promise<{
         message: string;

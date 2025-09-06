@@ -819,6 +819,37 @@ let UsersService = class UsersService {
             data: response.data
         };
     }
+    async checkPaymentStatus(userId, statusRequest) {
+        const user = await this.findUserById(userId);
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const upiBaseUrl = this.configService.get('UPI_BASE_URL') || "https://api.upitranzact.com/v1";
+        const authKey = this.configService.get('UPI_AUTH_KEY') || 'dXR6X2xpdmVfMTE2N2I4MmU1NjBlMjY1MTo0NjY2ZTY2ZmQ1OWEzOWQ1OWQ3MWJrag==';
+        const mid = this.configService.get('UPI_MID') || 'SSRSOLUTIO';
+        const url = `${upiBaseUrl}/payments/checkPaymentStatus`;
+        const payload = {
+            mid: mid,
+            order_id: statusRequest.order_id,
+        };
+        const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${authKey}`,
+            },
+        }));
+        if (response.data.txnStatus == "SUCCESS") {
+            return {
+                success: true,
+                message: "Payment status checked successfully",
+                data: response.data
+            };
+        }
+        return {
+            success: false,
+            message: response.data.msg,
+        };
+    }
     async validateUserCardAssignment(userId, otp) {
         const user = await this.findUserById(userId);
         const response = await this.merchantClientService.verifyRegistrationOtp({

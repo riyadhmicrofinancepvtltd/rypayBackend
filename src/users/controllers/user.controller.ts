@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto,PaymentStatusRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -549,6 +549,17 @@ export class UsersController {
     return await this.userService.createOrder(req.user.sub,pinRequest);
   }
 
+  @Post('check-payment-status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async checkPaymentStatus(
+    @Req() req: any,
+    @Body() statusRequest: PaymentStatusRequestDto,
+  ) {
+    return await this.userService.checkPaymentStatus(req.user.sub,statusRequest);
+  }
+  //
 
   @Post('forgot/update-pin')
   @ApiBearerAuth()

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateOrderRequestDto = exports.SendMoneyRequestDto = exports.ToContactRequestDto = exports.deleteUserAccountDto = exports.UpdateTransactionPinDto = exports.TransactionPinRequestDto = exports.UpdateForgotPin = exports.PinRequestDto = void 0;
+exports.PaymentStatusRequestDto = exports.CreateOrderRequestDto = exports.SendMoneyRequestDto = exports.ToContactRequestDto = exports.deleteUserAccountDto = exports.UpdateTransactionPinDto = exports.TransactionPinRequestDto = exports.UpdateForgotPin = exports.PinRequestDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class PinRequestDto {
@@ -125,4 +125,11 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateOrderRequestDto.prototype, "customer_email", void 0);
+class PaymentStatusRequestDto {
+}
+exports.PaymentStatusRequestDto = PaymentStatusRequestDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], PaymentStatusRequestDto.prototype, "order_id", void 0);
 //# sourceMappingURL=pin-request.dto.js.map

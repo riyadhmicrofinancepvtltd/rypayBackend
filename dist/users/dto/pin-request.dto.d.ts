@@ -35,3 +35,6 @@ export declare class CreateOrderRequestDto {
     customer_mobile: string;
     customer_email: string;
 }
+export declare class PaymentStatusRequestDto {
+    order_id: string;
+}
