@@ -839,6 +839,9 @@ let UsersService = class UsersService {
             },
         }));
         if (response.data.txnStatus == "SUCCESS") {
+            let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+            wallet.balance = wallet.balance + response.data.data.amount;
+            await this.walletRepository.save(wallet);
             return {
                 success: true,
                 message: "Payment status checked successfully",

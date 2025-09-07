@@ -35,7 +35,7 @@ import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UserDocumentResponseDto } from '../dto/user-documents.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
-import { CreateOrderRequestDto,PaymentStatusRequestDto } from '../dto/pin-request.dto';
+import { CreateOrderRequestDto, PaymentStatusRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UserMapper } from '../mapper/user-mapper';
@@ -947,20 +947,20 @@ export class UsersService {
       )
     );
 
-    if(response.data.statusCode == "200"){
+    if (response.data.statusCode == "200") {
       return {
         success: true,
         message: "Order created successfully",
-        orderId:response.data.data.orderId,
-        payment_url:response.data.data.payment_url,
+        orderId: response.data.data.orderId,
+        payment_url: response.data.data.payment_url,
       };
     }
     return {
       success: false,
       message: "Failed to create order",
-      data:response.data
+      data: response.data
     };
-    
+
 
   }
 
@@ -989,18 +989,21 @@ export class UsersService {
       )
     );
 
-    if(response.data.txnStatus == "SUCCESS"){
+    if (response.data.txnStatus == "SUCCESS") {
+      let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+      wallet.balance = wallet.balance + response.data.data.amount
+      await this.walletRepository.save(wallet);
       return {
         success: true,
         message: "Payment status checked successfully",
-        data:response.data
+        data: response.data
       };
     }
     return {
       success: false,
       message: response.data.msg,
     };
-    
+
 
   }
 
