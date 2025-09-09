@@ -30,6 +30,7 @@ export declare class PayoutService {
         message: string;
     }>;
     validatePayout(userId: string, amount: number, serviceUsed: string): Promise<void>;
+    validatePayoutNew(userId: string, amount: number, serviceUsed: string): Promise<void>;
     validateTransactionLimit(userId: string, amount: number, serviceUsed: string): Promise<void>;
     payoutUPI(userId: string, requestDto: UPIPayoutPayload): Promise<{
         referenceId: string;

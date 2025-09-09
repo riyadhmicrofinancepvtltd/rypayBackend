@@ -920,6 +920,8 @@ export class UsersService {
         message: message,
         userName: userName
       } as any
+
+      
       const data = await this.payoutService.payoutAccountNew(userId, payload);
       return data;
     }
