@@ -177,10 +177,10 @@ export class PayoutService {
         console.log("poolBalance====>",poolBalance);
         console.log("amount.balance====>",amount);
         if (wallet.balance < amount) {
-            throw new BadRequestException('Insufficient Balance')
+            throw new BadRequestException(['Insufficient Balance'])
         }
         if (poolBalance < amount) {
-            throw new BadRequestException('Technical Error! Please try after some time');
+            throw new BadRequestException(['Technical Error! Please try after some time']);
         }
         await this.validateTransactionLimit(userId, amount, serviceUsed);
     }
