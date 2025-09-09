@@ -24,6 +24,11 @@ export declare class PayoutService {
         amount: number;
         message: string;
     }>;
+    payoutAccountNew(userId: string, requestDto: AccountPayoutPayload): Promise<{
+        referenceId: string;
+        amount: number;
+        message: string;
+    }>;
     validatePayout(userId: string, amount: number, serviceUsed: string): Promise<void>;
     validateTransactionLimit(userId: string, amount: number, serviceUsed: string): Promise<void>;
     payoutUPI(userId: string, requestDto: UPIPayoutPayload): Promise<{

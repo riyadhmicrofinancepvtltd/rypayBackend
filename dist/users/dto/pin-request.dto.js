@@ -101,6 +101,27 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], SendMoneyRequestDto.prototype, "message", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "accountNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "ifsc", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['IMPS', 'RTGS', 'NEFT']),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "mode", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SendMoneyRequestDto.prototype, "userName", void 0);
 class CreateOrderRequestDto {
 }
 exports.CreateOrderRequestDto = CreateOrderRequestDto;

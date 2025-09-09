@@ -150,7 +150,7 @@ let UsersController = class UsersController {
         return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
     }
     async sendMoney(req, pinRequest) {
-        return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message);
+        return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message, pinRequest.accountNumber, pinRequest.ifsc, pinRequest.mode, pinRequest.userName);
     }
     async createOrder(req, pinRequest) {
         return await this.userService.createOrder(req.user.sub, pinRequest);

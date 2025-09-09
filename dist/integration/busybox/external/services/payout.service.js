@@ -92,6 +92,58 @@ let PayoutService = PayoutService_1 = class PayoutService {
             message: description
         };
     }
+    async payoutAccountNew(userId, requestDto) {
+        const serviceUsed = 'Payout';
+        await this.validatePayout(userId, requestDto.amount, serviceUsed);
+        const requestBody = {
+            account_number: requestDto.accountNumber,
+            amount: requestDto.amount,
+            ifsc_code: requestDto.ifsc,
+            mobile: requestDto.mobile,
+            mode: requestDto.mode
+        };
+        const response = (await this.payloutClientService.payoutUsingAccount(requestBody));
+        if (response.status === 'FAILURE') {
+            throw new common_1.BadRequestException([response.message]);
+        }
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        const maskedAccount = (0, hash_util_1.maskAccount)(requestBody.account_number);
+        const description = requestDto.message ? requestDto.message : external_constant_1.PayoutDescription.replace('{maskedAccount}', maskedAccount);
+        const orderId = (0, hash_util_1.generateRef)(12);
+        const payoutCharges = requestDto.mode?.toLowerCase() === 'neft' ? 0 : (0, payment_utils_1.getIMPSOrRTGSCharges)(requestDto.amount);
+        const order = {
+            order_id: orderId,
+            order_type: order_entity_1.OrderType.PAYOUT,
+            gateway_response: '',
+            amount: requestDto.amount,
+            status: order_entity_1.OrderStatus.PENDING,
+            transaction_id: response.stan?.toString(),
+            user: user,
+            description: description,
+            payment_method: 'WALLET',
+            paymentMode: requestDto.mode,
+            charges: payoutCharges,
+            respectiveUserName: requestDto.userName ?? "",
+            ifscNumber: requestDto.ifsc,
+            accountId: requestDto.accountNumber
+        };
+        const SavedOrder = this.orderRepository.create(order);
+        this.orderRepository.save(SavedOrder);
+        await this.walletService.processRechargePayment({
+            amount: requestDto.amount,
+            receiverId: requestDto.accountNumber,
+            serviceUsed: serviceUsed,
+            charges: payoutCharges,
+            description: description,
+            status: transactions_entity_1.TransactionStatus.PENDING,
+            reference: orderId
+        }, userId);
+        return {
+            referenceId: SavedOrder.order_id,
+            amount: +response.amount,
+            message: description
+        };
+    }
     async validatePayout(userId, amount, serviceUsed) {
         const user = await this.userRepository.findOne({ where: { id: userId } });
         const poolBalance = +(await this.payloutClientService.getPoolBalance()).balance;

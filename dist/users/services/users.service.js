@@ -719,7 +719,7 @@ let UsersService = class UsersService {
             }
         };
     }
-    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message) {
+    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifscCode, mode, userName) {
         let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
         if (!enumKey) {
             throw new common_1.BadRequestException(['Invalid payment mode']);
@@ -733,10 +733,7 @@ let UsersService = class UsersService {
             const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
             if (!isOldPinCorrect) {
-                return {
-                    success: false,
-                    message: 'Incorrect PIN. Please try again.',
-                };
+                throw new common_1.BadRequestException(['Incorrect PIN. Please try again.']);
             }
             if (userFrom) {
                 let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
@@ -759,14 +756,6 @@ let UsersService = class UsersService {
             return { success: true, message: "Money sent successfully." };
         }
         if (paymentMode === "upi") {
-            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
-            const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
-            if (!isOldPinCorrect) {
-                return {
-                    success: false,
-                    message: 'Incorrect PIN. Please try again.',
-                };
-            }
             let payload = {
                 upiId: upiId,
                 amount: amount,
@@ -775,9 +764,19 @@ let UsersService = class UsersService {
                 message: message
             };
             const data = await this.payoutService.payoutUPINew(userId, payload);
-            if (data?.referenceId) {
-                return { success: true, message: "Money sent successfully." };
-            }
+            return data;
+        }
+        if (paymentMode === "bank") {
+            let payload = {
+                accountNumber: accountNumber,
+                amount: amount,
+                ifscCode: ifscCode,
+                mobile: number,
+                mode: mode,
+                message: message,
+                userName: userName
+            };
+            const data = await this.payoutService.payoutAccountNew(userId, payload);
             return data;
         }
     }

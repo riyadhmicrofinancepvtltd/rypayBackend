@@ -27,6 +27,10 @@ export declare class SendMoneyRequestDto {
     upiId: string;
     upiUserName: string;
     message: string;
+    accountNumber: string;
+    ifsc: string;
+    mode: string;
+    userName: string;
 }
 export declare class CreateOrderRequestDto {
     amount: number;
