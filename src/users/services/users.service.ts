@@ -929,7 +929,7 @@ export class UsersService {
       let payload = {
         accountNumber: accountNumber,
         amount: amount,
-        ifscCode: ifscCode,
+        ifsc: ifscCode,
         mobile: number,
         mode: mode,
         message: message,
