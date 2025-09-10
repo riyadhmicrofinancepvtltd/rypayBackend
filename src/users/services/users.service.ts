@@ -900,6 +900,17 @@ export class UsersService {
       return { success: true, message: "Money sent successfully." };
     }
     if (paymentMode === "upi") {
+      const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+      const isOldPinCorrect = await bcrypt.compare(
+        transactionPIN,
+        virtualAccount.transfer_pin,
+      );
+      if (!isOldPinCorrect) {
+        return {
+          success: false,
+          message: 'Incorrect PIN. Please try again.',
+        }
+      }
       let payload = {
         upiId: upiId,
         amount: amount,
@@ -908,9 +919,13 @@ export class UsersService {
         message: message
       } as any
       const data = await this.payoutService.payoutUPINew(userId, payload);
+      if (data?.referenceId) {
+        return { success: true, message: "Money sent successfully." };
+      }
       return data;
     }
     if (paymentMode === "bank") {
+
       let payload = {
         accountNumber: accountNumber,
         amount: amount,
@@ -921,8 +936,9 @@ export class UsersService {
         userName: userName
       } as any
 
-      
+
       const data = await this.payoutService.payoutAccountNew(userId, payload);
+     
       return data;
     }
 
