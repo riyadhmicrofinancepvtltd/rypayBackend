@@ -99,6 +99,8 @@ export class PayoutService {
     async payoutAccountNew(userId: string, requestDto: AccountPayoutPayload) {
         const serviceUsed = 'Payout';
         await this.validatePayoutNew(userId, requestDto.amount, serviceUsed);
+        console.log("requestDto.ifsc====>",requestDto.ifsc);
+        console.log("requestDto=====>",requestDto)
         const requestBody: IAccountPayoutRequestBody = {
             account_number: requestDto.accountNumber,
             amount: requestDto.amount,
