@@ -925,7 +925,17 @@ export class UsersService {
       return data;
     }
     if (paymentMode === "bank") {
-console.log("bank---->",ifsc);
+      const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+      const isOldPinCorrect = await bcrypt.compare(
+        transactionPIN,
+        virtualAccount.transfer_pin,
+      );
+      if (!isOldPinCorrect) {
+        return {
+          success: false,
+          message: 'Incorrect PIN. Please try again.',
+        }
+      }
       let payload = {
         accountNumber: accountNumber,
         amount: amount,
@@ -936,9 +946,10 @@ console.log("bank---->",ifsc);
         userName: userName
       } as any
 
-
       const data = await this.payoutService.payoutAccountNew(userId, payload);
-     
+      if (data?.referenceId) {
+        return { success: true, message: "Money sent successfully." };
+      }
       return data;
     }
 

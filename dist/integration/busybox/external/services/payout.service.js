@@ -95,8 +95,6 @@ let PayoutService = PayoutService_1 = class PayoutService {
     async payoutAccountNew(userId, requestDto) {
         const serviceUsed = 'Payout';
         await this.validatePayoutNew(userId, requestDto.amount, serviceUsed);
-        console.log("requestDto.ifsc====>", requestDto.ifsc);
-        console.log("requestDto=====>", requestDto);
         const requestBody = {
             account_number: requestDto.accountNumber,
             amount: requestDto.amount,
@@ -105,7 +103,6 @@ let PayoutService = PayoutService_1 = class PayoutService {
             mode: requestDto.mode
         };
         const response = (await this.payloutClientService.payoutUsingAccount(requestBody));
-        console.log("response====>", response);
         if (response.status === 'FAILURE') {
             throw new common_1.BadRequestException([response.message]);
         }
