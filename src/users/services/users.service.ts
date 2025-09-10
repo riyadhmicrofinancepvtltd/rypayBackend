@@ -858,7 +858,7 @@ export class UsersService {
     upiUserName: string,
     message: string,
     accountNumber: string,
-    ifscCode: string,
+    ifsc: string,
     mode: string,
     userName: string,
   ) {
@@ -925,11 +925,11 @@ export class UsersService {
       return data;
     }
     if (paymentMode === "bank") {
-
+console.log("bank---->",ifsc);
       let payload = {
         accountNumber: accountNumber,
         amount: amount,
-        ifsc: ifscCode,
+        ifsc: ifsc,
         mobile: number,
         mode: mode,
         message: message,

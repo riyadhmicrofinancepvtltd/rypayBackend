@@ -719,7 +719,7 @@ let UsersService = class UsersService {
             }
         };
     }
-    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifscCode, mode, userName) {
+    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifsc, mode, userName) {
         let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
         if (!enumKey) {
             throw new common_1.BadRequestException(['Invalid payment mode']);
@@ -778,10 +778,11 @@ let UsersService = class UsersService {
             return data;
         }
         if (paymentMode === "bank") {
+            console.log("bank---->", ifsc);
             let payload = {
                 accountNumber: accountNumber,
                 amount: amount,
-                ifsc: ifscCode,
+                ifsc: ifsc,
                 mobile: number,
                 mode: mode,
                 message: message,
