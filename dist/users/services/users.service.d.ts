@@ -104,6 +104,9 @@ export declare class UsersService {
             phoneNumber: string;
         };
     }>;
+    getTransactionHistory(userId: string): Promise<{
+        transactionMoney: TransactionMoney[];
+    }>;
     sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string, upiId: string, upiUserName: string, message: string, accountNumber: string, ifsc: string, mode: string, userName: string): Promise<{
         referenceId: string;
         amount: number;

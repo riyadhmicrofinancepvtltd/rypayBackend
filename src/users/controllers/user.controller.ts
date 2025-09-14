@@ -527,6 +527,16 @@ export class UsersController {
     return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
   }
 
+  @Get('transaction-history')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getTransactionHistory(
+    @Req() req: any,
+  ) {
+    return await this.userService.getTransactionHistory(req.user.sub);
+  }
+
   @Post('send-money')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

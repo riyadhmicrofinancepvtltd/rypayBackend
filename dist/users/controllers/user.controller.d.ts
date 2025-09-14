@@ -89,6 +89,9 @@ export declare class UsersController {
             phoneNumber: string;
         };
     }>;
+    getTransactionHistory(req: any): Promise<{
+        transactionMoney: import("../../core/entities/transaction-money.entity").TransactionMoney[];
+    }>;
     sendMoney(req: any, pinRequest: SendMoneyRequestDto): Promise<{
         referenceId: string;
         amount: number;

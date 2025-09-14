@@ -723,6 +723,20 @@ let UsersService = class UsersService {
             }
         };
     }
+    async getTransactionHistory(userId) {
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const transactionMoney = await this.transactionMoneyRepo.find({
+            where: {
+                user_id: userId,
+            },
+        });
+        return {
+            transactionMoney: transactionMoney
+        };
+    }
     async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifsc, mode, userName) {
         let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
         if (!enumKey) {

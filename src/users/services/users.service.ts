@@ -854,6 +854,22 @@ export class UsersService {
     }
 
   }
+
+
+  async getTransactionHistory(userId: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new BadRequestException(['user not found']);
+    }
+    const transactionMoney = await this.transactionMoneyRepo.find({
+      where: {
+        user_id: userId,
+      },
+    });
+    return {
+      transactionMoney: transactionMoney
+    }
+  }
   async sendMoney(
     userId: string,
     paymentMode: string,
