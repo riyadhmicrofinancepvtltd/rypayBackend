@@ -21,5 +21,10 @@ export declare class Transaction {
     transactionHash: string;
     reference: string;
     transactionDate: Date;
+    ifsc: string;
+    name: string;
+    message: string;
+    bank: string;
+    transaction_id: string;
     status: TransactionStatus;
 }

@@ -75,6 +75,21 @@ export class Transaction {
   @Column()
   transactionDate: Date;
 
+  @Column()
+  ifsc: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  message: string;
+
+  @Column()
+  bank: string;
+
+  @Column()
+  transaction_id: string;
+
   @Column({
     type: 'enum',
     enum: TransactionStatus,

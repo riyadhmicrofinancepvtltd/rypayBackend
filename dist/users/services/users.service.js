@@ -26,8 +26,10 @@ const card_entity_1 = require("../../core/entities/card.entity");
 const document_entity_1 = require("../../core/entities/document.entity");
 const user_entity_1 = require("../../core/entities/user.entity");
 const virtual_account_entity_1 = require("../../core/entities/virtual-account.entity");
+const transactions_entity_1 = require("../../core/entities/transactions.entity");
 const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
+const transactions_entity_2 = require("../../core/entities/transactions.entity");
 const user_role_enum_1 = require("../../core/enum/user-role.enum");
 const hash_util_1 = require("../../core/utils/hash.util");
 const merchant_client_service_1 = require("../../integration/busybox/external-system-client/merchant-client.service");
@@ -45,7 +47,7 @@ const recharge_client_service_1 = require("../../integration/a1topup/external-sy
 const aadhar_verification_entity_1 = require("../../core/entities/aadhar-verification.entity");
 const notification_bridge_1 = require("../../notifications/services/notification-bridge");
 let UsersService = class UsersService {
-    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, payoutService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, aadharResponseRepo, documentRepository) {
+    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, payoutService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, transactionRepo, aadharResponseRepo, documentRepository) {
         this.tokenService = tokenService;
         this.httpService = httpService;
         this.configService = configService;
@@ -63,6 +65,7 @@ let UsersService = class UsersService {
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.virtualAccountRepo = virtualAccountRepo;
+        this.transactionRepo = transactionRepo;
         this.aadharResponseRepo = aadharResponseRepo;
         this.documentRepository = documentRepository;
         this.saltRounds = 10;
@@ -797,6 +800,21 @@ let UsersService = class UsersService {
             };
             const data = await this.payoutService.payoutAccountNew(userId, payload);
             if (data?.referenceId) {
+                const newAccount = this.transactionRepo.create({
+                    name: userName,
+                    type: 'CREDIT',
+                    serviceUsed: 'WALLET',
+                    amount: amount,
+                    message: message,
+                    sender: userId,
+                    receiver: userId,
+                    reference: data.referenceId,
+                    transactionDate: new Date(),
+                    status: transactions_entity_2.TransactionStatus.SUCCESS,
+                    ifsc: ifsc,
+                    bank: accountNumber.toString(),
+                });
+                const saved = await this.transactionRepo.save(newAccount);
                 return { success: true, message: "Money sent successfully." };
             }
             return data;
@@ -1122,8 +1140,9 @@ exports.UsersService = UsersService = __decorate([
     __param(14, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __param(15, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallet)),
     __param(16, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
-    __param(17, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
-    __param(18, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
+    __param(17, (0, typeorm_1.InjectRepository)(transactions_entity_1.Transaction)),
+    __param(18, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
+    __param(19, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
     __metadata("design:paramtypes", [token_service_1.TokenService,
         axios_1.HttpService,
         config_1.ConfigService,
@@ -1138,6 +1157,7 @@ exports.UsersService = UsersService = __decorate([
         recharge_client_service_1.RechargeClientService,
         wallet_queue_1.WalletBridge,
         notification_bridge_1.NotificationBridge,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

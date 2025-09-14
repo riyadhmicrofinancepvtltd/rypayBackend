@@ -96,6 +96,26 @@ __decorate([
     __metadata("design:type", Date)
 ], Transaction.prototype, "transactionDate", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Transaction.prototype, "ifsc", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Transaction.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Transaction.prototype, "message", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Transaction.prototype, "bank", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Transaction.prototype, "transaction_id", void 0);
+__decorate([
     (0, typeorm_1.Column)({
         type: 'enum',
         enum: TransactionStatus,
