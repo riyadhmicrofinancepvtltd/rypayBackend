@@ -46,33 +46,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       "/user/verify-to-contact",
       "/user/send-money"
     ];
-
-    const anyException = exception as any; // 👈 cast to any
-
-    const rawMessage =
-      anyException?.response?.message ||
-      anyException?.message ||
-      'Internal server error';
-    
-    const finalMessage = Array.isArray(rawMessage) ? rawMessage[0] : rawMessage;
-    
     if (openUrls.includes(request.url)) {
-      if (!response.headersSent) {
-        response.status(status).json({
-          statusCode: status,
-          success: false,
-          message: finalMessage,
-        });
-      }
+      response.status(status).json({
+        statusCode: status,
+        success: false,
+        message: message.message[0],
+      });
     }
-
-    // if (openUrls.includes(request.url)) {
-    //   response.status(status).json({
-    //     statusCode: status,
-    //     success: false,
-    //     message: message.message[0],
-    //   });
-    // }
+    
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),

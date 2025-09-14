@@ -29,7 +29,6 @@ const virtual_account_entity_1 = require("../../core/entities/virtual-account.en
 const transactions_entity_1 = require("../../core/entities/transactions.entity");
 const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
-const transactions_entity_2 = require("../../core/entities/transactions.entity");
 const user_role_enum_1 = require("../../core/enum/user-role.enum");
 const hash_util_1 = require("../../core/utils/hash.util");
 const merchant_client_service_1 = require("../../integration/busybox/external-system-client/merchant-client.service");
@@ -800,24 +799,6 @@ let UsersService = class UsersService {
             };
             const data = await this.payoutService.payoutAccountNew(userId, payload);
             if (data?.referenceId) {
-                console.log("data======>", data);
-                const newAccount = this.transactionRepo.create({
-                    name: userName,
-                    type: 'CREDIT',
-                    serviceUsed: 'WALLET',
-                    amount: amount,
-                    message: message,
-                    description: message,
-                    sender: userId,
-                    receiver: userId,
-                    reference: data.referenceId,
-                    transactionDate: new Date(),
-                    status: transactions_entity_2.TransactionStatus.SUCCESS,
-                    ifsc: ifsc,
-                    bank: accountNumber.toString(),
-                });
-                console.log("newAccount======>", newAccount);
-                const saved = await this.transactionRepo.save(newAccount);
                 return { success: true, message: "Money sent successfully." };
             }
             return data;

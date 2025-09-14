@@ -951,25 +951,22 @@ export class UsersService {
 
       const data = await this.payoutService.payoutAccountNew(userId, payload);
       if (data?.referenceId) {
-        console.log("data======>", data);
-        const newAccount = this.transactionRepo.create({
-          name: userName,
-          type: 'CREDIT',
-          serviceUsed: 'WALLET',
-          amount: amount,
-          message: message,
-          description: message,
-          sender: userId,
-          receiver: userId,
-          reference: data.referenceId,
-          transactionDate: new Date(),
-          status: TransactionStatus.SUCCESS,  
-          ifsc: ifsc,                        
-          bank: accountNumber.toString(),    
-        });
-        console.log("newAccount======>", newAccount);
-        const saved = await this.transactionRepo.save(newAccount);
-        
+        // const newAccount = this.transactionRepo.create({
+        //   name: userName,
+        //   type: 'CREDIT',
+        //   serviceUsed: 'WALLET',
+        //   amount: amount,
+        //   message: message,
+        //   description: message,
+        //   sender: userId,
+        //   receiver: userId,
+        //   reference: data.referenceId,
+        //   transactionDate: new Date(),
+        //   status: TransactionStatus.SUCCESS,  
+        //   ifsc: ifsc,                        
+        //   bank: accountNumber.toString(),    
+        // });
+        // const saved = await this.transactionRepo.save(newAccount);
         return { success: true, message: "Money sent successfully." };
       }
       return data;
