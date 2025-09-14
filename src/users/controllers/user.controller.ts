@@ -527,15 +527,18 @@ export class UsersController {
     return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
   }
 
-  @Get('transaction-history')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @HttpCode(HttpStatus.OK)
-  async getTransactionHistory(
-    @Req() req: any,
-  ) {
-    return await this.userService.getTransactionHistory(req.user.sub);
-  }
+  
+@Get('transaction-history')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@HttpCode(HttpStatus.OK)
+async getTransactionHistory(
+  @Req() req: any,
+  @Query('page') page: number = 1,
+  @Query('limit') limit: number = 10,
+) {
+  return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit));
+}
 
   @Post('send-money')
   @UseGuards(JwtAuthGuard)

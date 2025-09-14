@@ -149,8 +149,8 @@ let UsersController = class UsersController {
     async verifyToContact(req, pinRequest) {
         return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
     }
-    async getTransactionHistory(req) {
-        return await this.userService.getTransactionHistory(req.user.sub);
+    async getTransactionHistory(req, page = 1, limit = 10) {
+        return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit));
     }
     async sendMoney(req, pinRequest) {
         return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message, pinRequest.accountNumber, pinRequest.ifsc, pinRequest.mode, pinRequest.userName);
@@ -693,8 +693,10 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Number, Number]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getTransactionHistory", null);
 __decorate([

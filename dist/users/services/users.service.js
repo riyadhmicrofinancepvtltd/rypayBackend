@@ -724,6 +724,7 @@ let UsersService = class UsersService {
         };
     }
     async getTransactionHistory(userId, page = 1, limit = 10) {
+        console.log("UserId:", userId, "Page:", page, "Limit:", limit);
         const user = await this.userRepository.findOneBy({ id: userId });
         if (!user) {
             throw new common_1.BadRequestException(['user not found']);
