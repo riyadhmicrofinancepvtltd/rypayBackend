@@ -855,7 +855,6 @@ export class UsersService {
 
   }
 
-
   async getTransactionHistory(userId: string, page = 1, limit = 10) {
     console.log("UserId:", userId, "Page:", page, "Limit:", limit);
     const user = await this.userRepository.findOneBy({ id: userId });
@@ -934,6 +933,20 @@ export class UsersService {
         walletTo.balance = walletTo.balance + amount
         await this.walletRepository.save(walletTo);
       }
+      const newAccount = this.transactionMoneyRepo.create({
+        name: userName,
+        type: 'DEBIT',
+        amount: Number(amount),   // ✅ convert string → number
+        message: message,
+        reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+        transaction_date: new Date(),
+        status: "SUCCESS",  
+        ifsc: ifsc, 
+        user_id: userId,
+        transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+        bank: accountNumber.toString(),    
+      });
+      const saved = await this.transactionMoneyRepo.save(newAccount);
       return { success: true, message: "Money sent successfully." };
     }
     if (paymentMode === "upi") {
@@ -957,7 +970,36 @@ export class UsersService {
       } as any
       const data = await this.payoutService.payoutUPINew(userId, payload);
       if (data?.referenceId) {
+        const newAccount = this.transactionMoneyRepo.create({
+          name: userName,
+          type: 'DEBIT',
+          amount: Number(amount),   // ✅ convert string → number
+          message: message,
+          reference: data.referenceId,
+          transaction_date: new Date(),
+          status: "SUCCESS",  
+          ifsc: ifsc, 
+          user_id: userId,
+          transaction_id: data.referenceId,
+          bank: accountNumber.toString(),    
+        });
+        const saved = await this.transactionMoneyRepo.save(newAccount);
         return { success: true, message: "Money sent successfully." };
+      }else{
+        const newAccount = this.transactionMoneyRepo.create({
+          name: userName,
+          type: 'DEBIT',
+          amount: Number(amount),   // ✅ convert string → number
+          message: message,
+          reference: data.referenceId,
+          transaction_date: new Date(),
+          status: "FAILED",
+          ifsc: ifsc, 
+          user_id: userId,
+          transaction_id: data.referenceId,
+          bank: accountNumber.toString(),    
+        });
+        const saved = await this.transactionMoneyRepo.save(newAccount);
       }
       return data;
     }
@@ -987,7 +1029,7 @@ export class UsersService {
       if (data?.referenceId) {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
-          type: 'CREDIT',
+          type: 'DEBIT',
           amount: Number(amount),   // ✅ convert string → number
           message: message,
           reference: data.referenceId,
@@ -1000,6 +1042,21 @@ export class UsersService {
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
         return { success: true, message: "Money sent successfully." };
+      }else{
+        const newAccount = this.transactionMoneyRepo.create({
+          name: userName,
+          type: 'DEBIT',
+          amount: Number(amount),   // ✅ convert string → number
+          message: message,
+          reference: data.referenceId,
+          transaction_date: new Date(),
+          status: "FAILED",  
+          ifsc: ifsc, 
+          user_id: userId,
+          transaction_id: data.referenceId,
+          bank: accountNumber.toString(),    
+        });
+        const saved = await this.transactionMoneyRepo.save(newAccount);
       }
       return data;
     }
