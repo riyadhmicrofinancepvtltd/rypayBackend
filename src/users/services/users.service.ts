@@ -958,6 +958,7 @@ export class UsersService {
           serviceUsed: 'WALLET',
           amount: amount,
           message: message,
+          description: message,
           sender: userId,
           receiver: userId,
           reference: data.referenceId,
