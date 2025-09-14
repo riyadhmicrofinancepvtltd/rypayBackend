@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
 import { Transaction } from 'src/core/entities/transactions.entity';
+import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { Wallet} from 'src/core/entities/wallet.entity';
 import { IntegrationModule } from 'src/integration/integration.module';
 import { ConfigModule } from '@nestjs/config';

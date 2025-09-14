@@ -21,9 +21,11 @@ import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity'
 import { Transaction } from 'src/core/entities/transactions.entity';
+import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { TransactionStatus } from 'src/core/entities/transactions.entity';
+
 import { UserRole } from 'src/core/enum/user-role.enum';
 import { generateRef } from 'src/core/utils/hash.util';
 import { MerchantClientService } from 'src/integration/busybox/external-system-client/merchant-client.service';
@@ -71,6 +73,7 @@ export class UsersService {
     @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
     @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
     @InjectRepository(Transaction) private transactionRepo: Repository<Transaction>,
+    @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>,
     @InjectRepository(AadharResponse) private aadharResponseRepo: Repository<AadharResponse>,
     @InjectRepository(UserDocument) private documentRepository: Repository<UserDocument>,
   ) { }
@@ -951,22 +954,20 @@ export class UsersService {
 
       const data = await this.payoutService.payoutAccountNew(userId, payload);
       if (data?.referenceId) {
-        // const newAccount = this.transactionRepo.create({
-        //   name: userName,
-        //   type: 'CREDIT',
-        //   serviceUsed: 'WALLET',
-        //   amount: amount,
-        //   message: message,
-        //   description: message,
-        //   sender: userId,
-        //   receiver: userId,
-        //   reference: data.referenceId,
-        //   transactionDate: new Date(),
-        //   status: TransactionStatus.SUCCESS,  
-        //   ifsc: ifsc,                        
-        //   bank: accountNumber.toString(),    
-        // });
-        // const saved = await this.transactionRepo.save(newAccount);
+        const newAccount = this.transactionMoneyRepo.create({
+          name: userName,
+          type: 'CREDIT',
+          amount: Number(amount),   // ✅ convert string → number
+          message: message,
+          reference: data.referenceId,
+          transaction_date: new Date(),
+          status: "SUCCESS",  
+          ifsc: ifsc, 
+          user_id: userId,
+          transaction_id: data.referenceId,
+          bank: accountNumber.toString(),    
+        });
+        const saved = await this.transactionMoneyRepo.save(newAccount);
         return { success: true, message: "Money sent successfully." };
       }
       return data;
