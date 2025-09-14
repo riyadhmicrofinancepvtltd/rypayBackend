@@ -790,10 +790,10 @@ let UsersService = class UsersService {
                 reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
                 transaction_date: new Date(),
                 status: "SUCCESS",
-                ifsc: ifsc,
+                ifsc: null,
                 user_id: userId,
                 transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
-                bank: accountNumber.toString(),
+                bank: null,
             });
             const saved = await this.transactionMoneyRepo.save(newAccount);
             return { success: true, message: "Money sent successfully." };
@@ -847,7 +847,7 @@ let UsersService = class UsersService {
                     ifsc: ifsc,
                     user_id: userId,
                     transaction_id: data.referenceId,
-                    bank: accountNumber.toString(),
+                    bank: upiId?.toString() || null,
                 });
                 const saved = await this.transactionMoneyRepo.save(newAccount);
             }
