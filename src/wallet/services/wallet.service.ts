@@ -114,6 +114,7 @@ export class WalletService {
 
   async getWallet(query: FindOptionsWhere<Wallet>) {
     const wallet = await this.walletRepository.findOneBy(query);
+    console.log("wallet============================>", wallet);
     const { user, createdAt, updatedAt, ...walletData } = wallet;
     return {
       ...walletData,

@@ -814,9 +814,7 @@ let UsersService = class UsersService {
                 upiUserName: upiUserName,
                 message: message
             };
-            console.log("Payout UPI Payload:", payload);
             const data = await this.payoutService.payoutUPINew(userId, payload);
-            console.log("Payout UPI Response:", data);
             if (data?.referenceId) {
                 const newAccount = this.transactionMoneyRepo.create({
                     name: userName,

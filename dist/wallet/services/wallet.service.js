@@ -103,6 +103,7 @@ let WalletService = class WalletService {
     }
     async getWallet(query) {
         const wallet = await this.walletRepository.findOneBy(query);
+        console.log("wallet============================>", wallet);
         const { user, createdAt, updatedAt, ...walletData } = wallet;
         return {
             ...walletData,

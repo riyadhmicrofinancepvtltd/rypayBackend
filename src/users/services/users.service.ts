@@ -968,14 +968,12 @@ export class UsersService {
         upiUserName: upiUserName,
         message: message
       } as any
-      console.log("Payout UPI Payload:", payload);
       const data = await this.payoutService.payoutUPINew(userId, payload);
-      console.log("Payout UPI Response:", data);
       if (data?.referenceId) {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
           type: 'DEBIT',
-          amount: Number(amount),   // ✅ convert string → number
+          amount: Number(amount),   
           message: message,
           reference: data.referenceId,
           transaction_date: new Date(),
