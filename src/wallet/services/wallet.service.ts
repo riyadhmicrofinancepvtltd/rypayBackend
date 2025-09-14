@@ -112,39 +112,19 @@ export class WalletService {
     return this.walletRepository.findOneBy(query);
   }
 
-  // async getWallet(query: FindOptionsWhere<Wallet>) {
-  //   const wallet = await this.walletRepository.findOneBy(query);
-  //   console.log("wallet============================>", wallet);
-  //   const { user, createdAt, updatedAt, ...walletData } = wallet;
-  //   return {
-  //     ...walletData,
-  //     email: user.email,
-  //     firstName: user.firstName,
-  //     lastName: user.lastName,
-  //     updatedAt: updatedAt
-  //   };
-  // }
-
   async getWallet(query: FindOptionsWhere<Wallet>) {
-    const wallet = await this.walletRepository.findOne({
-      where: query,
-      relations: ['user'], // ensure user relation is loaded
-    });
-  
-    if (!wallet) {
-      throw new NotFoundException('Wallet not found');
-    }
-  
+    const wallet = await this.walletRepository.findOneBy(query);
     const { user, createdAt, updatedAt, ...walletData } = wallet;
-  
     return {
       ...walletData,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      updatedAt,
+      updatedAt: updatedAt
     };
   }
+
+
   
 
   async getWalletQRCode(query: FindOptionsWhere<Wallet>) {

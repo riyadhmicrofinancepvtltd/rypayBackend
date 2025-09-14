@@ -102,20 +102,14 @@ let WalletService = class WalletService {
         return this.walletRepository.findOneBy(query);
     }
     async getWallet(query) {
-        const wallet = await this.walletRepository.findOne({
-            where: query,
-            relations: ['user'],
-        });
-        if (!wallet) {
-            throw new common_1.NotFoundException('Wallet not found');
-        }
+        const wallet = await this.walletRepository.findOneBy(query);
         const { user, createdAt, updatedAt, ...walletData } = wallet;
         return {
             ...walletData,
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            updatedAt,
+            updatedAt: updatedAt
         };
     }
     async getWalletQRCode(query) {
