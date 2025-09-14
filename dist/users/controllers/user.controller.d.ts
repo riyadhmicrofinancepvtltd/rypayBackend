@@ -90,7 +90,15 @@ export declare class UsersController {
         };
     }>;
     getTransactionHistory(req: any): Promise<{
+        success: boolean;
+        message: string;
         transactionMoney: import("../../core/entities/transaction-money.entity").TransactionMoney[];
+        pagination: {
+            totalItems: number;
+            totalPages: number;
+            currentPage: number;
+            limit: number;
+        };
     }>;
     sendMoney(req: any, pinRequest: SendMoneyRequestDto): Promise<{
         referenceId: string;

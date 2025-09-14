@@ -723,18 +723,28 @@ let UsersService = class UsersService {
             }
         };
     }
-    async getTransactionHistory(userId) {
+    async getTransactionHistory(userId, page = 1, limit = 10) {
         const user = await this.userRepository.findOneBy({ id: userId });
         if (!user) {
             throw new common_1.BadRequestException(['user not found']);
         }
-        const transactionMoney = await this.transactionMoneyRepo.find({
-            where: {
-                user_id: userId,
-            },
+        const [transactionMoney, totalItems] = await this.transactionMoneyRepo.findAndCount({
+            where: { user_id: userId },
+            order: { transaction_date: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
         });
+        const totalPages = Math.ceil(totalItems / limit);
         return {
-            transactionMoney: transactionMoney
+            success: true,
+            message: "Fetched Transaction History",
+            transactionMoney,
+            pagination: {
+                totalItems,
+                totalPages,
+                currentPage: page,
+                limit,
+            },
         };
     }
     async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifsc, mode, userName) {

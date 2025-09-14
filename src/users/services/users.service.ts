@@ -856,20 +856,34 @@ export class UsersService {
   }
 
 
-  async getTransactionHistory(userId: string) {
+  async getTransactionHistory(userId: string, page = 1, limit = 10) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
-    const transactionMoney = await this.transactionMoneyRepo.find({
-      where: {
-        user_id: userId,
-      },
+  
+    const [transactionMoney, totalItems] = await this.transactionMoneyRepo.findAndCount({
+      where: { user_id: userId },
+      order: { transaction_date: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+  
+    const totalPages = Math.ceil(totalItems / limit);
+  
     return {
-      transactionMoney: transactionMoney
-    }
+      success: true,
+      message: "Fetched Transaction History",
+      transactionMoney,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+    };
   }
+  
   async sendMoney(
     userId: string,
     paymentMode: string,
