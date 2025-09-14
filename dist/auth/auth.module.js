@@ -16,6 +16,7 @@ const users_service_1 = require("../users/services/users.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../core/entities/user.entity");
 const virtual_account_entity_1 = require("../core/entities/virtual-account.entity");
+const transaction_money_entity_1 = require("../core/entities/transaction-money.entity");
 const config_1 = require("@nestjs/config");
 const refresh_token_entity_1 = require("../core/entities/refresh-token.entity");
 const otp_info_entity_1 = require("../core/entities/otp-info.entity");
@@ -49,7 +50,7 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             jwt_1.JwtModule.register({ global: true }),
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, virtual_account_entity_1.VirtualAccount, refresh_token_entity_1.RefreshToken, otp_info_entity_1.OtpInfo, wallet_entity_1.Wallet, transactions_entity_1.Transaction, order_entity_1.Order, document_entity_1.UserDocument, aadhar_verification_entity_1.AadharResponse]),
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, virtual_account_entity_1.VirtualAccount, transaction_money_entity_1.TransactionMoney, refresh_token_entity_1.RefreshToken, otp_info_entity_1.OtpInfo, wallet_entity_1.Wallet, transactions_entity_1.Transaction, order_entity_1.Order, document_entity_1.UserDocument, aadhar_verification_entity_1.AadharResponse]),
             pdf_module_1.PdfModule,
             cache_manager_1.CacheModule.register(),
             axios_1.HttpModule,
