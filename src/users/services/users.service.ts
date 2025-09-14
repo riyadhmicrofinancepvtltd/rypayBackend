@@ -978,10 +978,10 @@ export class UsersService {
           reference: data.referenceId,
           transaction_date: new Date(),
           status: "SUCCESS",  
-          ifsc: ifsc, 
+          ifsc: null, 
           user_id: userId,
           transaction_id: data.referenceId,
-          bank: accountNumber.toString(),    
+          bank: upiId.toString(),    
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
         return { success: true, message: "Money sent successfully." };
