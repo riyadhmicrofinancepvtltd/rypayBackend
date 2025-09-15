@@ -93,6 +93,7 @@ export class ExternalService {
                 type: Webhook_Type.Payout,
                 additionalData: payload
             }
+            console.log("payload====???",payload)
            // await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.log(payload);
             return {
