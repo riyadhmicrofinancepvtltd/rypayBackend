@@ -92,6 +92,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
         }
     }
     async handleBusyBoxPayoutEvents(payload) {
+        console.log("payload in service===================================>", payload);
         try {
             const transactionModel = {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
@@ -104,6 +105,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
             };
         }
         catch (err) {
+            console.log("<====================Error===========================================>", err);
             throw err;
         }
     }
