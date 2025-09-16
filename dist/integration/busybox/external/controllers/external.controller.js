@@ -38,7 +38,9 @@ let ExternalController = class ExternalController {
     async handlePayoutEvents(payload) {
         return this.externalService.handlePayoutEvents(payload);
     }
-    async handleBusyBoxPayoutEvents(payload) {
+    async handleBusyBoxPayoutEvents(payload, req) {
+        console.log('📥 Raw payload string:', JSON.stringify(req.body, null, 2));
+        console.log('📥 Parsed payload object:', payload);
         return this.externalService.handleBusyBoxPayoutEvents(payload);
     }
 };
@@ -81,8 +83,9 @@ __decorate([
 __decorate([
     (0, common_1.Post)('webhooks/busybox'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [upi_transaction_payload_dto_1.TransactionDto]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ExternalController.prototype, "handleBusyBoxPayoutEvents", null);
 exports.ExternalController = ExternalController = __decorate([

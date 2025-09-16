@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post,Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { TransactionNotifyPayload } from '../interfaces/transaction-notify.interface';
 import { KycWebhookPayload } from '../interfaces/kyc-webhook-payload.interface';
 import { WalletService } from 'src/wallet/services/wallet.service';
@@ -45,9 +46,16 @@ export class ExternalController {
     // webhook processing logic
   }
 
+  // @Post('webhooks/busybox')
+  // async handleBusyBoxPayoutEvents(@Body() payload: TransactionDto) {
+  //   return this.externalService.handleBusyBoxPayoutEvents(payload);
+  //   // webhook processing logic
+  // }
   @Post('webhooks/busybox')
-  async handleBusyBoxPayoutEvents(@Body() payload: TransactionDto) {
+  async handleBusyBoxPayoutEvents(@Body() payload: any, @Req() req: Request) {
+    console.log('📥 Raw payload string:', JSON.stringify(req.body, null, 2));
+    console.log('📥 Parsed payload object:', payload);
+
     return this.externalService.handleBusyBoxPayoutEvents(payload);
-    // webhook processing logic
   }
 }

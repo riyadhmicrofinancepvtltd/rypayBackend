@@ -92,20 +92,17 @@ let ExternalService = ExternalService_1 = class ExternalService {
         }
     }
     async handleBusyBoxPayoutEvents(payload) {
-        console.log("payload in service===================================>", payload);
         try {
             const transactionModel = {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
-                additionalData: payload
+                additionalData: payload,
             };
-            console.log("payload====???", payload);
-            this.logger.log(payload);
-            return {
-                message: 'Success'
-            };
+            console.log('✅ Processed Transaction Model:', transactionModel);
+            this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
+            return { message: 'Success' };
         }
         catch (err) {
-            console.log("<====================Error===========================================>", err);
+            console.log('❌ Error while handling BusyBox webhook:', err);
             throw err;
         }
     }

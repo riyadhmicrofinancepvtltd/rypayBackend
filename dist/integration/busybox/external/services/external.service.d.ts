@@ -23,7 +23,7 @@ export declare class ExternalService {
     handlePayoutEvents(payload: unknown): Promise<{
         message: string;
     }>;
-    handleBusyBoxPayoutEvents(payload: unknown): Promise<{
+    handleBusyBoxPayoutEvents(payload: any): Promise<{
         message: string;
     }>;
     handleDebitEvents(payload: TransactionDto): Promise<{

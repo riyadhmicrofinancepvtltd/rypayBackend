@@ -16,7 +16,7 @@ export class ExternalService {
         private walletService: WalletService,
         private userService: UsersService,
     ) {
-       this.logger =  new Logger(ExternalService.name)
+        this.logger = new Logger(ExternalService.name)
     }
 
     // debit amount from wallet
@@ -31,7 +31,7 @@ export class ExternalService {
             return {
                 message: 'Success'
             }
-        } catch(err) {
+        } catch (err) {
             // log message
             throw err
         }
@@ -87,25 +87,44 @@ export class ExternalService {
             throw err;
         }
     }
-    async handleBusyBoxPayoutEvents(payload: unknown) {
-console.log("payload in service===================================>",payload)
+    // async handleBusyBoxPayoutEvents(payload: any) {
+    //     console.log("payload in service===================================>", payload)
+    //     try {
+    //         const transactionModel = {
+    //             type: Webhook_Type.Payout,
+    //             additionalData: payload
+    //         }
+    //         console.log("payload====???", payload)
+    //         // await this.busyBoxWebHookRepo.save(transactionModel);
+    //         this.logger.log(payload);
+    //         return {
+    //             message: 'Success'
+    //         }
+    //     } catch (err) {
+    //         // log message
+    //         console.log("<====================Error===========================================>", err)
+    //         throw err;
+    //     }
+    // }
+    async handleBusyBoxPayoutEvents(payload: any) {
         try {
-            const transactionModel = {
-                type: Webhook_Type.Payout,
-                additionalData: payload
-            }
-            console.log("payload====???",payload)
-           // await this.busyBoxWebHookRepo.save(transactionModel);
-            this.logger.log(payload);
-            return {
-                message: 'Success'
-            }
+          const transactionModel = {
+            type: Webhook_Type.Payout,
+            additionalData: payload,
+          };
+    
+          console.log('✅ Processed Transaction Model:', transactionModel);
+          this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
+    
+          // Save to DB later
+          // await this.busyBoxWebHookRepo.save(transactionModel);
+    
+          return { message: 'Success' };
         } catch (err) {
-            // log message
-            console.log("<====================Error===========================================>",err)
-            throw err;
+          console.log('❌ Error while handling BusyBox webhook:', err);
+          throw err;
         }
-    }
+      }
 
     async handleDebitEvents(payload: TransactionDto) {
         try {

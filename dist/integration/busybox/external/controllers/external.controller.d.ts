@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { TransactionNotifyPayload } from '../interfaces/transaction-notify.interface';
 import { KycWebhookPayload } from '../interfaces/kyc-webhook-payload.interface';
 import { ExternalService } from '../services/external.service';
@@ -20,7 +21,7 @@ export declare class ExternalController {
     handlePayoutEvents(payload: TransactionDto): Promise<{
         message: string;
     }>;
-    handleBusyBoxPayoutEvents(payload: TransactionDto): Promise<{
+    handleBusyBoxPayoutEvents(payload: any, req: Request): Promise<{
         message: string;
     }>;
 }
