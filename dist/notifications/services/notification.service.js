@@ -140,6 +140,33 @@ let NotificationService = class NotificationService {
         const pagination = new pagination_response_dto_1.Pagination();
         return pagination.PaginateResponse(notifications, total, page, limit);
     }
+    async getNotificationList(userId, page, limit) {
+        const user = await this.userRepo.findOneBy({ id: userId });
+        if (!user) {
+            throw new common_1.ForbiddenException('user not found');
+        }
+        const userCreatedDate = user.createdAt;
+        const [notifications, totalItems] = await this.notificationRepository
+            .createQueryBuilder('notification')
+            .where('(notification.userId = :userId OR notification.userId IS NULL)', { userId })
+            .andWhere('notification.createdAt >= :userCreatedDate', { userCreatedDate })
+            .skip((page - 1) * limit)
+            .take(limit)
+            .orderBy('notification.createdAt', 'DESC')
+            .getManyAndCount();
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            success: true,
+            message: "Fetched notifications successfully",
+            notifications,
+            pagination: {
+                totalItems,
+                totalPages,
+                currentPage: page,
+                limit,
+            },
+        };
+    }
     async markAllRead(userId) {
         const user = await this.userRepo.findOneBy({ id: userId });
         if (!user) {

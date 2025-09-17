@@ -62,4 +62,15 @@ export class NotificationController {
   ): Promise<PaginatedResponseDto<Notification>> {
     return this.notificationService.findAllPaginated(req.user.sub, page, limit);
   }
+
+  @Post('list-new')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'get notifications' })
+  async getNotificationList(
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10,
+    @Req() req: any
+  ): Promise<PaginatedResponseDto<Notification>> {
+    return this.notificationService.getNotificationList(req.user.sub, page, limit);
+  }
 }

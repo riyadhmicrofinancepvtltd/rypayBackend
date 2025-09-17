@@ -14,4 +14,5 @@ export declare class NotificationController {
         message: string;
     }>;
     listNotifcation(page: number, limit: number, req: any): Promise<PaginatedResponseDto<Notification>>;
+    getNotificationList(page: number, limit: number, req: any): Promise<PaginatedResponseDto<Notification>>;
 }

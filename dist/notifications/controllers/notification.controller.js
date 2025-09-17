@@ -48,6 +48,9 @@ let NotificationController = class NotificationController {
     async listNotifcation(page = 1, limit = 10, req) {
         return this.notificationService.findAllPaginated(req.user.sub, page, limit);
     }
+    async getNotificationList(page = 1, limit = 10, req) {
+        return this.notificationService.getNotificationList(req.user.sub, page, limit);
+    }
 };
 exports.NotificationController = NotificationController;
 __decorate([
@@ -88,6 +91,17 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], NotificationController.prototype, "listNotifcation", null);
+__decorate([
+    (0, common_1.Post)('list-new'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'get notifications' }),
+    __param(0, (0, common_1.Query)('page', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:returntype", Promise)
+], NotificationController.prototype, "getNotificationList", null);
 exports.NotificationController = NotificationController = __decorate([
     (0, common_1.Controller)('notifications'),
     (0, swagger_1.ApiTags)('notifications'),

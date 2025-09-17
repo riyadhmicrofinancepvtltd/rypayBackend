@@ -32,6 +32,7 @@ export declare class NotificationService {
             hasNextPage: boolean;
         };
     }>;
+    getNotificationList(userId: string, page: number, limit: number): Promise<any>;
     markAllRead(userId: string): Promise<boolean>;
     markAsRead(notificationId: number): Promise<Notification>;
     deleteOldNotifications(): Promise<void>;
