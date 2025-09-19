@@ -798,6 +798,14 @@ let UsersService = class UsersService {
                 bank: null,
             });
             const saved = await this.transactionMoneyRepo.save(newAccount);
+            const newReward = this.rewardRepo.create({
+                balance: 1,
+                is_read: false,
+                message: message,
+                user_id: userId,
+                created_at: new Date(),
+            });
+            const saved1 = await this.rewardRepo.save(newReward);
             return { success: true, message: "Money sent successfully." };
         }
         if (paymentMode === "upi") {
