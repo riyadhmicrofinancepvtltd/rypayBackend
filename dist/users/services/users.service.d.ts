@@ -140,6 +140,7 @@ export declare class UsersService {
             currentPage: number;
             limit: number;
         };
+        totalBalance: number;
     }>;
     createOrder(userId: string, pinRequest: CreateOrderRequestDto): Promise<{
         success: boolean;

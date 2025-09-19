@@ -1112,18 +1112,54 @@ export class UsersService {
 
   }
 
+  // async getRewardHistory(userId: string, page = 1, limit = 10) {
+  //   const user = await this.userRepository.findOneBy({ id: userId });
+  //   if (!user) {
+  //     throw new BadRequestException(['user not found']);
+  //   }
+  //   const [reward, totalItems] = await this.rewardRepo.findAndCount({
+  //     where: { user_id: userId },
+  //     order: { created_at: 'DESC' },
+  //     skip: (page - 1) * limit,
+  //     take: limit,
+  //   });
+  //   const totalPages = Math.ceil(totalItems / limit);
+  //   return {
+  //     success: true,
+  //     message: "Fetched Reward History",
+  //     reward,
+  //     pagination: {
+  //       totalItems,
+  //       totalPages,
+  //       currentPage: page,
+  //       limit,
+  //     },
+  //   };
+  // }
   async getRewardHistory(userId: string, page = 1, limit = 10) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
+  
+    // fetch rewards with pagination
     const [reward, totalItems] = await this.rewardRepo.findAndCount({
       where: { user_id: userId },
       order: { created_at: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
+  
+    // calculate sum of balances where is_read = true
+    const { totalBalance } = await this.rewardRepo
+      .createQueryBuilder('reward')
+      .select('COALESCE(SUM(reward.balance), 0)', 'totalBalance')
+      .where('reward.user_id = :userId', { userId })
+      .andWhere('reward.is_read = true')
+      .getRawOne();
+  
     const totalPages = Math.ceil(totalItems / limit);
+  
     return {
       success: true,
       message: "Fetched Reward History",
@@ -1134,8 +1170,10 @@ export class UsersService {
         currentPage: page,
         limit,
       },
+      totalBalance: Number(totalBalance), // convert string → number
     };
   }
+  
 
   async createOrder(userId: string, pinRequest: CreateOrderRequestDto) {
     const user = await this.findUserById(userId);

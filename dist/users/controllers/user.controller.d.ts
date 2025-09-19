@@ -123,6 +123,7 @@ export declare class UsersController {
             currentPage: number;
             limit: number;
         };
+        totalBalance: number;
     }>;
     createOrder(req: any, pinRequest: CreateOrderRequestDto): Promise<{
         success: boolean;

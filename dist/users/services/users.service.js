@@ -959,6 +959,12 @@ let UsersService = class UsersService {
             skip: (page - 1) * limit,
             take: limit,
         });
+        const { totalBalance } = await this.rewardRepo
+            .createQueryBuilder('reward')
+            .select('COALESCE(SUM(reward.balance), 0)', 'totalBalance')
+            .where('reward.user_id = :userId', { userId })
+            .andWhere('reward.is_read = true')
+            .getRawOne();
         const totalPages = Math.ceil(totalItems / limit);
         return {
             success: true,
@@ -970,6 +976,7 @@ let UsersService = class UsersService {
                 currentPage: page,
                 limit,
             },
+            totalBalance: Number(totalBalance),
         };
     }
     async createOrder(userId, pinRequest) {
