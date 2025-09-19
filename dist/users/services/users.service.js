@@ -799,6 +799,7 @@ let UsersService = class UsersService {
             });
             const saved = await this.transactionMoneyRepo.save(newAccount);
             const newReward = this.rewardRepo.create({
+                name: userName,
                 balance: 1,
                 is_read: false,
                 message: message,
@@ -841,6 +842,7 @@ let UsersService = class UsersService {
                 });
                 const saved = await this.transactionMoneyRepo.save(newAccount);
                 const newReward = this.rewardRepo.create({
+                    name: userName,
                     balance: 1,
                     is_read: false,
                     message: message,
@@ -903,6 +905,7 @@ let UsersService = class UsersService {
                 });
                 const saved = await this.transactionMoneyRepo.save(newAccount);
                 const newReward = this.rewardRepo.create({
+                    name: userName,
                     balance: 1,
                     is_read: false,
                     message: message,
@@ -943,7 +946,7 @@ let UsersService = class UsersService {
         user.is_read = true;
         await this.rewardRepo.save(user);
         const newAccount = this.transactionMoneyRepo.create({
-            name: "Reward",
+            name: user.name,
             type: 'DEBIT',
             amount: Number(user.balance),
             message: user.message || "",
@@ -956,6 +959,9 @@ let UsersService = class UsersService {
             bank: null,
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
+        let walletTo = await this.walletRepository.findOneBy({ user: { id: userId } });
+        walletTo.balance = walletTo.balance + Number(user.balance);
+        await this.walletRepository.save(walletTo);
         return {
             success: true,
             message: "Reward marked as read",

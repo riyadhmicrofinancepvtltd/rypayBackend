@@ -38,6 +38,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
 ], Reward.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Reward.prototype, "name", void 0);
 exports.Reward = Reward = __decorate([
     (0, typeorm_1.Entity)('rewards')
 ], Reward);

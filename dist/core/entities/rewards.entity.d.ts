@@ -5,4 +5,5 @@ export declare class Reward {
     message: string;
     user_id: string;
     created_at: Date;
+    name: string;
 }

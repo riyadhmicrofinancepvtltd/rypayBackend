@@ -1110,7 +1110,7 @@ export class UsersService {
       const newAccount = this.transactionMoneyRepo.create({
         name: user.name,
         type: 'DEBIT',
-        amount: Number(user.balance),   // ✅ convert string → number
+        amount: Number(user.balance),   
         message: user.message || "",
         reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
         transaction_date: new Date(),
@@ -1121,6 +1121,9 @@ export class UsersService {
         bank: null,    
       });
       const saved = await this.transactionMoneyRepo.save(newAccount);
+      let walletTo = await this.walletRepository.findOneBy({ user: { id: userId } });
+        walletTo.balance = walletTo.balance + Number(user.balance)
+        await this.walletRepository.save(walletTo);
       return {
         success: true,
         message: "Reward marked as read",
