@@ -932,7 +932,7 @@ let UsersService = class UsersService {
         }
     }
     async scratchReward(userId, rewardRequest) {
-        const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id) } });
+        const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id), is_read: false } });
         if (!user) {
             return {
                 success: false,
@@ -942,6 +942,20 @@ let UsersService = class UsersService {
         }
         user.is_read = true;
         await this.rewardRepo.save(user);
+        const newAccount = this.transactionMoneyRepo.create({
+            name: "Reward",
+            type: 'DEBIT',
+            amount: Number(user.balance),
+            message: user.message || "",
+            reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+            transaction_date: new Date(),
+            status: "SUCCESS",
+            ifsc: null,
+            user_id: userId,
+            transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+            bank: null,
+        });
+        const saved = await this.transactionMoneyRepo.save(newAccount);
         return {
             success: true,
             message: "Reward marked as read",

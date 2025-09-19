@@ -1093,7 +1093,7 @@ export class UsersService {
   }
 
   async scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto) {
-    const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id) } });
+    const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id),is_read: false } });
     if (!user) {
      return {
        success: false,
@@ -1104,6 +1104,20 @@ export class UsersService {
 
     user.is_read = true;
       await this.rewardRepo.save(user);
+      const newAccount = this.transactionMoneyRepo.create({
+        name: "Reward",
+        type: 'DEBIT',
+        amount: Number(user.balance),   // ✅ convert string → number
+        message: user.message || "",
+        reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+        transaction_date: new Date(),
+        status: "SUCCESS",  
+        ifsc: null, 
+        user_id: userId,
+        transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+        bank: null,    
+      });
+      const saved = await this.transactionMoneyRepo.save(newAccount);
       return {
         success: true,
         message: "Reward marked as read",
@@ -1112,30 +1126,7 @@ export class UsersService {
 
   }
 
-  // async getRewardHistory(userId: string, page = 1, limit = 10) {
-  //   const user = await this.userRepository.findOneBy({ id: userId });
-  //   if (!user) {
-  //     throw new BadRequestException(['user not found']);
-  //   }
-  //   const [reward, totalItems] = await this.rewardRepo.findAndCount({
-  //     where: { user_id: userId },
-  //     order: { created_at: 'DESC' },
-  //     skip: (page - 1) * limit,
-  //     take: limit,
-  //   });
-  //   const totalPages = Math.ceil(totalItems / limit);
-  //   return {
-  //     success: true,
-  //     message: "Fetched Reward History",
-  //     reward,
-  //     pagination: {
-  //       totalItems,
-  //       totalPages,
-  //       currentPage: page,
-  //       limit,
-  //     },
-  //   };
-  // }
+ 
   async getRewardHistory(userId: string, page = 1, limit = 10) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
