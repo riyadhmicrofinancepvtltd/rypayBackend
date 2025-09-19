@@ -6,6 +6,7 @@ import { PayoutService } from 'src/integration/busybox/external/services/payout.
 import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
+import { Reward } from 'src/core/entities/rewards.entity';
 import { Transaction } from 'src/core/entities/transactions.entity';
 import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
@@ -46,12 +47,13 @@ export declare class UsersService {
     private userRepository;
     private walletRepository;
     private virtualAccountRepo;
+    private rewardRepo;
     private transactionRepo;
     private transactionMoneyRepo;
     private aadharResponseRepo;
     private documentRepository;
     private readonly saltRounds;
-    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, payoutService: PayoutService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, transactionRepo: Repository<Transaction>, transactionMoneyRepo: Repository<TransactionMoney>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
+    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, payoutService: PayoutService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, rewardRepo: Repository<Reward>, transactionRepo: Repository<Transaction>, transactionMoneyRepo: Repository<TransactionMoney>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
     registerUser(userRequestDto: UserRequestDto): Promise<UserResponse>;
     registerUserNew(userRequestDto: UserRequestDto): Promise<UserResponse>;
     validateRefferelCode(referrelCode: string | null, queryRunner: QueryRunner): Promise<User>;

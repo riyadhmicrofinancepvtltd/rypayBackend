@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/services/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
+import { Reward } from 'src/core/entities/rewards.entity'
 import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from 'src/core/entities/refresh-token.entity';
@@ -38,7 +39,7 @@ import { AadharResponse } from 'src/core/entities/aadhar-verification.entity';
 @Module({
   imports: [
     JwtModule.register({ global: true }),
-    TypeOrmModule.forFeature([User,VirtualAccount,TransactionMoney, RefreshToken, OtpInfo, Wallet, Transaction, Order, UserDocument, AadharResponse]),
+    TypeOrmModule.forFeature([User,VirtualAccount,Reward,TransactionMoney, RefreshToken, OtpInfo, Wallet, Transaction, Order, UserDocument, AadharResponse]),
     PdfModule,
     CacheModule.register(),
     HttpModule,

@@ -20,6 +20,7 @@ import { CardStatus } from 'src/core/entities/card.entity';
 import { UserDocument } from 'src/core/entities/document.entity';
 import { User } from 'src/core/entities/user.entity';
 import { VirtualAccount } from 'src/core/entities/virtual-account.entity'
+import { Reward } from 'src/core/entities/rewards.entity'
 import { Transaction } from 'src/core/entities/transactions.entity';
 import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
@@ -72,6 +73,7 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
     @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
+    @InjectRepository(Reward) private rewardRepo: Repository<Reward>,
     @InjectRepository(Transaction) private transactionRepo: Repository<Transaction>,
     @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>,
     @InjectRepository(AadharResponse) private aadharResponseRepo: Repository<AadharResponse>,
@@ -990,7 +992,7 @@ export class UsersService {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
           type: 'DEBIT',
-          amount: Number(amount),   // ✅ convert string → number
+          amount: Number(amount),   
           message: message,
           reference: data.referenceId,
           transaction_date: new Date(),
@@ -1042,6 +1044,15 @@ export class UsersService {
           bank: accountNumber.toString(),    
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
+        const newReward = this.rewardRepo.create({
+          balance:1,
+          is_read: false,
+          message: message,
+          user_id: userId,
+          created_at: new Date(),
+        });
+        const saved1 = await this.rewardRepo.save(newReward);
+
         return { success: true, message: "Money sent successfully." };
       }else{
         const newAccount = this.transactionMoneyRepo.create({
