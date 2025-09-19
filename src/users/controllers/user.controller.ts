@@ -575,6 +575,18 @@ async getTransactionHistory(
     return await this.userService.scratchReward(req.user.sub,rewardRequest);
   }
 
+  @Get('get-reward-history')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getRewardHistory(
+    @Req() req: any,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return await this.userService.getRewardHistory(req.user.sub, Number(page), Number(limit));
+  }
+
   @Post('create-order-request')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

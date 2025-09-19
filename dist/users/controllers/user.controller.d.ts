@@ -113,6 +113,17 @@ export declare class UsersController {
         message: string;
         data: import("../../core/entities/rewards.entity").Reward;
     }>;
+    getRewardHistory(req: any, page?: number, limit?: number): Promise<{
+        success: boolean;
+        message: string;
+        reward: import("../../core/entities/rewards.entity").Reward[];
+        pagination: {
+            totalItems: number;
+            totalPages: number;
+            currentPage: number;
+            limit: number;
+        };
+    }>;
     createOrder(req: any, pinRequest: CreateOrderRequestDto): Promise<{
         success: boolean;
         message: string;

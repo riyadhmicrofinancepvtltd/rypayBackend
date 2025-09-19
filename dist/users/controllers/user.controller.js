@@ -158,6 +158,9 @@ let UsersController = class UsersController {
     async scratchReward(req, rewardRequest) {
         return await this.userService.scratchReward(req.user.sub, rewardRequest);
     }
+    async getRewardHistory(req, page = 1, limit = 10) {
+        return await this.userService.getRewardHistory(req.user.sub, Number(page), Number(limit));
+    }
     async createOrder(req, pinRequest) {
         return await this.userService.createOrder(req.user.sub, pinRequest);
     }
@@ -724,6 +727,18 @@ __decorate([
     __metadata("design:paramtypes", [Object, pin_request_dto_1.ScratchRewardRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "scratchReward", null);
+__decorate([
+    (0, common_1.Get)('get-reward-history'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Number]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getRewardHistory", null);
 __decorate([
     (0, common_1.Post)('create-order-request'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

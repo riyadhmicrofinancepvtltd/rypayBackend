@@ -1111,6 +1111,32 @@ export class UsersService {
       };
 
   }
+
+  async getRewardHistory(userId: string, page = 1, limit = 10) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new BadRequestException(['user not found']);
+    }
+    const [reward, totalItems] = await this.rewardRepo.findAndCount({
+      where: { user_id: userId },
+      order: { created_at: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    const totalPages = Math.ceil(totalItems / limit);
+    return {
+      success: true,
+      message: "Fetched Reward History",
+      reward,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+    };
+  }
+
   async createOrder(userId: string, pinRequest: CreateOrderRequestDto) {
     const user = await this.findUserById(userId);
     if (!user) {

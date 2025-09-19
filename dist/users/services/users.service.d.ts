@@ -130,6 +130,17 @@ export declare class UsersService {
         message: string;
         data: Reward;
     }>;
+    getRewardHistory(userId: string, page?: number, limit?: number): Promise<{
+        success: boolean;
+        message: string;
+        reward: Reward[];
+        pagination: {
+            totalItems: number;
+            totalPages: number;
+            currentPage: number;
+            limit: number;
+        };
+    }>;
     createOrder(userId: string, pinRequest: CreateOrderRequestDto): Promise<{
         success: boolean;
         message: string;
