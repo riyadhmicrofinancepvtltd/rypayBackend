@@ -831,8 +831,15 @@ let UsersService = class UsersService {
                     transaction_id: data.referenceId,
                     bank: upiId?.toString() || null,
                 });
-                console.log("newAccount", newAccount);
                 const saved = await this.transactionMoneyRepo.save(newAccount);
+                const newReward = this.rewardRepo.create({
+                    balance: 1,
+                    is_read: false,
+                    message: message,
+                    user_id: userId,
+                    created_at: new Date(),
+                });
+                const saved1 = await this.rewardRepo.save(newReward);
                 return { success: true, message: "Money sent successfully." };
             }
             else {
