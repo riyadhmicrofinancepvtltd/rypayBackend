@@ -2,7 +2,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto, ToContactRequestDto, SendMoneyRequestDto, CreateOrderRequestDto, PaymentStatusRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto, ToContactRequestDto, SendMoneyRequestDto, CreateOrderRequestDto, PaymentStatusRequestDto, ScratchRewardRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto";
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -107,6 +107,11 @@ export declare class UsersController {
     } | {
         success: boolean;
         message: string;
+    }>;
+    scratchReward(req: any, rewardRequest: ScratchRewardRequestDto): Promise<{
+        success: boolean;
+        message: string;
+        data: import("../../core/entities/rewards.entity").Reward;
     }>;
     createOrder(req: any, pinRequest: CreateOrderRequestDto): Promise<{
         success: boolean;

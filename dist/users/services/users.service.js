@@ -931,6 +931,23 @@ let UsersService = class UsersService {
             return data;
         }
     }
+    async scratchReward(userId, rewardRequest) {
+        const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id) } });
+        if (!user) {
+            return {
+                success: false,
+                message: "Reward not found",
+                data: null,
+            };
+        }
+        user.is_read = true;
+        await this.rewardRepo.save(user);
+        return {
+            success: true,
+            message: "Reward marked as read",
+            data: user,
+        };
+    }
     async createOrder(userId, pinRequest) {
         const user = await this.findUserById(userId);
         if (!user) {

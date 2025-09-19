@@ -40,7 +40,7 @@ import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UserDocumentResponseDto } from '../dto/user-documents.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
-import { CreateOrderRequestDto, PaymentStatusRequestDto } from '../dto/pin-request.dto';
+import { CreateOrderRequestDto, PaymentStatusRequestDto,ScratchRewardRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UserMapper } from '../mapper/user-mapper';
@@ -1092,6 +1092,25 @@ export class UsersService {
 
   }
 
+  async scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto) {
+    const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id) } });
+    if (!user) {
+     return {
+       success: false,
+       message: "Reward not found",
+       data: null,
+     };
+    }
+
+    user.is_read = true;
+      await this.rewardRepo.save(user);
+      return {
+        success: true,
+        message: "Reward marked as read",
+        data: user,
+      };
+
+  }
   async createOrder(userId: string, pinRequest: CreateOrderRequestDto) {
     const user = await this.findUserById(userId);
     if (!user) {

@@ -42,3 +42,6 @@ export declare class CreateOrderRequestDto {
 export declare class PaymentStatusRequestDto {
     order_id: string;
 }
+export declare class ScratchRewardRequestDto {
+    reward_id: string;
+}

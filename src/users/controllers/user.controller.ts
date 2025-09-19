@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto,PaymentStatusRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto,PaymentStatusRequestDto,ScratchRewardRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -563,6 +563,18 @@ async getTransactionHistory(
       pinRequest.userName,
     );
   }
+
+  @Post('scratch-reward')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async scratchReward(
+    @Req() req: any,
+    @Body() rewardRequest: ScratchRewardRequestDto,
+  ) {
+    return await this.userService.scratchReward(req.user.sub,rewardRequest);
+  }
+
   @Post('create-order-request')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

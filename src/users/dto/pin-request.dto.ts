@@ -115,4 +115,10 @@ export class SendMoneyRequestDto {
  }
 
 
+ export class ScratchRewardRequestDto {
+    @ApiProperty()
+    reward_id: string;
+ }
+
+
  

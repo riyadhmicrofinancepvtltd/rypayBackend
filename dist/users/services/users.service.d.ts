@@ -20,7 +20,7 @@ import { DataSource, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto";
-import { CreateOrderRequestDto, PaymentStatusRequestDto } from '../dto/pin-request.dto';
+import { CreateOrderRequestDto, PaymentStatusRequestDto, ScratchRewardRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UploadFileService } from './updaload-file.service';
@@ -124,6 +124,11 @@ export declare class UsersService {
     } | {
         success: boolean;
         message: string;
+    }>;
+    scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto): Promise<{
+        success: boolean;
+        message: string;
+        data: Reward;
     }>;
     createOrder(userId: string, pinRequest: CreateOrderRequestDto): Promise<{
         success: boolean;
