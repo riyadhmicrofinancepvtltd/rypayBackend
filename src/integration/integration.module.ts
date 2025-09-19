@@ -13,6 +13,7 @@ import { OtpInfo } from 'src/core/entities/otp-info.entity';
 import { Transaction } from 'src/core/entities/transactions.entity';
 import { User } from 'src/core/entities/user.entity';
 import {VirtualAccount} from 'src/core/entities/virtual-account.entity'
+import { Reward } from 'src/core/entities/rewards.entity'
 import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
 import { WebhookResponse } from 'src/core/entities/webhook.entity';
@@ -59,7 +60,7 @@ import { PaymentExternalClientService } from './upitransact/external-system-clie
     HttpModule, ConfigModule,
     NotificationsModule,
     CoinsModule,
-    TypeOrmModule.forFeature([Wallet, User,VirtualAccount,TransactionMoney, Order, Transaction, Card, BusyBoxWebhookResponse, WebhookResponse, UserDocument, OtpInfo, AadharResponse])
+    TypeOrmModule.forFeature([Wallet, User,VirtualAccount,Reward,TransactionMoney, Order, Transaction, Card, BusyBoxWebhookResponse, WebhookResponse, UserDocument, OtpInfo, AadharResponse])
   ],
   providers: [
     MerchantClientService,

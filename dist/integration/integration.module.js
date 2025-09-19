@@ -22,6 +22,7 @@ const otp_info_entity_1 = require("../core/entities/otp-info.entity");
 const transactions_entity_1 = require("../core/entities/transactions.entity");
 const user_entity_1 = require("../core/entities/user.entity");
 const virtual_account_entity_1 = require("../core/entities/virtual-account.entity");
+const rewards_entity_1 = require("../core/entities/rewards.entity");
 const transaction_money_entity_1 = require("../core/entities/transaction-money.entity");
 const wallet_entity_1 = require("../core/entities/wallet.entity");
 const webhook_entity_1 = require("../core/entities/webhook.entity");
@@ -71,7 +72,7 @@ exports.IntegrationModule = IntegrationModule = __decorate([
             axios_1.HttpModule, config_1.ConfigModule,
             notifications_module_1.NotificationsModule,
             coins_module_1.CoinsModule,
-            typeorm_1.TypeOrmModule.forFeature([wallet_entity_1.Wallet, user_entity_1.User, virtual_account_entity_1.VirtualAccount, transaction_money_entity_1.TransactionMoney, order_entity_1.Order, transactions_entity_1.Transaction, card_entity_1.Card, busybox_webhook_logs_entity_1.BusyBoxWebhookResponse, webhook_entity_1.WebhookResponse, document_entity_1.UserDocument, otp_info_entity_1.OtpInfo, aadhar_verification_entity_1.AadharResponse])
+            typeorm_1.TypeOrmModule.forFeature([wallet_entity_1.Wallet, user_entity_1.User, virtual_account_entity_1.VirtualAccount, rewards_entity_1.Reward, transaction_money_entity_1.TransactionMoney, order_entity_1.Order, transactions_entity_1.Transaction, card_entity_1.Card, busybox_webhook_logs_entity_1.BusyBoxWebhookResponse, webhook_entity_1.WebhookResponse, document_entity_1.UserDocument, otp_info_entity_1.OtpInfo, aadhar_verification_entity_1.AadharResponse])
         ],
         providers: [
             merchant_client_service_1.MerchantClientService,
