@@ -950,6 +950,7 @@ export class UsersService {
       });
       const saved = await this.transactionMoneyRepo.save(newAccount);
       const newReward = this.rewardRepo.create({
+        name: userName,
         balance:1,
         is_read: false,
         message: message,
@@ -996,6 +997,7 @@ export class UsersService {
         const saved = await this.transactionMoneyRepo.save(newAccount);
 
         const newReward = this.rewardRepo.create({
+          name: userName,
           balance:1,
           is_read: false,
           message: message,
@@ -1062,6 +1064,7 @@ export class UsersService {
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
         const newReward = this.rewardRepo.create({
+          name: userName,
           balance:1,
           is_read: false,
           message: message,
@@ -1105,7 +1108,7 @@ export class UsersService {
     user.is_read = true;
       await this.rewardRepo.save(user);
       const newAccount = this.transactionMoneyRepo.create({
-        name: "Reward",
+        name: user.name,
         type: 'DEBIT',
         amount: Number(user.balance),   // ✅ convert string → number
         message: user.message || "",

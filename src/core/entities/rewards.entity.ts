@@ -25,4 +25,7 @@ export class Reward {
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
+
+  @Column()
+  name: string;
 }
