@@ -336,6 +336,7 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException(['User already exists']);
         }
         const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
+        console.log("data=====>", data);
         if (data.status === "SUCCESS") {
             return {
                 success: true,
