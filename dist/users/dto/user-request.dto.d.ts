@@ -1,5 +1,6 @@
 import { UserRole } from 'src/core/enum/user-role.enum';
 import { MerchantRequestDto } from './merchecnt-request.dto';
+import { VirtualAccountRequestDto } from './virtual-account-request.dto';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 export declare class AddressRequestDto {
     address1: string;
@@ -18,6 +19,7 @@ export declare class UserRequestCommonDto {
     otpSessionId: string;
     dob: string;
     address: AddressRequestDto;
+    virtualAccount: VirtualAccountRequestDto;
     email: string;
     userType: UserRole;
     panNumber: string;

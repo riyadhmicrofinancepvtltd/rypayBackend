@@ -14,6 +14,7 @@ const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const user_role_enum_1 = require("../../core/enum/user-role.enum");
 const merchecnt_request_dto_1 = require("./merchecnt-request.dto");
+const virtual_account_request_dto_1 = require("./virtual-account-request.dto");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
 class AddressRequestDto {
 }
@@ -98,6 +99,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", AddressRequestDto)
 ], UserRequestCommonDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.Validate)(virtual_account_request_dto_1.VirtualAccountRequestDto),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", virtual_account_request_dto_1.VirtualAccountRequestDto)
+], UserRequestCommonDto.prototype, "virtualAccount", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
     (0, swagger_1.ApiProperty)(),

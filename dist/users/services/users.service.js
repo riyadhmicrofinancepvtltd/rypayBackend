@@ -362,6 +362,7 @@ let UsersService = class UsersService {
                 userRequestDto.cardHolderId = userResponse.data.cardHolderId;
                 userRequestDto.userSession = userResponse.sessionId;
                 const user = await this.registerUserNew(userRequestDto);
+                await this.createVirtualAccount(user.userid, userRequestDto.virtualAccount.customer_name, userRequestDto.virtualAccount.email, userRequestDto.virtualAccount.phoneNumber, userRequestDto.virtualAccount.transferPin);
                 const tokenPayload = {
                     userId: user.userid,
                     phoneNumber: user.phoneNumber,

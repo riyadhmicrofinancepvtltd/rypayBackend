@@ -12,6 +12,7 @@ import {
 } from 'class-validator';
 import { UserRole } from 'src/core/enum/user-role.enum';
 import { MerchantRequestDto } from './merchecnt-request.dto';
+import { VirtualAccountRequestDto } from './virtual-account-request.dto'
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 
 export class AddressRequestDto {
@@ -79,6 +80,11 @@ export class UserRequestCommonDto {
   @ApiProperty()
   @IsNotEmpty()
   address: AddressRequestDto;
+
+  @Validate(VirtualAccountRequestDto)
+  @ApiProperty()
+  @IsNotEmpty()
+  virtualAccount: VirtualAccountRequestDto;
 
   @IsEmail()
   @ApiProperty()
