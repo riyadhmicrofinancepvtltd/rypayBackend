@@ -33,6 +33,7 @@ const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
 const user_role_enum_1 = require("../../core/enum/user-role.enum");
 const hash_util_1 = require("../../core/utils/hash.util");
+const reward_util_1 = require("../../core/utils/reward.util");
 const merchant_client_service_1 = require("../../integration/busybox/external-system-client/merchant-client.service");
 const otp_repository_1 = require("../../notifications/repository/otp.repository");
 const otp_flow_service_1 = require("../../notifications/services/otp-flow.service");
@@ -757,6 +758,7 @@ let UsersService = class UsersService {
         if (!enumKey) {
             throw new common_1.BadRequestException(['Invalid payment mode']);
         }
+        const rewardAmount = (0, reward_util_1.calculateReward)(amount);
         if (paymentMode === "number") {
             const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
             if (!userTo) {
@@ -767,24 +769,6 @@ let UsersService = class UsersService {
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
             if (!isOldPinCorrect) {
                 throw new common_1.BadRequestException(['Incorrect PIN. Please try again.']);
-            }
-            if (userFrom) {
-                let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
-                if (wallet.balance >= amount) {
-                    wallet.balance = wallet.balance - amount;
-                    await this.walletRepository.save(wallet);
-                }
-                else {
-                    return {
-                        success: false,
-                        message: 'Insufficient balance',
-                    };
-                }
-            }
-            if (userTo) {
-                let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-                walletTo.balance = walletTo.balance + amount;
-                await this.walletRepository.save(walletTo);
             }
             const newAccount = this.transactionMoneyRepo.create({
                 name: userName,
@@ -802,7 +786,7 @@ let UsersService = class UsersService {
             const saved = await this.transactionMoneyRepo.save(newAccount);
             const newReward = this.rewardRepo.create({
                 name: userName,
-                balance: 1,
+                balance: rewardAmount,
                 is_read: false,
                 message: message,
                 user_id: userId,

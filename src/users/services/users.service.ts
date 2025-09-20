@@ -29,6 +29,7 @@ import { TransactionStatus } from 'src/core/entities/transactions.entity';
 
 import { UserRole } from 'src/core/enum/user-role.enum';
 import { generateRef } from 'src/core/utils/hash.util';
+import { calculateReward } from 'src/core/utils/reward.util';
 import { MerchantClientService } from 'src/integration/busybox/external-system-client/merchant-client.service';
 import { OtpRepository } from 'src/notifications/repository/otp.repository';
 import { OtpFlowService } from 'src/notifications/services/otp-flow.service';
@@ -896,6 +897,8 @@ export class UsersService {
       },
     };
   }
+
+
   
   async sendMoney(
     userId: string,
@@ -915,6 +918,7 @@ export class UsersService {
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
     }
+    const rewardAmount = calculateReward(amount);
     if (paymentMode === "number") {
       const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
       if (!userTo) {
@@ -929,23 +933,23 @@ export class UsersService {
       if (!isOldPinCorrect) {
         throw new BadRequestException(['Incorrect PIN. Please try again.']);
       }
-      if (userFrom) {
-        let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
-        if (wallet.balance >= amount) {
-          wallet.balance = wallet.balance - amount
-          await this.walletRepository.save(wallet);
-        } else {
-          return {
-            success: false,
-            message: 'Insufficient balance',
-          }
-        }
-      }
-      if (userTo) {
-        let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-        walletTo.balance = walletTo.balance + amount
-        await this.walletRepository.save(walletTo);
-      }
+      // if (userFrom) {
+      //   let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+      //   if (wallet.balance >= amount) {
+      //     wallet.balance = wallet.balance - amount
+      //     await this.walletRepository.save(wallet);
+      //   } else {
+      //     return {
+      //       success: false,
+      //       message: 'Insufficient balance',
+      //     }
+      //   }
+      // }
+      // if (userTo) {
+      //   let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
+      //   walletTo.balance = walletTo.balance + amount
+      //   await this.walletRepository.save(walletTo);
+      // }
       const newAccount = this.transactionMoneyRepo.create({
         name: userName,
         type: 'DEBIT',
@@ -962,7 +966,7 @@ export class UsersService {
       const saved = await this.transactionMoneyRepo.save(newAccount);
       const newReward = this.rewardRepo.create({
         name: userName,
-        balance:1,
+        balance:rewardAmount,
         is_read: false,
         message: message,
         user_id: userId,
