@@ -770,6 +770,24 @@ let UsersService = class UsersService {
             if (!isOldPinCorrect) {
                 throw new common_1.BadRequestException(['Incorrect PIN. Please try again.']);
             }
+            if (userFrom) {
+                let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
+                if (wallet.balance >= amount) {
+                    wallet.balance = wallet.balance - amount;
+                    await this.walletRepository.save(wallet);
+                }
+                else {
+                    return {
+                        success: false,
+                        message: 'Insufficient balance',
+                    };
+                }
+            }
+            if (userTo) {
+                let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
+                walletTo.balance = walletTo.balance + amount;
+                await this.walletRepository.save(walletTo);
+            }
             const newAccount = this.transactionMoneyRepo.create({
                 name: userName,
                 type: 'DEBIT',
@@ -829,7 +847,7 @@ let UsersService = class UsersService {
                 const saved = await this.transactionMoneyRepo.save(newAccount);
                 const newReward = this.rewardRepo.create({
                     name: userName,
-                    balance: 1,
+                    balance: rewardAmount,
                     is_read: false,
                     message: message,
                     user_id: userId,
@@ -892,7 +910,7 @@ let UsersService = class UsersService {
                 const saved = await this.transactionMoneyRepo.save(newAccount);
                 const newReward = this.rewardRepo.create({
                     name: userName,
-                    balance: 1,
+                    balance: rewardAmount,
                     is_read: false,
                     message: message,
                     user_id: userId,
