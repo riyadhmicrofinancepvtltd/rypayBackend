@@ -18,6 +18,7 @@ export declare class AccountResponse {
 }
 export declare class UserResponse {
     userid: string;
+    fullName: string;
     firstName: string;
     lastName: string;
     phoneNumber: string;

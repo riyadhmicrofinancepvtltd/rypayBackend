@@ -69,6 +69,7 @@ class UserResponse {
         this.userid = user.id;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
+        this.fullName = user.fullName;
         this.email = user.email;
         this.dob = user.dob;
         this.userRole = user.role;
@@ -90,6 +91,10 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], UserResponse.prototype, "userid", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UserResponse.prototype, "fullName", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)

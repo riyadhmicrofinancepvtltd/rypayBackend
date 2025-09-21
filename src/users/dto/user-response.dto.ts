@@ -48,6 +48,9 @@ export class UserResponse {
   userid: string;
 
   @ApiProperty()
+  fullName: string;
+
+  @ApiProperty()
   firstName: string;
 
   @ApiProperty()
@@ -111,6 +114,7 @@ export class UserResponse {
     this.userid = user.id;
     this.firstName = user.firstName;
     this.lastName = user.lastName;
+    this.fullName = user.fullName;
     this.email = user.email;
     this.dob = user.dob;
     this.userRole = user.role;
