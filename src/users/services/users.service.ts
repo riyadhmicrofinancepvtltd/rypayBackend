@@ -919,7 +919,7 @@ export class UsersService {
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
     }
-    const rewardAmount = 1//calculateReward(amount);
+    const rewardAmount = calculateReward(amount);
     if (paymentMode === "number") {
       const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
       console.log("UserTo:=====>", userTo);
@@ -938,7 +938,7 @@ export class UsersService {
       if (userFrom) {
         let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
         if (wallet.balance >= amount) {
-          wallet.balance = wallet.balance - amount - convenienceFee
+          wallet.balance = wallet.balance - Number(amount) - Number(convenienceFee)
           await this.walletRepository.save(wallet);
         } else {
           return {
