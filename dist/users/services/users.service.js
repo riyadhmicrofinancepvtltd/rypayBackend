@@ -263,6 +263,7 @@ let UsersService = class UsersService {
                 userid: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                fullName: user.fullName,
                 email: user.email,
                 dob: user.dob,
                 gender: user.gender,
