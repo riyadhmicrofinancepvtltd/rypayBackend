@@ -951,7 +951,7 @@ export class UsersService {
         console.log("UserTo Found:===amount==>", amount);
         let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
         console.log("WalletTo Found:===amount==>", walletTo);
-        walletTo.balance = walletTo.balance + amount
+        walletTo.balance = Number(walletTo.balance || 0) + Number(amount);
         let savedWallet = await this.walletRepository.save(walletTo);
         console.log("WalletTo Saved:===amount==>", savedWallet);
       }
