@@ -204,11 +204,12 @@ export class RechargeClientService {
   }
 
   async requestAadharOtp(aadharNumber: string) {
+    const urid = Math.floor(100000000 + Math.random() * 900000000);
     const body = {
       token: this.apiToken,
       aadhaarNumber: aadharNumber,
       transType: 'aadhaarSendOtp',
-      urid:"446545656"
+      urid: urid.toString(), 
     };
 
     console.log("send payload==>",body);
@@ -225,13 +226,14 @@ export class RechargeClientService {
   }
 
   async validateAadharOtp(aadharNumber: string, otp: string, sessionId: string) {
+    const urid = Math.floor(100000000 + Math.random() * 900000000);
     const body = {
       token: this.apiToken,
       aadhaarNumber: aadharNumber,
       otp: otp,
       otpSessionId: sessionId,
       transType:"aadhaarVerifyOtp",
-      urid:"446545656"
+      urid: urid.toString(),
     };
 
     console.log("verify payload==>",body);
