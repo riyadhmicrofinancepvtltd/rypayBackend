@@ -6,4 +6,5 @@ export declare class AccountPayoutPayload {
     mode: string;
     message: string;
     userName: string;
+    convenienceFee: number;
 }

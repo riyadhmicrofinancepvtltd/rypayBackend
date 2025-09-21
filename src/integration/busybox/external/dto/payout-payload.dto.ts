@@ -30,4 +30,7 @@ export class AccountPayoutPayload {
     @ApiProperty()
     @IsOptional()
     userName: string
+
+    @ApiProperty()
+    convenienceFee:number
 }

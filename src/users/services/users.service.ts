@@ -936,7 +936,7 @@ export class UsersService {
       if (userFrom) {
         let wallet = await this.walletRepository.findOneBy({ user: { id: userId } });
         if (wallet.balance >= amount) {
-          wallet.balance = wallet.balance - amount
+          wallet.balance = wallet.balance - amount - convenienceFee
           await this.walletRepository.save(wallet);
         } else {
           return {
@@ -960,6 +960,7 @@ export class UsersService {
         status: "SUCCESS",  
         ifsc: null, 
         user_id: userId,
+        convenience_fee: convenienceFee,
         transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
         bank: null,    
       });
@@ -1036,6 +1037,7 @@ export class UsersService {
           ifsc: ifsc, 
           user_id: userId,
           transaction_id: data.referenceId,
+          convenience_fee: convenienceFee,
           bank: upiId?.toString() || null,   
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
@@ -1061,7 +1063,8 @@ export class UsersService {
         mobile: number,
         mode: mode,
         message: message,
-        userName: userName
+        userName: userName,
+        convenienceFee:convenienceFee,
       } as any
 
       const data = await this.payoutService.payoutAccountNew(userId, payload);
@@ -1077,6 +1080,7 @@ export class UsersService {
           ifsc: ifsc, 
           user_id: userId,
           transaction_id: data.referenceId,
+          convenience_fee: convenienceFee,
           bank: accountNumber.toString(),    
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
@@ -1103,6 +1107,7 @@ export class UsersService {
           ifsc: ifsc, 
           user_id: userId,
           transaction_id: data.referenceId,
+          convenience_fee: convenienceFee,
           bank: accountNumber.toString(),    
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);

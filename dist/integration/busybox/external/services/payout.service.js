@@ -129,12 +129,13 @@ let PayoutService = PayoutService_1 = class PayoutService {
         };
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
-        await this.walletService.processRechargePayment({
+        await this.walletService.processRechargePaymentNew({
             amount: requestDto.amount,
             receiverId: requestDto.accountNumber,
             serviceUsed: serviceUsed,
             charges: payoutCharges,
             description: description,
+            convenienceFee: requestDto.convenienceFee,
             status: transactions_entity_1.TransactionStatus.PENDING,
             reference: orderId
         }, userId);
