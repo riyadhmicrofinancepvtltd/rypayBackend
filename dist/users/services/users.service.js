@@ -787,12 +787,9 @@ let UsersService = class UsersService {
                 }
             }
             if (userTo) {
-                console.log("UserTo Found:===amount==>", amount);
                 let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
-                console.log("WalletTo Found:===amount==>", walletTo);
                 walletTo.balance = Number(walletTo.balance || 0) + Number(amount);
                 let savedWallet = await this.walletRepository.save(walletTo);
-                console.log("WalletTo Saved:===amount==>", savedWallet);
             }
             const newAccount = this.transactionMoneyRepo.create({
                 name: userName,
@@ -809,15 +806,17 @@ let UsersService = class UsersService {
                 bank: null,
             });
             const saved = await this.transactionMoneyRepo.save(newAccount);
-            const newReward = this.rewardRepo.create({
-                name: userName,
-                balance: rewardAmount,
-                is_read: false,
-                message: message,
-                user_id: userId,
-                created_at: new Date(),
-            });
-            const saved1 = await this.rewardRepo.save(newReward);
+            if (rewardAmount > 0) {
+                const newReward = this.rewardRepo.create({
+                    name: userName,
+                    balance: rewardAmount,
+                    is_read: false,
+                    message: message,
+                    user_id: userId,
+                    created_at: new Date(),
+                });
+                const saved1 = await this.rewardRepo.save(newReward);
+            }
             return { success: true, message: "Money sent successfully." };
         }
         if (paymentMode === "upi") {
@@ -854,15 +853,17 @@ let UsersService = class UsersService {
                     bank: upiId?.toString() || null,
                 });
                 const saved = await this.transactionMoneyRepo.save(newAccount);
-                const newReward = this.rewardRepo.create({
-                    name: userName,
-                    balance: rewardAmount,
-                    is_read: false,
-                    message: message,
-                    user_id: userId,
-                    created_at: new Date(),
-                });
-                const saved1 = await this.rewardRepo.save(newReward);
+                if (rewardAmount > 0) {
+                    const newReward = this.rewardRepo.create({
+                        name: userName,
+                        balance: rewardAmount,
+                        is_read: false,
+                        message: message,
+                        user_id: userId,
+                        created_at: new Date(),
+                    });
+                    const saved1 = await this.rewardRepo.save(newReward);
+                }
                 return { success: true, message: "Money sent successfully." };
             }
             else {
@@ -920,15 +921,17 @@ let UsersService = class UsersService {
                     bank: accountNumber.toString(),
                 });
                 const saved = await this.transactionMoneyRepo.save(newAccount);
-                const newReward = this.rewardRepo.create({
-                    name: userName,
-                    balance: rewardAmount,
-                    is_read: false,
-                    message: message,
-                    user_id: userId,
-                    created_at: new Date(),
-                });
-                const saved1 = await this.rewardRepo.save(newReward);
+                if (rewardAmount > 0) {
+                    const newReward = this.rewardRepo.create({
+                        name: userName,
+                        balance: rewardAmount,
+                        is_read: false,
+                        message: message,
+                        user_id: userId,
+                        created_at: new Date(),
+                    });
+                    const saved1 = await this.rewardRepo.save(newReward);
+                }
                 return { success: true, message: "Money sent successfully." };
             }
             else {
@@ -964,7 +967,7 @@ let UsersService = class UsersService {
         await this.rewardRepo.save(user);
         const newAccount = this.transactionMoneyRepo.create({
             name: user.name,
-            type: 'DEBIT',
+            type: 'REDEEM',
             amount: Number(user.balance),
             message: user.message || "",
             reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
