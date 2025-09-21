@@ -408,7 +408,7 @@ export class UsersService {
     }
 
     const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
-    console.log("data=====>", data);
+    console.log("send otp data=====>", data);
     if (data.status === "SUCCESS") {
       return {
         success: true,
@@ -427,6 +427,7 @@ export class UsersService {
       throw new BadRequestException(["OTP is required"]);
     }
     const response = await this.rechargeClient.validateAadharOtp(userRequestDto.aadharNumber, userRequestDto.otp, userRequestDto.otpSessionId);
+   console.log("response===verify otp==>", response);
     if (response.status === "SUCCESS" && response.transId === "OTP_VERIFIED") {
       await this.aadharResponseRepo.save(this.aadharResponseRepo.create({
         aadharNumber: userRequestDto.aadharNumber,

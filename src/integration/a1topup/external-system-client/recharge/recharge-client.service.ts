@@ -207,8 +207,11 @@ export class RechargeClientService {
     const body = {
       token: this.apiToken,
       aadhaarNumber: aadharNumber,
-      transType: 'aadhaarSendOtp'
+      transType: 'aadhaarSendOtp',
+      urid:"446545656"
     };
+
+    console.log("send payload==>",body);
 
     try {
       const response = await firstValueFrom(
@@ -225,10 +228,13 @@ export class RechargeClientService {
     const body = {
       token: this.apiToken,
       aadhaarNumber: aadharNumber,
-      otp,
+      otp: otp,
       otpSessionId: sessionId,
-      "transType":"aadhaarVerifyOtp"
+      transType:"aadhaarVerifyOtp",
+      urid:"446545656"
     };
+
+    console.log("verify payload==>",body);
 
     try {
       const response = await firstValueFrom(
