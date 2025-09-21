@@ -21,4 +21,11 @@ export class UPIPayoutPayload {
     @ApiProperty()
     @IsOptional()
     upiUserName: string
+
+
+    @ApiProperty()
+    convenienceFee: number;
+
+
+
 }

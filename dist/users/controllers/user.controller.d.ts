@@ -84,8 +84,7 @@ export declare class UsersController {
         message: string;
         user: {
             userId: string;
-            firstName: string;
-            lastName: string;
+            fullName: string;
             phoneNumber: string;
         };
     }>;

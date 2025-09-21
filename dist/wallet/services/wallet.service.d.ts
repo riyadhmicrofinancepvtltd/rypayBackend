@@ -27,6 +27,7 @@ export declare class WalletService {
     private findWalletByUserIdFrom;
     private findWalletByUserIdTo;
     private updateWalletBalance;
+    private updateWalletBalanceNew;
     createWallet(createWalletDto: CreateWalletDto, queryRunner: QueryRunner): Promise<Wallet>;
     getOne(query: FindOptionsWhere<Wallet>): Promise<Wallet>;
     getWallet(query: FindOptionsWhere<Wallet>): Promise<{
@@ -46,6 +47,7 @@ export declare class WalletService {
     debitAmountOnCardTransaction(cardTransaction: TransactionNotifyPayload): Promise<Wallet>;
     processFundTransfer(transferAccountDto: TransferMoneyDto, req: any): Promise<Wallet>;
     processRechargePayment(deductBalanceData: DeductWalletBalanceRechargeDto, userId: string): Promise<Wallet>;
+    processRechargePaymentNew(deductBalanceData: DeductWalletBalanceRechargeDto, userId: string): Promise<Wallet>;
     processPaymentGatewaySuccess(addMoneyDto: AddMoneyThroughPGDTO, userId: string): Promise<Wallet>;
     processRechargeRefundPayment(orderId: string): Promise<Wallet>;
     processRechargeSuccess(orderId: string, transactionId: string, gatewayId: string): Promise<boolean>;

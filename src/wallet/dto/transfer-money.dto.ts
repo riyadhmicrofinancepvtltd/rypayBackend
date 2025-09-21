@@ -93,6 +93,7 @@ export class AddMoneyToWalletDto {
     status: TransactionStatus;
     charges?: number;
     serviceUsed: string;
+    convenienceFee?: number;
   }
 
   export class AddMoneyThroughPGDTO {

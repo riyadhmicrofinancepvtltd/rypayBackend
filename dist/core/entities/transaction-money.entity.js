@@ -67,6 +67,15 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], TransactionMoney.prototype, "ifsc", void 0);
+__decorate([
+    (0, typeorm_1.Column)('decimal', {
+        transformer: {
+            to: (value) => Number(value),
+            from: (value) => parseFloat(value),
+        }
+    }),
+    __metadata("design:type", Number)
+], TransactionMoney.prototype, "convenience_fee", void 0);
 exports.TransactionMoney = TransactionMoney = __decorate([
     (0, typeorm_1.Entity)('transaction_money')
 ], TransactionMoney);

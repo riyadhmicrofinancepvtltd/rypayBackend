@@ -11,4 +11,5 @@ export declare class TransactionMoney {
     type: string;
     bank: string;
     ifsc: string;
+    convenience_fee: number;
 }

@@ -725,8 +725,7 @@ let UsersService = class UsersService {
             message: 'User found',
             user: {
                 userId: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
+                fullName: user.fullName,
                 phoneNumber: user.phoneNumber,
             }
         };
@@ -756,7 +755,7 @@ let UsersService = class UsersService {
             },
         };
     }
-    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifsc, mode, userName) {
+    async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifsc, mode, userName, convenienceFee) {
         let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
         if (!enumKey) {
             throw new common_1.BadRequestException(['Invalid payment mode']);
@@ -830,7 +829,8 @@ let UsersService = class UsersService {
                 amount: amount,
                 mobile: number,
                 upiUserName: upiUserName,
-                message: message
+                message: message,
+                convenienceFee: convenienceFee,
             };
             const data = await this.payoutService.payoutUPINew(userId, payload);
             if (data?.referenceId) {
@@ -842,6 +842,7 @@ let UsersService = class UsersService {
                     reference: data.referenceId,
                     transaction_date: new Date(),
                     status: "SUCCESS",
+                    convenience_fee: convenienceFee,
                     ifsc: null,
                     user_id: userId,
                     transaction_id: data.referenceId,

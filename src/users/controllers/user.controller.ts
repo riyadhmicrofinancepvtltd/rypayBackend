@@ -561,6 +561,7 @@ async getTransactionHistory(
       pinRequest.ifsc,
       pinRequest.mode,
       pinRequest.userName,
+      pinRequest.convenienceFee
     );
   }
 

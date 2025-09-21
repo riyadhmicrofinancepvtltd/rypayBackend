@@ -43,4 +43,14 @@ export class TransactionMoney {
 
     @Column()
     ifsc: string;
+
+
+    @Column('decimal', {
+      transformer: {
+        to: (value: number | string) => Number(value),   // always store as number
+        from: (value: string) => parseFloat(value),      // convert DB string → number
+      }
+    })
+    convenience_fee: number;
+
 }

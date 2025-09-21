@@ -312,10 +312,11 @@ export class PayoutService {
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
 
-        await this.walletService.processRechargePayment({amount: requestDto.amount,
+        await this.walletService.processRechargePaymentNew({amount: requestDto.amount,
              receiverId: requestDto.upiId,
              serviceUsed: serviceUsed,
              description: description,
+             convenienceFee: requestDto.convenienceFee,
              status: TransactionStatus.PENDING,
              reference: orderId }, userId);
         return {

@@ -88,6 +88,9 @@ export class SendMoneyRequestDto {
     @ApiProperty()
     @IsOptional()
     userName: string
+
+    @ApiProperty()
+    convenienceFee: number;
 }
 
 

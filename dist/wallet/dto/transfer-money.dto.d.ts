@@ -44,6 +44,7 @@ export declare class DeductWalletBalanceRechargeDto {
     status: TransactionStatus;
     charges?: number;
     serviceUsed: string;
+    convenienceFee?: number;
 }
 export declare class AddMoneyThroughPGDTO {
     amount: number;

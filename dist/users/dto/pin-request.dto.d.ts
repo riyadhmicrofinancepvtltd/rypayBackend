@@ -31,6 +31,7 @@ export declare class SendMoneyRequestDto {
     ifsc: string;
     mode: string;
     userName: string;
+    convenienceFee: number;
 }
 export declare class CreateOrderRequestDto {
     amount: number;

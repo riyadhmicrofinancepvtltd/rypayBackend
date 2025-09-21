@@ -101,8 +101,7 @@ export declare class UsersService {
         message: string;
         user: {
             userId: string;
-            firstName: string;
-            lastName: string;
+            fullName: string;
             phoneNumber: string;
         };
     }>;
@@ -117,7 +116,7 @@ export declare class UsersService {
             limit: number;
         };
     }>;
-    sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string, upiId: string, upiUserName: string, message: string, accountNumber: string, ifsc: string, mode: string, userName: string): Promise<{
+    sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string, upiId: string, upiUserName: string, message: string, accountNumber: string, ifsc: string, mode: string, userName: string, convenienceFee: number): Promise<{
         referenceId: string;
         amount: number;
         message: string;

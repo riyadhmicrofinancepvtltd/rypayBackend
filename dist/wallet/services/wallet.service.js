@@ -94,6 +94,12 @@ let WalletService = class WalletService {
         wallet.updatedAt = new Date();
         return queryRunner.manager.save(wallet);
     }
+    async updateWalletBalanceNew(wallet, amount, queryRunner, isCredit, convenienceFee) {
+        const balance = Number.parseFloat(wallet.balance?.toString());
+        wallet.balance = isCredit ? balance + amount : balance - amount - convenienceFee;
+        wallet.updatedAt = new Date();
+        return queryRunner.manager.save(wallet);
+    }
     async createWallet(createWalletDto, queryRunner) {
         const wallet = this.walletRepository.create(createWalletDto);
         return queryRunner.manager.save(wallet);
@@ -338,6 +344,62 @@ let WalletService = class WalletService {
                 walletAmountToDeduct += deductBalanceData.charges;
             }
             await this.updateWalletBalance(wallet, walletAmountToDeduct, queryRunner, false);
+            const transaction = await this.transactionsService.saveTransaction(rechargeDto, queryRunner);
+            await this.coinsService.addCoins(user.id, deductBalanceData.amount, transaction.id?.toString());
+            await this.notificationBridge.add('transaction', {
+                transaction,
+                type: notification_entity_1.NotificationType.TRANSACTION_DEBIT
+            });
+            return wallet;
+        });
+    }
+    async processRechargePaymentNew(deductBalanceData, userId) {
+        return this.handleTransaction(async (queryRunner) => {
+            const user = await this.findUserById(userId);
+            const wallet = await this.findWalletByUserId(userId);
+            if (deductBalanceData.amount < 0) {
+                throw new common_1.BadRequestException('Amount cannot be negative');
+            }
+            let walletBalance = Number.parseFloat(wallet.balance?.toString());
+            if (deductBalanceData.amount > walletBalance) {
+                throw new common_1.BadRequestException('Insufficient balance');
+            }
+            const rechargeDto = {
+                ...deductBalanceData,
+                transactionHash: (0, hash_util_1.generateHash)(),
+                user: user,
+                type: transaction_type_enum_1.TransactionType.DEBIT,
+                transactionDate: new Date(),
+                walletBalanceBefore: walletBalance,
+                walletBalanceAfter: walletBalance - deductBalanceData.amount,
+                wallet,
+                sender: user.id,
+                receiver: deductBalanceData.receiverId,
+                serviceUsed: deductBalanceData.serviceUsed,
+            };
+            walletBalance -= deductBalanceData.amount;
+            let walletAmountToDeduct = deductBalanceData.amount;
+            let convenienceFee = deductBalanceData.convenienceFee;
+            if (deductBalanceData.charges) {
+                const deductCharges = {
+                    ...deductBalanceData,
+                    amount: deductBalanceData.charges,
+                    description: `${deductBalanceData.reference} payment charges`,
+                    transactionHash: (0, hash_util_1.generateHash)(),
+                    user: user,
+                    type: transaction_type_enum_1.TransactionType.DEBIT,
+                    transactionDate: new Date(),
+                    walletBalanceBefore: walletBalance,
+                    walletBalanceAfter: walletBalance - deductBalanceData.charges,
+                    wallet,
+                    sender: user.id,
+                    receiver: deductBalanceData.receiverId,
+                    serviceUsed: deductBalanceData.serviceUsed,
+                };
+                await this.transactionsService.saveTransaction(deductCharges, queryRunner);
+                walletAmountToDeduct += deductBalanceData.charges;
+            }
+            await this.updateWalletBalanceNew(wallet, walletAmountToDeduct, queryRunner, false, convenienceFee);
             const transaction = await this.transactionsService.saveTransaction(rechargeDto, queryRunner);
             await this.coinsService.addCoins(user.id, deductBalanceData.amount, transaction.id?.toString());
             await this.notificationBridge.add('transaction', {

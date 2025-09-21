@@ -103,6 +103,19 @@ export class WalletService {
     return queryRunner.manager.save(wallet);
   }
 
+  private async updateWalletBalanceNew(
+    wallet: Wallet,
+    amount: number,
+    queryRunner: QueryRunner,
+    isCredit: boolean,
+    convenienceFee: number
+  ) {
+    const balance = Number.parseFloat(wallet.balance?.toString())
+    wallet.balance = isCredit ? balance + amount : balance - amount-convenienceFee;
+    wallet.updatedAt = new Date();
+    return queryRunner.manager.save(wallet);
+  }
+
   async createWallet(createWalletDto: CreateWalletDto, queryRunner: QueryRunner) {
     const wallet = this.walletRepository.create(createWalletDto);
     return queryRunner.manager.save(wallet);
@@ -363,6 +376,7 @@ export class WalletService {
       walletBalance -= deductBalanceData.amount;
       //deduct charges, if applicable
       let walletAmountToDeduct = deductBalanceData.amount;
+      
       if (deductBalanceData.charges) {
         const deductCharges = {
           ...deductBalanceData,
@@ -393,6 +407,72 @@ export class WalletService {
       return wallet;
     });
   }
+
+
+  async processRechargePaymentNew(
+    deductBalanceData: DeductWalletBalanceRechargeDto,
+    userId: string,
+  ): Promise<Wallet> {
+    return this.handleTransaction(async (queryRunner) => {
+      const user = await this.findUserById(userId);
+      const wallet = await this.findWalletByUserId(userId);
+
+      if (deductBalanceData.amount < 0) {
+        throw new BadRequestException('Amount cannot be negative');
+      }
+      let walletBalance = Number.parseFloat(wallet.balance?.toString());
+      if (deductBalanceData.amount > walletBalance) {
+        throw new BadRequestException('Insufficient balance');
+      }
+
+      const rechargeDto = {
+        ...deductBalanceData,
+        transactionHash: generateHash(),
+        user: user,
+        type: TransactionType.DEBIT,
+        transactionDate: new Date(),
+        walletBalanceBefore: walletBalance,
+        walletBalanceAfter: walletBalance - deductBalanceData.amount,
+        wallet,
+        sender: user.id,
+        receiver: deductBalanceData.receiverId,
+        serviceUsed: deductBalanceData.serviceUsed,
+      };
+      walletBalance -= deductBalanceData.amount;
+      //deduct charges, if applicable
+      let walletAmountToDeduct = deductBalanceData.amount;
+      let convenienceFee = deductBalanceData.convenienceFee;
+      if (deductBalanceData.charges) {
+        const deductCharges = {
+          ...deductBalanceData,
+          amount: deductBalanceData.charges,
+          description: `${deductBalanceData.reference} payment charges`,
+          transactionHash: generateHash(),
+          user: user,
+          type: TransactionType.DEBIT,
+          transactionDate: new Date(),
+          walletBalanceBefore: walletBalance,
+          walletBalanceAfter: walletBalance - deductBalanceData.charges,
+          wallet,
+          sender: user.id,
+          receiver: deductBalanceData.receiverId,
+          serviceUsed: deductBalanceData.serviceUsed,
+        }
+        await this.transactionsService.saveTransaction(deductCharges, queryRunner);
+        walletAmountToDeduct += deductBalanceData.charges; 
+      }
+//updateWalletBalanceNew
+      await this.updateWalletBalanceNew(wallet, walletAmountToDeduct, queryRunner, false,convenienceFee);
+      const transaction = await this.transactionsService.saveTransaction(rechargeDto, queryRunner);
+      await this.coinsService.addCoins(user.id, deductBalanceData.amount, transaction.id?.toString());
+      await this.notificationBridge.add('transaction', {
+        transaction,
+        type: NotificationType.TRANSACTION_DEBIT
+      });
+      return wallet;
+    });
+  }
+
 
   async processPaymentGatewaySuccess(
     addMoneyDto: AddMoneyThroughPGDTO,

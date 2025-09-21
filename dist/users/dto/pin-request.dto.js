@@ -122,6 +122,10 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], SendMoneyRequestDto.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Number)
+], SendMoneyRequestDto.prototype, "convenienceFee", void 0);
 class CreateOrderRequestDto {
 }
 exports.CreateOrderRequestDto = CreateOrderRequestDto;

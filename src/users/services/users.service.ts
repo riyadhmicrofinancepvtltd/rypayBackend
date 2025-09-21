@@ -861,8 +861,7 @@ export class UsersService {
       message: 'User found',
       user: {
         userId: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         phoneNumber: user.phoneNumber,
       }
     }
@@ -913,6 +912,7 @@ export class UsersService {
     ifsc: string,
     mode: string,
     userName: string,
+    convenienceFee: number
   ) {
     let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
     if (!enumKey) {
@@ -992,7 +992,8 @@ export class UsersService {
         amount: amount,
         mobile: number,
         upiUserName: upiUserName,
-        message: message
+        message: message,
+        convenienceFee:convenienceFee,
       } as any
       const data = await this.payoutService.payoutUPINew(userId, payload);
       if (data?.referenceId) {
@@ -1004,6 +1005,7 @@ export class UsersService {
           reference: data.referenceId,
           transaction_date: new Date(),
           status: "SUCCESS",  
+          convenience_fee: convenienceFee,
           ifsc: null, 
           user_id: userId,
           transaction_id: data.referenceId,
