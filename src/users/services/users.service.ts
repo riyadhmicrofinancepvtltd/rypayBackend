@@ -919,7 +919,7 @@ export class UsersService {
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
     }
-    const rewardAmount = calculateReward(amount);
+    const rewardAmount = 1//calculateReward(amount);
     if (paymentMode === "number") {
       const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
       console.log("UserTo:=====>", userTo);

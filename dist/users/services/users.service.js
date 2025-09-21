@@ -33,7 +33,6 @@ const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
 const user_role_enum_1 = require("../../core/enum/user-role.enum");
 const hash_util_1 = require("../../core/utils/hash.util");
-const reward_util_1 = require("../../core/utils/reward.util");
 const merchant_client_service_1 = require("../../integration/busybox/external-system-client/merchant-client.service");
 const otp_repository_1 = require("../../notifications/repository/otp.repository");
 const otp_flow_service_1 = require("../../notifications/services/otp-flow.service");
@@ -760,7 +759,7 @@ let UsersService = class UsersService {
         if (!enumKey) {
             throw new common_1.BadRequestException(['Invalid payment mode']);
         }
-        const rewardAmount = (0, reward_util_1.calculateReward)(amount);
+        const rewardAmount = 1;
         if (paymentMode === "number") {
             const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
             console.log("UserTo:=====>", userTo);
