@@ -90,6 +90,7 @@ class UserMapper {
         user.email = userRequestDto.email;
         user.firstName = userRequestDto.firstName;
         user.lastName = userRequestDto.lastName;
+        user.fullName = userRequestDto.fullName;
         user.aadharNumber = userRequestDto.aadharNumber;
         user.panNumber = userRequestDto.panNumber;
         user.kycVerificationStatus = userRequestDto.kycVerificationStatus;
