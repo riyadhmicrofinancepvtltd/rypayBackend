@@ -41,11 +41,16 @@ export class AddressRequestDto {
 }
 
 export class UserRequestCommonDto {
+
   @IsNotEmpty()
+  @ApiProperty()
+  fullName: string;
+
+  @IsOptional()
   @ApiProperty({ description: 'first name' })
   firstName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   lastName: string;
 

@@ -88,6 +88,10 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'full_name' }),
+    __metadata("design:type", String)
+], User.prototype, "fullName", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'last_name' }),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);

@@ -25,8 +25,9 @@ export class UserMapper {
     user.phoneNumber = userRequestDto.phoneNumber;
     user.email = userRequestDto.email;
     user.referralCode = generateReferralCode(user.phoneNumber);
-    user.firstName = userRequestDto.firstName;
-    user.lastName = userRequestDto.lastName;
+    user.firstName = userRequestDto?.firstName || '';
+    user.lastName = userRequestDto?.lastName || '';
+    user.fullName = userRequestDto?.fullName;
     user.role = userRequestDto.userType;
     user.aadharNumber = userRequestDto.aadharNumber;
     user.panNumber = userRequestDto.panNumber;

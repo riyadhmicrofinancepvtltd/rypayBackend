@@ -24,6 +24,7 @@ export declare class User {
     createdAt: Date;
     updatedAt: Date;
     firstName: string;
+    fullName: string;
     lastName: string;
     dob: string;
     role: UserRole;

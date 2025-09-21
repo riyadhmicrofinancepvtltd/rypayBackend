@@ -408,7 +408,6 @@ export class UsersService {
     }
 
     const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
-    console.log("send otp data=====>", data);
     if (data.status === "SUCCESS") {
       return {
         success: true,
@@ -427,7 +426,9 @@ export class UsersService {
       throw new BadRequestException(["OTP is required"]);
     }
     const response = await this.rechargeClient.validateAadharOtp(userRequestDto.aadharNumber, userRequestDto.otp, userRequestDto.otpSessionId);
-   console.log("response===verify otp==>", response);
+  if(response?.aadhaarData?.fullName !== userRequestDto?.fullName) {
+    throw new BadRequestException(["Your name doesn't match with your Aadhar card. Please try again."]);
+  }
     if (response.status === "SUCCESS" && response.transId === "OTP_VERIFIED") {
       await this.aadharResponseRepo.save(this.aadharResponseRepo.create({
         aadharNumber: userRequestDto.aadharNumber,
@@ -439,9 +440,6 @@ export class UsersService {
       if (userResponse.status === "SUCCESS") {
         userRequestDto.cardHolderId = userResponse.data.cardHolderId;
         userRequestDto.userSession = userResponse.sessionId;
-
-    
-
         const user = await this.registerUserNew(userRequestDto);
         await this.createVirtualAccount(
           user.userid,

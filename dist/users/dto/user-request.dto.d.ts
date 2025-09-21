@@ -10,6 +10,7 @@ export declare class AddressRequestDto {
     pincode: string;
 }
 export declare class UserRequestCommonDto {
+    fullName: string;
     firstName: string;
     lastName: string;
     gender: 'M' | 'F';

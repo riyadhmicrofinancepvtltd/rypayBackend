@@ -52,11 +52,16 @@ class UserRequestCommonDto {
 exports.UserRequestCommonDto = UserRequestCommonDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UserRequestCommonDto.prototype, "fullName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, swagger_1.ApiProperty)({ description: 'first name' }),
     __metadata("design:type", String)
 ], UserRequestCommonDto.prototype, "firstName", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], UserRequestCommonDto.prototype, "lastName", void 0);
