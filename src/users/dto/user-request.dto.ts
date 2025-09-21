@@ -88,7 +88,7 @@ export class UserRequestCommonDto {
 
   @Validate(VirtualAccountRequestDto)
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   virtualAccount: VirtualAccountRequestDto;
 
   @IsEmail()

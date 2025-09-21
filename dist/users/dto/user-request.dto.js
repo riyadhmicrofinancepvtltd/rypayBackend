@@ -107,7 +107,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.Validate)(virtual_account_request_dto_1.VirtualAccountRequestDto),
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", virtual_account_request_dto_1.VirtualAccountRequestDto)
 ], UserRequestCommonDto.prototype, "virtualAccount", void 0);
 __decorate([
