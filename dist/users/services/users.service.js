@@ -789,8 +789,10 @@ let UsersService = class UsersService {
             if (userTo) {
                 console.log("UserTo Found:===amount==>", amount);
                 let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
+                console.log("WalletTo Found:===amount==>", walletTo);
                 walletTo.balance = walletTo.balance + amount;
-                await this.walletRepository.save(walletTo);
+                let savedWallet = await this.walletRepository.save(walletTo);
+                console.log("WalletTo Saved:===amount==>", savedWallet);
             }
             const newAccount = this.transactionMoneyRepo.create({
                 name: userName,
