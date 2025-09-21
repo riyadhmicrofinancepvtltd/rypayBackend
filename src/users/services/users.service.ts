@@ -914,6 +914,7 @@ export class UsersService {
     userName: string,
     convenienceFee: number
   ) {
+
     let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
@@ -921,6 +922,7 @@ export class UsersService {
     const rewardAmount = calculateReward(amount);
     if (paymentMode === "number") {
       const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
+      console.log("UserTo:=====>", userTo);
       if (!userTo) {
         throw new BadRequestException(['Rypay account not found']);
       }
@@ -946,6 +948,7 @@ export class UsersService {
         }
       }
       if (userTo) {
+        console.log("UserTo Found:===amount==>", amount);
         let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
         walletTo.balance = walletTo.balance + amount
         await this.walletRepository.save(walletTo);

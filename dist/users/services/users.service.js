@@ -763,6 +763,7 @@ let UsersService = class UsersService {
         const rewardAmount = (0, reward_util_1.calculateReward)(amount);
         if (paymentMode === "number") {
             const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
+            console.log("UserTo:=====>", userTo);
             if (!userTo) {
                 throw new common_1.BadRequestException(['Rypay account not found']);
             }
@@ -786,6 +787,7 @@ let UsersService = class UsersService {
                 }
             }
             if (userTo) {
+                console.log("UserTo Found:===amount==>", amount);
                 let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
                 walletTo.balance = walletTo.balance + amount;
                 await this.walletRepository.save(walletTo);
