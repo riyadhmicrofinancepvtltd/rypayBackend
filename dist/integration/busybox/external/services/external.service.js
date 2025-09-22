@@ -103,14 +103,11 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
                 additionalData: payload,
             };
-            console.log('✅ Processed Transaction Model:', transactionModel);
             this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
             if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
                 const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
-                console.log('User found for VA number:', user);
                 if (user) {
                     let walletTo = await this.walletRepository.findOneBy({ user: { id: user.userid } });
-                    console.log('Wallet before update:', walletTo);
                     walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
                     let savedWallet = await this.walletRepository.save(walletTo);
                 }
@@ -128,7 +125,6 @@ let ExternalService = ExternalService_1 = class ExternalService {
                     transaction_id: transactionModel?.additionalData?.txn_id,
                     bank: null,
                 });
-                console.log('New TransactionMoney entity:', newAccount);
                 const saved = await this.transactionMoneyRepo.save(newAccount);
             }
             return { message: 'Success' };

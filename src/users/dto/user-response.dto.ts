@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TokenResponse } from 'src/auth/dto/token-response.dto';
 import { Address } from 'src/core/entities/address.entity';
+import { Merchant } from 'src/core/entities/merchant.entity';
 import { Card } from 'src/core/entities/card.entity';
 import { User } from 'src/core/entities/user.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
@@ -110,6 +111,9 @@ export class UserResponse {
   @ApiProperty()
   accountDetails: AccountResponse;
 
+  @ApiProperty()
+  merchant: Merchant;
+
   constructor(user: User) {
     this.userid = user.id;
     this.firstName = user.firstName;
@@ -119,6 +123,7 @@ export class UserResponse {
     this.dob = user.dob;
     this.userRole = user.role;
     this.address = user.address;
+    this.merchant = user.merchant;
     this.aadharNumber = user.aadharNumber;
     this.panNumber = user.panNumber;
     this.isBlocked = !!user.isBlocked;

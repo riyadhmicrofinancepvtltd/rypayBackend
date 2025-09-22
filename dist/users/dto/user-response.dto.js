@@ -13,6 +13,7 @@ exports.UserApiResponseDto = exports.AddressDto = exports.UserResponse = exports
 const swagger_1 = require("@nestjs/swagger");
 const token_response_dto_1 = require("../../auth/dto/token-response.dto");
 const address_entity_1 = require("../../core/entities/address.entity");
+const merchant_entity_1 = require("../../core/entities/merchant.entity");
 const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
 class CardResponse {
@@ -74,6 +75,7 @@ class UserResponse {
         this.dob = user.dob;
         this.userRole = user.role;
         this.address = user.address;
+        this.merchant = user.merchant;
         this.aadharNumber = user.aadharNumber;
         this.panNumber = user.panNumber;
         this.isBlocked = !!user.isBlocked;
@@ -175,6 +177,10 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", AccountResponse)
 ], UserResponse.prototype, "accountDetails", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", merchant_entity_1.Merchant)
+], UserResponse.prototype, "merchant", void 0);
 class AddressDto {
 }
 exports.AddressDto = AddressDto;

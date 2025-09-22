@@ -17,8 +17,8 @@ export class ExternalService {
     constructor(
         @InjectRepository(BusyBoxWebhookResponse) private busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>,
         @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
-         @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
-          @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>,
+        @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
+        @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>,
         private walletService: WalletService,
         private userService: UsersService,
     ) {
@@ -114,50 +114,46 @@ export class ExternalService {
     // }
     async handleBusyBoxPayoutEvents(payload: any) {
         try {
-          const transactionModel = {
-            type: Webhook_Type.Payout,
-            additionalData: payload,
-          };
-    
-          console.log('✅ Processed Transaction Model:', transactionModel);
-          this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
-    if(transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
-        const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
-        console.log('User found for VA number:', user);
-        if(user) {
-            let walletTo = await this.walletRepository.findOneBy({ user: { id: user.userid } });
-            console.log('Wallet before update:', walletTo);
-        walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
-        let savedWallet = await this.walletRepository.save(walletTo);
+            const transactionModel = {
+                type: Webhook_Type.Payout,
+                additionalData: payload,
+            };
 
-        }
-        const newAccount = this.transactionMoneyRepo.create({
-                name: transactionModel?.additionalData?.remitter_name, 
-                type: 'CREDIT',
-                amount: Number(transactionModel.additionalData?.amount),   
-                message: null,
-                reference: transactionModel.additionalData?.rrn,
-                transaction_date: new Date(),
-                status: "SUCCESS",  
-                ifsc: null, 
-                user_id: user?.userid,
-                convenience_fee: 0,
-                transaction_id: transactionModel?.additionalData?.txn_id,
-                bank: null,    
-              });
-              console.log('New TransactionMoney entity:', newAccount);
-              const saved = await this.transactionMoneyRepo.save(newAccount);
+            this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
+            if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
+                const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
+                if (user) {
+                    let walletTo = await this.walletRepository.findOneBy({ user: { id: user.userid } });
+                    walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
+                    let savedWallet = await this.walletRepository.save(walletTo);
+
+                }
+                const newAccount = this.transactionMoneyRepo.create({
+                    name: transactionModel?.additionalData?.remitter_name,
+                    type: 'CREDIT',
+                    amount: Number(transactionModel.additionalData?.amount),
+                    message: null,
+                    reference: transactionModel.additionalData?.rrn,
+                    transaction_date: new Date(),
+                    status: "SUCCESS",
+                    ifsc: null,
+                    user_id: user?.userid,
+                    convenience_fee: 0,
+                    transaction_id: transactionModel?.additionalData?.txn_id,
+                    bank: null,
+                });
+                const saved = await this.transactionMoneyRepo.save(newAccount);
 
 
-    }
-          
-    
-          return { message: 'Success' };
+            }
+
+
+            return { message: 'Success' };
         } catch (err) {
-          console.log('❌ Error while handling BusyBox webhook:', err);
-          throw err;
+            console.log('❌ Error while handling BusyBox webhook:', err);
+            throw err;
         }
-      }
+    }
 
     async handleDebitEvents(payload: TransactionDto) {
         try {

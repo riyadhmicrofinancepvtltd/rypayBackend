@@ -1,5 +1,6 @@
 import { TokenResponse } from 'src/auth/dto/token-response.dto';
 import { Address } from 'src/core/entities/address.entity';
+import { Merchant } from 'src/core/entities/merchant.entity';
 import { Card } from 'src/core/entities/card.entity';
 import { User } from 'src/core/entities/user.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
@@ -39,6 +40,7 @@ export declare class UserResponse {
     merchantPartnerId: String;
     referrelCode: String;
     accountDetails: AccountResponse;
+    merchant: Merchant;
     constructor(user: User);
 }
 export declare class AddressDto {

@@ -53,9 +53,6 @@ export class ExternalController {
   // }
   @Post('webhooks/busybox')
   async handleBusyBoxPayoutEvents(@Body() payload: any, @Req() req: Request) {
-    console.log('📥 Raw payload string:', JSON.stringify(req.body, null, 2));
-    console.log('📥 Parsed payload object:', payload);
-
     return this.externalService.handleBusyBoxPayoutEvents(payload);
   }
 }
