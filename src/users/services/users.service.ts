@@ -41,7 +41,7 @@ import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
 import { UserDocumentResponseDto } from '../dto/user-documents.dto';
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
-import { CreateOrderRequestDto, PaymentStatusRequestDto,ScratchRewardRequestDto } from '../dto/pin-request.dto';
+import { CreateOrderRequestDto, PaymentStatusRequestDto, ScratchRewardRequestDto } from '../dto/pin-request.dto';
 import { UserAdminRequestDto, UserRequestDto, UserUpdateRequestDto } from '../dto/user-request.dto';
 import { UserApiResponseDto, UserResponse } from '../dto/user-response.dto';
 import { UserMapper } from '../mapper/user-mapper';
@@ -427,9 +427,9 @@ export class UsersService {
       throw new BadRequestException(["OTP is required"]);
     }
     const response = await this.rechargeClient.validateAadharOtp(userRequestDto.aadharNumber, userRequestDto.otp, userRequestDto.otpSessionId);
-  if(response?.aadhaarData?.fullName !== userRequestDto?.fullName) {
-    throw new BadRequestException(["Your name doesn't match with your Aadhar card. Please try again."]);
-  }
+    if (response?.aadhaarData?.fullName !== userRequestDto?.fullName) {
+      throw new BadRequestException(["Your name doesn't match with your Aadhar card. Please try again."]);
+    }
     if (response.status === "SUCCESS" && response.transId === "OTP_VERIFIED") {
       await this.aadharResponseRepo.save(this.aadharResponseRepo.create({
         aadharNumber: userRequestDto.aadharNumber,
@@ -874,16 +874,16 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
-  
+
     const [transactionMoney, totalItems] = await this.transactionMoneyRepo.findAndCount({
       where: { user_id: userId },
       order: { transaction_date: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
-  
+
     const totalPages = Math.ceil(totalItems / limit);
-  
+
     return {
       success: true,
       message: "Fetched Transaction History",
@@ -898,7 +898,7 @@ export class UsersService {
   }
 
 
-  
+
   async sendMoney(
     userId: string,
     paymentMode: string,
@@ -914,7 +914,6 @@ export class UsersService {
     userName: string,
     convenienceFee: number
   ) {
-
     let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
     if (!enumKey) {
       throw new BadRequestException(['Invalid payment mode']);
@@ -922,7 +921,6 @@ export class UsersService {
     const rewardAmount = calculateReward(amount);
     if (paymentMode === "number") {
       const userTo = await this.userRepository.findOneBy({ phoneNumber: number });
-      console.log("UserTo:=====>", userTo);
       if (!userTo) {
         throw new BadRequestException(['Rypay account not found']);
       }
@@ -959,26 +957,26 @@ export class UsersService {
         message: message,
         reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
         transaction_date: new Date(),
-        status: "SUCCESS",  
-        ifsc: null, 
+        status: "SUCCESS",
+        ifsc: null,
         user_id: userId,
         convenience_fee: convenienceFee,
         transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
-        bank: null,    
+        bank: null,
       });
       const saved = await this.transactionMoneyRepo.save(newAccount);
-      if(rewardAmount>0){
- const newReward = this.rewardRepo.create({
-        name: userName,
-        balance:rewardAmount,
-        is_read: false,
-        message: message,
-        user_id: userId,
-        created_at: new Date(),
-      });
-      const saved1 = await this.rewardRepo.save(newReward);
+      if (rewardAmount > 0) {
+        const newReward = this.rewardRepo.create({
+          name: userName,
+          balance: rewardAmount,
+          is_read: false,
+          message: message,
+          user_id: userId,
+          created_at: new Date(),
+        });
+        const saved1 = await this.rewardRepo.save(newReward);
       }
-     
+
       return { success: true, message: "Money sent successfully." };
     }
     if (paymentMode === "upi") {
@@ -999,29 +997,29 @@ export class UsersService {
         mobile: number,
         upiUserName: upiUserName,
         message: message,
-        convenienceFee:convenienceFee,
+        convenienceFee: convenienceFee,
       } as any
       const data = await this.payoutService.payoutUPINew(userId, payload);
       if (data?.referenceId) {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
           type: 'DEBIT',
-          amount: Number(amount),   
+          amount: Number(amount),
           message: message,
           reference: data.referenceId,
           transaction_date: new Date(),
-          status: "SUCCESS",  
+          status: "SUCCESS",
           convenience_fee: convenienceFee,
-          ifsc: null, 
+          ifsc: null,
           user_id: userId,
           transaction_id: data.referenceId,
-          bank: upiId?.toString() || null,    
+          bank: upiId?.toString() || null,
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
-        if(rewardAmount>0){
+        if (rewardAmount > 0) {
           const newReward = this.rewardRepo.create({
             name: userName,
-            balance:rewardAmount,
+            balance: rewardAmount,
             is_read: false,
             message: message,
             user_id: userId,
@@ -1029,22 +1027,22 @@ export class UsersService {
           });
           const saved1 = await this.rewardRepo.save(newReward);
         }
-      
+
         return { success: true, message: "Money sent successfully." };
-      }else{
+      } else {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
           type: 'DEBIT',
-          amount: Number(amount),   
+          amount: Number(amount),
           message: message,
           reference: data.referenceId,
           transaction_date: new Date(),
           status: "FAILED",
-          ifsc: ifsc, 
+          ifsc: ifsc,
           user_id: userId,
           transaction_id: data.referenceId,
           convenience_fee: convenienceFee,
-          bank: upiId?.toString() || null,   
+          bank: upiId?.toString() || null,
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
       }
@@ -1070,7 +1068,7 @@ export class UsersService {
         mode: mode,
         message: message,
         userName: userName,
-        convenienceFee:convenienceFee,
+        convenienceFee: convenienceFee,
       } as any
 
       const data = await this.payoutService.payoutAccountNew(userId, payload);
@@ -1082,18 +1080,18 @@ export class UsersService {
           message: message,
           reference: data.referenceId,
           transaction_date: new Date(),
-          status: "SUCCESS",  
-          ifsc: ifsc, 
+          status: "SUCCESS",
+          ifsc: ifsc,
           user_id: userId,
           transaction_id: data.referenceId,
           convenience_fee: convenienceFee,
-          bank: accountNumber.toString(),    
+          bank: accountNumber.toString(),
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
-        if(rewardAmount>0){
+        if (rewardAmount > 0) {
           const newReward = this.rewardRepo.create({
             name: userName,
-            balance:rewardAmount,
+            balance: rewardAmount,
             is_read: false,
             message: message,
             user_id: userId,
@@ -1101,10 +1099,10 @@ export class UsersService {
           });
           const saved1 = await this.rewardRepo.save(newReward);
         }
-       
+
 
         return { success: true, message: "Money sent successfully." };
-      }else{
+      } else {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
           type: 'DEBIT',
@@ -1112,12 +1110,12 @@ export class UsersService {
           message: message,
           reference: data.referenceId,
           transaction_date: new Date(),
-          status: "FAILED",  
-          ifsc: ifsc, 
+          status: "FAILED",
+          ifsc: ifsc,
           user_id: userId,
           transaction_id: data.referenceId,
           convenience_fee: convenienceFee,
-          bank: accountNumber.toString(),    
+          bank: accountNumber.toString(),
         });
         const saved = await this.transactionMoneyRepo.save(newAccount);
       }
@@ -1127,49 +1125,49 @@ export class UsersService {
   }
 
   async scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto) {
-    const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id),is_read: false } });
+    const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id), is_read: false } });
     if (!user) {
-     return {
-       success: false,
-       message: "Reward not found",
-       data: null,
-     };
+      return {
+        success: false,
+        message: "Reward not found",
+        data: null,
+      };
     }
 
     user.is_read = true;
-      await this.rewardRepo.save(user);
-      const newAccount = this.transactionMoneyRepo.create({
-        name: user.name,
-        type: 'REDEEM',
-        amount: Number(user.balance),   
-        message: user.message || "",
-        reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
-        transaction_date: new Date(),
-        status: "SUCCESS",  
-        ifsc: null, 
-        user_id: userId,
-        transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
-        bank: null,    
-      });
-      const saved = await this.transactionMoneyRepo.save(newAccount);
-      let walletTo = await this.walletRepository.findOneBy({ user: { id: userId } });
-        walletTo.balance = walletTo.balance + Number(user.balance)
-        await this.walletRepository.save(walletTo);
-      return {
-        success: true,
-        message: "Reward marked as read",
-        data: user,
-      };
+    await this.rewardRepo.save(user);
+    const newAccount = this.transactionMoneyRepo.create({
+      name: user.name,
+      type: 'REDEEM',
+      amount: Number(user.balance),
+      message: user.message || "",
+      reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+      transaction_date: new Date(),
+      status: "SUCCESS",
+      ifsc: null,
+      user_id: userId,
+      transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+      bank: null,
+    });
+    const saved = await this.transactionMoneyRepo.save(newAccount);
+    let walletTo = await this.walletRepository.findOneBy({ user: { id: userId } });
+    walletTo.balance = walletTo.balance + Number(user.balance)
+    await this.walletRepository.save(walletTo);
+    return {
+      success: true,
+      message: "Reward marked as read",
+      data: user,
+    };
 
   }
 
- 
+
   async getRewardHistory(userId: string, page = 1, limit = 10) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new BadRequestException(['user not found']);
     }
-  
+
     // fetch rewards with pagination
     const [reward, totalItems] = await this.rewardRepo.findAndCount({
       where: { user_id: userId },
@@ -1177,7 +1175,7 @@ export class UsersService {
       skip: (page - 1) * limit,
       take: limit,
     });
-  
+
     // calculate sum of balances where is_read = true
     const { totalBalance } = await this.rewardRepo
       .createQueryBuilder('reward')
@@ -1185,9 +1183,9 @@ export class UsersService {
       .where('reward.user_id = :userId', { userId })
       .andWhere('reward.is_read = true')
       .getRawOne();
-  
+
     const totalPages = Math.ceil(totalItems / limit);
-  
+
     return {
       success: true,
       message: "Fetched Reward History",
@@ -1201,7 +1199,7 @@ export class UsersService {
       totalBalance: Number(totalBalance), // convert string → number
     };
   }
-  
+
 
   async createOrder(userId: string, pinRequest: CreateOrderRequestDto) {
     const user = await this.findUserById(userId);

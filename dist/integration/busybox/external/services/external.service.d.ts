@@ -1,16 +1,22 @@
 import { BusyBoxWebhookResponse } from 'src/core/entities/busybox_webhook_logs.entity';
+import { Wallet } from 'src/core/entities/wallet.entity';
+import { VirtualAccount } from 'src/core/entities/virtual-account.entity';
 import { Repository } from 'typeorm';
 import { TransactionNotifyPayload } from '../interfaces/transaction-notify.interface';
+import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { WalletService } from 'src/wallet/services/wallet.service';
 import { KycWebhookPayload } from '../interfaces/kyc-webhook-payload.interface';
 import { UsersService } from 'src/users/services/users.service';
 import { TransactionDto } from '../interfaces/upi-transaction-payload.dto';
 export declare class ExternalService {
     private busyBoxWebHookRepo;
+    private walletRepository;
+    private virtualAccountRepo;
+    private transactionMoneyRepo;
     private walletService;
     private userService;
     private readonly logger;
-    constructor(busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>, walletService: WalletService, userService: UsersService);
+    constructor(busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, transactionMoneyRepo: Repository<TransactionMoney>, walletService: WalletService, userService: UsersService);
     handleCardtransactions(payload: TransactionNotifyPayload): Promise<{
         message: string;
     }>;

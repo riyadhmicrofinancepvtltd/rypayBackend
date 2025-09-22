@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BusyBoxWebhookResponse, Webhook_Type } from 'src/core/entities/busybox_webhook_logs.entity';
+import { Wallet } from 'src/core/entities/wallet.entity';
+import { VirtualAccount } from 'src/core/entities/virtual-account.entity'
 import { Repository } from 'typeorm';
 import { TransactionNotifyPayload } from '../interfaces/transaction-notify.interface';
+import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { WalletService } from 'src/wallet/services/wallet.service';
 import { KycWebhookPayload } from '../interfaces/kyc-webhook-payload.interface';
 import { UsersService } from 'src/users/services/users.service';
@@ -13,6 +16,9 @@ export class ExternalService {
     private readonly logger: Logger
     constructor(
         @InjectRepository(BusyBoxWebhookResponse) private busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>,
+        @InjectRepository(Wallet) private walletRepository: Repository<Wallet>,
+         @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
+          @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>,
         private walletService: WalletService,
         private userService: UsersService,
     ) {
@@ -115,9 +121,36 @@ export class ExternalService {
     
           console.log('✅ Processed Transaction Model:', transactionModel);
           this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
-    
-          // Save to DB later
-          // await this.busyBoxWebHookRepo.save(transactionModel);
+    if(transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
+        const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
+        console.log('User found for VA number:', user);
+        if(user) {
+            let walletTo = await this.walletRepository.findOneBy({ user: { id: user.userid } });
+            console.log('Wallet before update:', walletTo);
+        walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
+        let savedWallet = await this.walletRepository.save(walletTo);
+
+        }
+        const newAccount = this.transactionMoneyRepo.create({
+                name: transactionModel?.additionalData?.remitter_name, 
+                type: 'CREDIT',
+                amount: Number(transactionModel.additionalData?.amount),   
+                message: null,
+                reference: transactionModel.additionalData?.rrn,
+                transaction_date: new Date(),
+                status: "SUCCESS",  
+                ifsc: null, 
+                user_id: user?.userid,
+                convenience_fee: 0,
+                transaction_id: transactionModel?.additionalData?.txn_id,
+                bank: null,    
+              });
+              console.log('New TransactionMoney entity:', newAccount);
+              const saved = await this.transactionMoneyRepo.save(newAccount);
+
+
+    }
+          
     
           return { message: 'Success' };
         } catch (err) {
