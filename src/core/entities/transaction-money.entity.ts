@@ -53,4 +53,8 @@ export class TransactionMoney {
     })
     convenience_fee: number;
 
+
+    @Column()
+    transaction_mode: string;
+
 }

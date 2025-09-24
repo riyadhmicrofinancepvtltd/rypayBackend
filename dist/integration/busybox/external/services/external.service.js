@@ -119,6 +119,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                     reference: transactionModel.additionalData?.rrn,
                     transaction_date: new Date(),
                     status: "SUCCESS",
+                    transaction_mode: "VIRTUAL_ACCOUNT",
                     ifsc: null,
                     user_id: user?.userid,
                     convenience_fee: 0,
