@@ -896,7 +896,44 @@ export class UsersService {
       },
     };
   }
+  async getRecentTransaction(
+    userId: string,
+    page = 1,
+    limit = 10,
+    transactionMode?: string,
+  ) {
+    console.log("UserId:", userId, "Page:", page, "Limit:", limit, "Mode:", transactionMode);
+  
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new BadRequestException(['user not found']);
+    }
 
+    const whereCondition: any = { user_id: userId };
+    if (transactionMode) {
+      whereCondition.transaction_mode = transactionMode;
+    }
+    const [transactionMoney, totalItems] = await this.transactionMoneyRepo.findAndCount({
+      where: whereCondition,
+      order: { transaction_date: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  
+    const totalPages = Math.ceil(totalItems / limit);
+    return {
+      success: true,
+      message: "Fetched Recent Transaction",
+      transactionMoney,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+    };
+  }
+  
 
 
   async sendMoney(
@@ -960,6 +997,8 @@ export class UsersService {
         status: "SUCCESS",
         ifsc: null,
         transaction_mode: "NUMBER",
+        number: number,
+        upi: null,
         user_id: userId,
         convenience_fee: convenienceFee,
         transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
@@ -1012,6 +1051,8 @@ export class UsersService {
           status: "SUCCESS",
           convenience_fee: convenienceFee,
           transaction_mode: "UPI",
+          upi: upiId,
+          number: null,
           ifsc: null,
           user_id: userId,
           transaction_id: data.referenceId,
@@ -1041,6 +1082,8 @@ export class UsersService {
           transaction_date: new Date(),
           status: "FAILED",
           transaction_mode: "UPI",
+          upi: upiId,
+          number: null,
           ifsc: ifsc,
           user_id: userId,
           transaction_id: data.referenceId,
@@ -1085,6 +1128,8 @@ export class UsersService {
           transaction_date: new Date(),
           status: "SUCCESS",
           transaction_mode: "BANK",
+          upi: null,
+          number: null,
           ifsc: ifsc,
           user_id: userId,
           transaction_id: data.referenceId,
@@ -1117,6 +1162,8 @@ export class UsersService {
           status: "FAILED",
           transaction_mode: "BANK",
           ifsc: ifsc,
+          upi: null,
+          number: null,
           user_id: userId,
           transaction_id: data.referenceId,
           convenience_fee: convenienceFee,

@@ -57,4 +57,10 @@ export class TransactionMoney {
     @Column()
     transaction_mode: string;
 
+    @Column()
+    number: string;
+
+    @Column()
+    upi: string;
+
 }

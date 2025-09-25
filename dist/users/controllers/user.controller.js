@@ -152,6 +152,9 @@ let UsersController = class UsersController {
     async getTransactionHistory(req, page = 1, limit = 10) {
         return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit));
     }
+    async getRecentTransaction(req, page = 1, limit = 10, transactionMode) {
+        return await this.userService.getRecentTransaction(req.user.sub, Number(page), Number(limit), transactionMode);
+    }
     async sendMoney(req, pinRequest) {
         return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message, pinRequest.accountNumber, pinRequest.ifsc, pinRequest.mode, pinRequest.userName, pinRequest.convenienceFee);
     }
@@ -705,6 +708,19 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number, Number]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getTransactionHistory", null);
+__decorate([
+    (0, common_1.Get)('recent-transaction'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('transactionMode')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getRecentTransaction", null);
 __decorate([
     (0, common_1.Post)('send-money'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

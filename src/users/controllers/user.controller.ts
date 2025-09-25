@@ -540,6 +540,26 @@ async getTransactionHistory(
   return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit));
 }
 
+
+@Get('recent-transaction')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@HttpCode(HttpStatus.OK)
+async getRecentTransaction(
+  @Req() req: any,
+  @Query('page') page: number = 1,
+  @Query('limit') limit: number = 10,
+  @Query('transactionMode') transactionMode?: string,   
+) {
+  return await this.userService.getRecentTransaction(
+    req.user.sub,
+    Number(page),
+    Number(limit),
+    transactionMode,
+  );
+}
+
+
   @Post('send-money')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

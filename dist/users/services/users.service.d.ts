@@ -116,6 +116,17 @@ export declare class UsersService {
             limit: number;
         };
     }>;
+    getRecentTransaction(userId: string, page?: number, limit?: number, transactionMode?: string): Promise<{
+        success: boolean;
+        message: string;
+        transactionMoney: TransactionMoney[];
+        pagination: {
+            totalItems: number;
+            totalPages: number;
+            currentPage: number;
+            limit: number;
+        };
+    }>;
     sendMoney(userId: string, paymentMode: string, amount: number, transactionPIN: string, number: string, upiId: string, upiUserName: string, message: string, accountNumber: string, ifsc: string, mode: string, userName: string, convenienceFee: number): Promise<{
         referenceId: string;
         amount: number;

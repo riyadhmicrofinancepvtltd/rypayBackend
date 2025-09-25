@@ -80,6 +80,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], TransactionMoney.prototype, "transaction_mode", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TransactionMoney.prototype, "number", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TransactionMoney.prototype, "upi", void 0);
 exports.TransactionMoney = TransactionMoney = __decorate([
     (0, typeorm_1.Entity)('transaction_money')
 ], TransactionMoney);

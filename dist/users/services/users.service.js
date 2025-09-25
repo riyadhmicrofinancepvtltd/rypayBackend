@@ -755,6 +755,35 @@ let UsersService = class UsersService {
             },
         };
     }
+    async getRecentTransaction(userId, page = 1, limit = 10, transactionMode) {
+        console.log("UserId:", userId, "Page:", page, "Limit:", limit, "Mode:", transactionMode);
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const whereCondition = { user_id: userId };
+        if (transactionMode) {
+            whereCondition.transaction_mode = transactionMode;
+        }
+        const [transactionMoney, totalItems] = await this.transactionMoneyRepo.findAndCount({
+            where: whereCondition,
+            order: { transaction_date: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+        const totalPages = Math.ceil(totalItems / limit);
+        return {
+            success: true,
+            message: "Fetched Recent Transaction",
+            transactionMoney,
+            pagination: {
+                totalItems,
+                totalPages,
+                currentPage: page,
+                limit,
+            },
+        };
+    }
     async sendMoney(userId, paymentMode, amount, transactionPIN, number, upiId, upiUserName, message, accountNumber, ifsc, mode, userName, convenienceFee) {
         let enumKey = ["upi", "number", "bank"].find(key => key === paymentMode);
         if (!enumKey) {
@@ -800,6 +829,8 @@ let UsersService = class UsersService {
                 status: "SUCCESS",
                 ifsc: null,
                 transaction_mode: "NUMBER",
+                number: number,
+                upi: null,
                 user_id: userId,
                 convenience_fee: convenienceFee,
                 transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
@@ -848,6 +879,8 @@ let UsersService = class UsersService {
                     status: "SUCCESS",
                     convenience_fee: convenienceFee,
                     transaction_mode: "UPI",
+                    upi: upiId,
+                    number: null,
                     ifsc: null,
                     user_id: userId,
                     transaction_id: data.referenceId,
@@ -877,6 +910,8 @@ let UsersService = class UsersService {
                     transaction_date: new Date(),
                     status: "FAILED",
                     transaction_mode: "UPI",
+                    upi: upiId,
+                    number: null,
                     ifsc: ifsc,
                     user_id: userId,
                     transaction_id: data.referenceId,
@@ -917,6 +952,8 @@ let UsersService = class UsersService {
                     transaction_date: new Date(),
                     status: "SUCCESS",
                     transaction_mode: "BANK",
+                    upi: null,
+                    number: null,
                     ifsc: ifsc,
                     user_id: userId,
                     transaction_id: data.referenceId,
@@ -948,6 +985,8 @@ let UsersService = class UsersService {
                     status: "FAILED",
                     transaction_mode: "BANK",
                     ifsc: ifsc,
+                    upi: null,
+                    number: null,
                     user_id: userId,
                     transaction_id: data.referenceId,
                     convenience_fee: convenienceFee,

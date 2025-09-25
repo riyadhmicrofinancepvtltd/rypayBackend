@@ -13,4 +13,6 @@ export declare class TransactionMoney {
     ifsc: string;
     convenience_fee: number;
     transaction_mode: string;
+    number: string;
+    upi: string;
 }
