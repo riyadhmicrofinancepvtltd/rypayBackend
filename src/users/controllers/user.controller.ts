@@ -536,8 +536,9 @@ async getTransactionHistory(
   @Req() req: any,
   @Query('page') page: number = 1,
   @Query('limit') limit: number = 10,
+  @Query('transactionMode') transactionMode?: string, 
 ) {
-  return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit));
+  return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit),transactionMode);
 }
 
 

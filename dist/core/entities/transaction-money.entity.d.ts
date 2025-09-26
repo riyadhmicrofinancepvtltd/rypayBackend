@@ -15,4 +15,5 @@ export declare class TransactionMoney {
     transaction_mode: string;
     number: string;
     upi: string;
+    bank_mode: string;
 }

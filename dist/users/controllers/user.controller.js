@@ -149,8 +149,8 @@ let UsersController = class UsersController {
     async verifyToContact(req, pinRequest) {
         return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
     }
-    async getTransactionHistory(req, page = 1, limit = 10) {
-        return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit));
+    async getTransactionHistory(req, page = 1, limit = 10, transactionMode) {
+        return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit), transactionMode);
     }
     async getRecentTransaction(req, page = 1, limit = 10, transactionMode) {
         return await this.userService.getRecentTransaction(req.user.sub, Number(page), Number(limit), transactionMode);
@@ -704,8 +704,9 @@ __decorate([
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Query)('page')),
     __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('transactionMode')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Number, Number]),
+    __metadata("design:paramtypes", [Object, Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getTransactionHistory", null);
 __decorate([

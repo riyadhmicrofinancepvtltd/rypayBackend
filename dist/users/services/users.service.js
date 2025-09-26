@@ -730,14 +730,18 @@ let UsersService = class UsersService {
             }
         };
     }
-    async getTransactionHistory(userId, page = 1, limit = 10) {
+    async getTransactionHistory(userId, page = 1, limit = 10, transactionMode) {
         console.log("UserId:", userId, "Page:", page, "Limit:", limit);
         const user = await this.userRepository.findOneBy({ id: userId });
         if (!user) {
             throw new common_1.BadRequestException(['user not found']);
         }
+        const whereCondition = { user_id: userId };
+        if (transactionMode) {
+            whereCondition.transaction_mode = transactionMode;
+        }
         const [transactionMoney, totalItems] = await this.transactionMoneyRepo.findAndCount({
-            where: { user_id: userId },
+            where: whereCondition,
             order: { transaction_date: 'DESC' },
             skip: (page - 1) * limit,
             take: limit,
@@ -837,17 +841,6 @@ let UsersService = class UsersService {
                 bank: null,
             });
             const saved = await this.transactionMoneyRepo.save(newAccount);
-            if (rewardAmount > 0) {
-                const newReward = this.rewardRepo.create({
-                    name: userName,
-                    balance: rewardAmount,
-                    is_read: false,
-                    message: message,
-                    user_id: userId,
-                    created_at: new Date(),
-                });
-                const saved1 = await this.rewardRepo.save(newReward);
-            }
             return { success: true, message: "Money sent successfully." };
         }
         if (paymentMode === "upi") {
@@ -952,6 +945,7 @@ let UsersService = class UsersService {
                     transaction_date: new Date(),
                     status: "SUCCESS",
                     transaction_mode: "BANK",
+                    bank_mode: mode,
                     upi: null,
                     number: null,
                     ifsc: ifsc,
