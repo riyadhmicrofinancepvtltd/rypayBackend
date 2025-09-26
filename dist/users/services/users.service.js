@@ -845,6 +845,12 @@ let UsersService = class UsersService {
         }
         if (paymentMode === "upi") {
             const res = await this.rechargeClient.validateUPI(upiId);
+            if (res?.status !== "SUCCESS" && res?.upiData?.status !== "SUCCESS") {
+                return {
+                    success: false,
+                    message: 'Invalid UPI ID. Please check and try again.',
+                };
+            }
             console.log("UPI Validation Response:", res);
             const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
