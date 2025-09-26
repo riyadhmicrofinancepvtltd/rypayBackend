@@ -163,6 +163,24 @@ let RechargeClientService = class RechargeClientService {
             throw error;
         }
     }
+    async validateUPI(upiId) {
+        const urid = Math.floor(100000000 + Math.random() * 900000000);
+        const body = {
+            token: this.apiToken,
+            upiId: upiId,
+            urid: urid.toString(),
+            transType: 'upiName',
+        };
+        console.log("send payload==>", body);
+        try {
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body));
+            return response.data;
+        }
+        catch (error) {
+            this.logger.error('Aadhar eKYC request error :', error);
+            throw error;
+        }
+    }
     async validateAadharOtp(aadharNumber, otp, sessionId) {
         const urid = Math.floor(100000000 + Math.random() * 900000000);
         const body = {

@@ -36,6 +36,7 @@ export declare class RechargeClientService {
     getAepsMiniStatement(miniStatementData: AEPSMiniStatementRequestModel): Promise<AEPSMiniStatementResponseModel>;
     getAepsWithdrawal(withdrawalData: AEPSWithdrawalRequestModel): Promise<AEPSWithdrawalResponseModel>;
     requestAadharOtp(aadharNumber: string): Promise<any>;
+    validateUPI(upiId: string): Promise<any>;
     validateAadharOtp(aadharNumber: string, otp: string, sessionId: string): Promise<any>;
     initUtilityPayment(utilityPayload: IUtilityBillPaymentRequest): Promise<UtilityBillAPIResponse>;
     getServiceProvidersList(): Promise<IOperatorApiResponse>;

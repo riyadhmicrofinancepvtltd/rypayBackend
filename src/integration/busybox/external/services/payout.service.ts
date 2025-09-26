@@ -175,8 +175,6 @@ export class PayoutService {
             throw new ForbiddenException('User does not exist')
         }
         const wallet = await this.walletService.getWallet({user: {id: userId}});
-        console.log("poolBalance====>",poolBalance);
-        console.log("amount.balance====>",amount);
         if (wallet.balance < amount) {
             throw new BadRequestException(['Insufficient Balance'])
         }

@@ -120,10 +120,6 @@ export class PayoutClientService {
    */
   async verifyUpi(data: IVerifyUPIRequestDTO): Promise<IVerifyUpiResponseDTO> {
     const config = await this.accessTokenService.getHeaderConfig(true);
-    console.log("verifyUpi data====>", data);
-    console.log("config====>", config);
-    let url = `${this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL')}/verify/upi`;
-    console.log("url====>", url);
     try {
       const response = await firstValueFrom(
         this.httpService.post<IVerifyUpiResponseDTO>(
