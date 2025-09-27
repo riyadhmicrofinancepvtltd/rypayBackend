@@ -1019,7 +1019,6 @@ export class UsersService {
           message: 'Invalid UPI ID. Please check and try again.',
         }
       }
-      console.log("UPI Validation Response:", res);
       const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
       const isOldPinCorrect = await bcrypt.compare(
         transactionPIN,
@@ -1095,6 +1094,13 @@ export class UsersService {
       return data;
     }
     if (paymentMode === "bank") {
+      const res = await this.rechargeClient.validateBank(accountNumber,ifsc);
+      if(res?.status !=="SUCCESS" && res?.beneficiaryData?.fetchStatus !=="SUCCESS"){
+        return{
+          success: false,
+          message: 'Invalid Account Number. Please try again.',
+        }
+      }
       const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
       const isOldPinCorrect = await bcrypt.compare(
         transactionPIN,

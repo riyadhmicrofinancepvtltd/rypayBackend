@@ -37,6 +37,7 @@ export declare class RechargeClientService {
     getAepsWithdrawal(withdrawalData: AEPSWithdrawalRequestModel): Promise<AEPSWithdrawalResponseModel>;
     requestAadharOtp(aadharNumber: string): Promise<any>;
     validateUPI(upiId: string): Promise<any>;
+    validateBank(accountNumber: string, ifscCode: string): Promise<any>;
     validateAadharOtp(aadharNumber: string, otp: string, sessionId: string): Promise<any>;
     initUtilityPayment(utilityPayload: IUtilityBillPaymentRequest): Promise<UtilityBillAPIResponse>;
     getServiceProvidersList(): Promise<IOperatorApiResponse>;

@@ -153,7 +153,6 @@ let RechargeClientService = class RechargeClientService {
             transType: 'aadhaarSendOtp',
             urid: urid.toString(),
         };
-        console.log("send payload==>", body);
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body));
             return response.data;
@@ -171,7 +170,24 @@ let RechargeClientService = class RechargeClientService {
             urid: urid.toString(),
             transType: 'upiName',
         };
-        console.log("send payload==>", body);
+        try {
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body));
+            return response.data;
+        }
+        catch (error) {
+            this.logger.error('Aadhar eKYC request error :', error);
+            throw error;
+        }
+    }
+    async validateBank(accountNumber, ifscCode) {
+        const urid = Math.floor(100000000 + Math.random() * 900000000);
+        const body = {
+            token: this.apiToken,
+            urid: urid.toString(),
+            transType: 'bankAccountValidate',
+            ifscCode: ifscCode,
+            accountNumber: accountNumber,
+        };
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body));
             return response.data;
