@@ -44,7 +44,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       "/user/verify-transaction-pin-otp",
       "/user/delete-user",
       "/user/verify-to-contact",
-      "/user/send-money"
+      "/user/send-money",
+      "/user/upi-verify",
+      "/user/bank-verify"
     ];
     if (openUrls.includes(request.url)) {
       response.status(status).json({

@@ -597,6 +597,17 @@ async getRecentTransaction(
     return await this.userService.upiValidate(req.user.sub,upiRequest.upiId);
   }
 
+  @Post('bank-verify')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async bankValidate(
+    @Req() req: any,
+    @Body() bankRequest: bankValidateRequestDto,
+  ) {
+    return await this.userService.bankValidate(req.user.sub,bankRequest.ifsc,bankRequest.accountNumber);
+  }
+
 
 
   @Post('scratch-reward')

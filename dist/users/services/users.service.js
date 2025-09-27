@@ -1031,6 +1031,32 @@ let UsersService = class UsersService {
             };
         }
     }
+    async bankValidate(userId, ifsc, accountNumber) {
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const res = await this.rechargeClient.validateBank(accountNumber, ifsc);
+        if (res?.status === "FAILED" && res?.resText === "Invalid ifscCode") {
+            return {
+                success: false,
+                message: 'Invalid ifscCode. Please try again.',
+            };
+        }
+        if (res?.status !== "SUCCESS" && res?.beneficiaryData?.fetchStatus !== "SUCCESS") {
+            return {
+                success: false,
+                message: 'Invalid Account Number. Please try again.',
+            };
+        }
+        else {
+            return {
+                success: true,
+                message: 'Account Number is valid.',
+                data: res?.beneficiaryData
+            };
+        }
+    }
     async scratchReward(userId, rewardRequest) {
         const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id), is_read: false } });
         if (!user) {

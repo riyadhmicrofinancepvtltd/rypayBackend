@@ -1209,6 +1209,34 @@ export class UsersService {
       }
     }
   }
+  async bankValidate(userId: string, ifsc: string, accountNumber: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new BadRequestException(['user not found']);
+    }
+
+    const res = await this.rechargeClient.validateBank(accountNumber,ifsc);
+      if(res?.status==="FAILED" && res?.resText==="Invalid ifscCode"){
+        return{
+          success: false,
+          message: 'Invalid ifscCode. Please try again.',
+        }
+      }
+      if(res?.status !=="SUCCESS" && res?.beneficiaryData?.fetchStatus !=="SUCCESS"){
+        return{
+          success: false,
+          message: 'Invalid Account Number. Please try again.',
+        }
+      }
+   
+    else{
+      return{
+        success: true,
+        message: 'Account Number is valid.',
+        data:res?.beneficiaryData
+      }
+    }
+  }
 
 
   async scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto) {

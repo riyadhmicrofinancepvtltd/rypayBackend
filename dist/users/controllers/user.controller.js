@@ -161,6 +161,9 @@ let UsersController = class UsersController {
     async upiValidate(req, upiRequest) {
         return await this.userService.upiValidate(req.user.sub, upiRequest.upiId);
     }
+    async bankValidate(req, bankRequest) {
+        return await this.userService.bankValidate(req.user.sub, bankRequest.ifsc, bankRequest.accountNumber);
+    }
     async scratchReward(req, rewardRequest) {
         return await this.userService.scratchReward(req.user.sub, rewardRequest);
     }
@@ -747,6 +750,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, pin_request_dto_1.upiValidateRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "upiValidate", null);
+__decorate([
+    (0, common_1.Post)('bank-verify'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.bankValidateRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "bankValidate", null);
 __decorate([
     (0, common_1.Post)('scratch-reward'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

@@ -144,6 +144,15 @@ export declare class UsersService {
         message: string;
         data: any;
     }>;
+    bankValidate(userId: string, ifsc: string, accountNumber: string): Promise<{
+        success: boolean;
+        message: string;
+        data?: undefined;
+    } | {
+        success: boolean;
+        message: string;
+        data: any;
+    }>;
     scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto): Promise<{
         success: boolean;
         message: string;
