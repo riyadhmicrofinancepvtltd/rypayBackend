@@ -207,7 +207,6 @@ let RechargeClientService = class RechargeClientService {
             transType: "aadhaarVerifyOtp",
             urid: urid.toString(),
         };
-        console.log("verify payload==>", body);
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body));
             return response.data;

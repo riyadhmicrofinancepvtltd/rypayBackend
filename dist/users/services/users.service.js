@@ -924,6 +924,12 @@ let UsersService = class UsersService {
         }
         if (paymentMode === "bank") {
             const res = await this.rechargeClient.validateBank(accountNumber, ifsc);
+            if (res?.status === "FAILED" && res?.resText === "Invalid ifscCode") {
+                return {
+                    success: false,
+                    message: 'Invalid ifscCode. Please try again.',
+                };
+            }
             if (res?.status !== "SUCCESS" && res?.beneficiaryData?.fetchStatus !== "SUCCESS") {
                 return {
                     success: false,

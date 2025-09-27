@@ -270,8 +270,6 @@ export class RechargeClientService {
       urid: urid.toString(),
     };
 
-    console.log("verify payload==>",body);
-
     try {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
