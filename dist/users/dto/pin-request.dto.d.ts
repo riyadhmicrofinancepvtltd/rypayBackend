@@ -46,3 +46,10 @@ export declare class PaymentStatusRequestDto {
 export declare class ScratchRewardRequestDto {
     reward_id: string;
 }
+export declare class upiValidateRequestDto {
+    upiId: string;
+}
+export declare class bankValidateRequestDto {
+    ifsc: string;
+    accountNumber: string;
+}

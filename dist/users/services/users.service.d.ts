@@ -135,6 +135,15 @@ export declare class UsersService {
         success: boolean;
         message: string;
     }>;
+    upiValidate(userId: string, upiId: string): Promise<{
+        success: boolean;
+        message: string;
+        data?: undefined;
+    } | {
+        success: boolean;
+        message: string;
+        data: any;
+    }>;
     scratchReward(userId: string, rewardRequest: ScratchRewardRequestDto): Promise<{
         success: boolean;
         message: string;

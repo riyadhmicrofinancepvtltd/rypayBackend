@@ -158,6 +158,9 @@ let UsersController = class UsersController {
     async sendMoney(req, pinRequest) {
         return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message, pinRequest.accountNumber, pinRequest.ifsc, pinRequest.mode, pinRequest.userName, pinRequest.convenienceFee);
     }
+    async upiValidate(req, upiRequest) {
+        return await this.userService.upiValidate(req.user.sub, upiRequest.upiId);
+    }
     async scratchReward(req, rewardRequest) {
         return await this.userService.scratchReward(req.user.sub, rewardRequest);
     }
@@ -733,6 +736,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, pin_request_dto_1.SendMoneyRequestDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "sendMoney", null);
+__decorate([
+    (0, common_1.Post)('upi-verify'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, pin_request_dto_1.upiValidateRequestDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "upiValidate", null);
 __decorate([
     (0, common_1.Post)('scratch-reward'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

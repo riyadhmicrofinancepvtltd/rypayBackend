@@ -1011,6 +1011,26 @@ let UsersService = class UsersService {
             return data;
         }
     }
+    async upiValidate(userId, upiId) {
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const res = await this.rechargeClient.validateUPI(upiId);
+        if (res?.status !== "SUCCESS" && res?.upiData?.status !== "SUCCESS") {
+            return {
+                success: false,
+                message: 'Invalid UPI ID. Please check and try again.',
+            };
+        }
+        else {
+            return {
+                success: true,
+                message: 'UPI ID is valid.',
+                data: res?.upiData
+            };
+        }
+    }
     async scratchReward(userId, rewardRequest) {
         const user = await this.rewardRepo.findOne({ where: { id: Number(rewardRequest.reward_id), is_read: false } });
         if (!user) {

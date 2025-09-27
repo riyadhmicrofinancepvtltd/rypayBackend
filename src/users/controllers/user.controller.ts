@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto,PaymentStatusRequestDto,ScratchRewardRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto,PaymentStatusRequestDto,ScratchRewardRequestDto,upiValidateRequestDto,bankValidateRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -584,7 +584,20 @@ async getRecentTransaction(
       pinRequest.userName,
       pinRequest.convenienceFee
     );
+  }  
+  
+  @Post('upi-verify')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async upiValidate(
+    @Req() req: any,
+    @Body() upiRequest: upiValidateRequestDto,
+  ) {
+    return await this.userService.upiValidate(req.user.sub,upiRequest.upiId);
   }
+
+
 
   @Post('scratch-reward')
   @UseGuards(JwtAuthGuard)

@@ -124,4 +124,16 @@ export class SendMoneyRequestDto {
  }
 
 
+ export class upiValidateRequestDto {
+    @ApiProperty()
+    upiId: string;
+ }
  
+
+ export class bankValidateRequestDto {
+    @ApiProperty()
+    ifsc: string;
+
+    @ApiProperty()
+    accountNumber: string;
+ }
