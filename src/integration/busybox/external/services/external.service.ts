@@ -32,6 +32,7 @@ export class ExternalService {
                 type: Webhook_Type.TRANSACTION,
                 additionalData: payload
             }
+            console.log("handleCardtransactions====>",transactionModel)
             await this.busyBoxWebHookRepo.save(transactionModel);
             await this.walletService.debitAmountOnCardTransaction(payload);
             return {
@@ -49,6 +50,7 @@ export class ExternalService {
                 type: Webhook_Type.KYC_EVENT,
                 additionalData: payload
             }
+            console.log("handleKycEvents====>",transactionModel)
             await this.busyBoxWebHookRepo.save(transactionModel);
             await this.userService.handleKycEvent(payload.cardholderId, payload.kycStatus);
             return {
@@ -66,6 +68,7 @@ export class ExternalService {
                 type: Webhook_Type.UPI,
                 additionalData: payload
             }
+            console.log("handleUpiEvents====>",transactionModel)
             await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.log(payload);
             return {
@@ -83,6 +86,7 @@ export class ExternalService {
                 type: Webhook_Type.Payout,
                 additionalData: payload
             }
+            console.log("handlePayoutEvents====>",transactionModel)
             await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.log(payload);
             return {
@@ -118,7 +122,7 @@ export class ExternalService {
                 type: Webhook_Type.Payout,
                 additionalData: payload,
             };
-
+            console.log("handleBusyBoxPayoutEvents====>",transactionModel)
             this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
             if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
                 const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
@@ -162,6 +166,7 @@ export class ExternalService {
                 type: Webhook_Type.DEBIT,
                 additionalData: payload
             }
+            console.log("handleDebitEvents====>",transactionModel)
             await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.debug('DEBIT', payload);
             return {

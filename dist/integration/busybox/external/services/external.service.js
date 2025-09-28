@@ -39,6 +39,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.TRANSACTION,
                 additionalData: payload
             };
+            console.log("handleCardtransactions====>", transactionModel);
             await this.busyBoxWebHookRepo.save(transactionModel);
             await this.walletService.debitAmountOnCardTransaction(payload);
             return {
@@ -55,6 +56,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.KYC_EVENT,
                 additionalData: payload
             };
+            console.log("handleKycEvents====>", transactionModel);
             await this.busyBoxWebHookRepo.save(transactionModel);
             await this.userService.handleKycEvent(payload.cardholderId, payload.kycStatus);
             return {
@@ -71,6 +73,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.UPI,
                 additionalData: payload
             };
+            console.log("handleUpiEvents====>", transactionModel);
             await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.log(payload);
             return {
@@ -87,6 +90,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
                 additionalData: payload
             };
+            console.log("handlePayoutEvents====>", transactionModel);
             await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.log(payload);
             return {
@@ -103,6 +107,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
                 additionalData: payload,
             };
+            console.log("handleBusyBoxPayoutEvents====>", transactionModel);
             this.logger.log(`BusyBox webhook received: ${JSON.stringify(payload)}`);
             if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
                 const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
@@ -141,6 +146,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.DEBIT,
                 additionalData: payload
             };
+            console.log("handleDebitEvents====>", transactionModel);
             await this.busyBoxWebHookRepo.save(transactionModel);
             this.logger.debug('DEBIT', payload);
             return {
