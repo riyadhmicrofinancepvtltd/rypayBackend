@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Order, OrderStatus, OrderType } from 'src/core/entities/order.entity';
 import { TransactionStatus } from 'src/core/entities/transactions.entity';
 import { User } from 'src/core/entities/user.entity';
+
 import { generateRef } from 'src/core/utils/hash.util';
 import { PaymentGatewayDescription } from 'src/integration/busybox/external/constants/external.constant';
 import { WalletService } from 'src/wallet/services/wallet.service';
@@ -32,6 +33,8 @@ export class PaymentExternalService {
             type: Webhook_Type.QRPayment,
             additionalData: requestDto as any
         })
+        console.log(`Payment Callback Received====33===>: ${JSON.stringify(requestDto)}`);
+        console.log("webHookResponse==77==>",webHookResponse)
         await this.webHookRepo.save(webHookResponse);
         if (requestDto.data.paymentType === 'Dynamic') {
             await this.dynamicQRHandler(requestDto)

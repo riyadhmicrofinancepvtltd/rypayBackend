@@ -40,6 +40,8 @@ let PaymentExternalService = PaymentExternalService_1 = class PaymentExternalSer
             type: busybox_webhook_logs_entity_1.Webhook_Type.QRPayment,
             additionalData: requestDto
         });
+        console.log(`Payment Callback Received====33===>: ${JSON.stringify(requestDto)}`);
+        console.log("webHookResponse==77==>", webHookResponse);
         await this.webHookRepo.save(webHookResponse);
         if (requestDto.data.paymentType === 'Dynamic') {
             await this.dynamicQRHandler(requestDto);
