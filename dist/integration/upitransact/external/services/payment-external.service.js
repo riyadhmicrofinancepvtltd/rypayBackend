@@ -19,6 +19,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const order_entity_1 = require("../../../../core/entities/order.entity");
 const transactions_entity_1 = require("../../../../core/entities/transactions.entity");
 const user_entity_1 = require("../../../../core/entities/user.entity");
+const transaction_money_entity_1 = require("../../../../core/entities/transaction-money.entity");
 const hash_util_1 = require("../../../../core/utils/hash.util");
 const external_constant_1 = require("../../../busybox/external/constants/external.constant");
 const wallet_service_1 = require("../../../../wallet/services/wallet.service");
@@ -27,12 +28,13 @@ const busybox_webhook_logs_entity_1 = require("../../../../core/entities/busybox
 const notification_bridge_1 = require("../../../../notifications/services/notification-bridge");
 const notification_entity_1 = require("../../../../core/entities/notification.entity");
 let PaymentExternalService = PaymentExternalService_1 = class PaymentExternalService {
-    constructor(walletService, webHookRepo, orderRepository, notificationBridge, userRepository) {
+    constructor(walletService, webHookRepo, orderRepository, notificationBridge, userRepository, transactionMoneyRepo) {
         this.walletService = walletService;
         this.webHookRepo = webHookRepo;
         this.orderRepository = orderRepository;
         this.notificationBridge = notificationBridge;
         this.userRepository = userRepository;
+        this.transactionMoneyRepo = transactionMoneyRepo;
         this.logger = new common_1.Logger(PaymentExternalService_1.name);
     }
     async handlePaymentCallback(requestDto) {
@@ -82,6 +84,24 @@ let PaymentExternalService = PaymentExternalService_1 = class PaymentExternalSer
                 reference: orderId }, user.id);
             order.status = order_entity_1.OrderStatus.SUCCESS;
             order.transaction_id = requestDto.data.UTR;
+            const newAccount = this.transactionMoneyRepo.create({
+                name: requestDto.data.payerName,
+                type: 'CREDIT',
+                amount: Number(requestDto.data.amount),
+                message: "",
+                reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+                transaction_date: new Date(),
+                status: "SUCCESS",
+                ifsc: null,
+                transaction_mode: "WALLET",
+                number: null,
+                upi: requestDto.data.payeeUPI,
+                user_id: user.id,
+                convenience_fee: 0,
+                transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+                bank: null,
+            });
+            const saved = await this.transactionMoneyRepo.save(newAccount);
         }
         else {
             order.status = order_entity_1.OrderStatus.FAILED;
@@ -131,10 +151,12 @@ exports.PaymentExternalService = PaymentExternalService = PaymentExternalService
     __param(1, (0, typeorm_1.InjectRepository)(busybox_webhook_logs_entity_1.BusyBoxWebhookResponse)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.Order)),
     __param(4, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(5, (0, typeorm_1.InjectRepository)(transaction_money_entity_1.TransactionMoney)),
     __metadata("design:paramtypes", [wallet_service_1.WalletService,
         typeorm_2.Repository,
         typeorm_2.Repository,
         notification_bridge_1.NotificationBridge,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], PaymentExternalService);
 //# sourceMappingURL=payment-external.service.js.map

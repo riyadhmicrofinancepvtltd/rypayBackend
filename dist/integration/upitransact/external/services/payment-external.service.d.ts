@@ -1,5 +1,6 @@
 import { Order } from 'src/core/entities/order.entity';
 import { User } from 'src/core/entities/user.entity';
+import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { WalletService } from 'src/wallet/services/wallet.service';
 import { Repository } from 'typeorm';
 import { PaymentRequestDto } from '../dto/payment-request.dto';
@@ -12,8 +13,9 @@ export declare class PaymentExternalService {
     private orderRepository;
     private readonly notificationBridge;
     private userRepository;
+    private transactionMoneyRepo;
     private readonly logger;
-    constructor(walletService: WalletService, webHookRepo: Repository<BusyBoxWebhookResponse>, orderRepository: Repository<Order>, notificationBridge: NotificationBridge, userRepository: Repository<User>);
+    constructor(walletService: WalletService, webHookRepo: Repository<BusyBoxWebhookResponse>, orderRepository: Repository<Order>, notificationBridge: NotificationBridge, userRepository: Repository<User>, transactionMoneyRepo: Repository<TransactionMoney>);
     handlePaymentCallback(requestDto: WebhookPaymentRequestDto): Promise<void>;
     private staticQRHandler;
     private dynamicQRHandler;

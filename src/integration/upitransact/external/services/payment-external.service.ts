@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Order, OrderStatus, OrderType } from 'src/core/entities/order.entity';
 import { TransactionStatus } from 'src/core/entities/transactions.entity';
 import { User } from 'src/core/entities/user.entity';
-
+import { TransactionMoney } from 'src/core/entities/transaction-money.entity';
 import { generateRef } from 'src/core/utils/hash.util';
 import { PaymentGatewayDescription } from 'src/integration/busybox/external/constants/external.constant';
 import { WalletService } from 'src/wallet/services/wallet.service';
@@ -22,7 +22,9 @@ export class PaymentExternalService {
         @InjectRepository(BusyBoxWebhookResponse) private webHookRepo: Repository<BusyBoxWebhookResponse>,
         @InjectRepository(Order) private orderRepository: Repository<Order>,
         private readonly notificationBridge: NotificationBridge,
-        @InjectRepository(User) private userRepository: Repository<User>
+        @InjectRepository(User) private userRepository: Repository<User>,
+        @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>
+        
 
     ) {
        this.logger =  new Logger(PaymentExternalService.name)
@@ -35,6 +37,8 @@ export class PaymentExternalService {
         })
         console.log(`Payment Callback Received====33===>: ${JSON.stringify(requestDto)}`);
         console.log("webHookResponse==77==>",webHookResponse)
+        
+  
         await this.webHookRepo.save(webHookResponse);
         if (requestDto.data.paymentType === 'Dynamic') {
             await this.dynamicQRHandler(requestDto)
@@ -77,6 +81,25 @@ export class PaymentExternalService {
                 reference: orderId }, user.id);
             order.status = OrderStatus.SUCCESS;
             order.transaction_id = requestDto.data.UTR;
+
+            const newAccount = this.transactionMoneyRepo.create({
+                name: requestDto.data.payerName,
+                type: 'CREDIT',
+                amount: Number(requestDto.data.amount),   
+                message: "",
+                reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+                transaction_date: new Date(),
+                status: "SUCCESS",
+                ifsc: null,
+                transaction_mode: "WALLET",
+                number: null,
+                upi: requestDto.data.payeeUPI,
+                user_id: user.id,
+                convenience_fee: 0,
+                transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+                bank: null,
+              });
+              const saved = await this.transactionMoneyRepo.save(newAccount);
         } else {
             order.status = OrderStatus.FAILED
         }
