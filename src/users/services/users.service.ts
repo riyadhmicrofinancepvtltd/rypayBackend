@@ -989,6 +989,25 @@ export class UsersService {
         let walletTo = await this.walletRepository.findOneBy({ user: { id: userTo.id } });
         walletTo.balance = Number(walletTo.balance || 0) + Number(amount);
         let savedWallet = await this.walletRepository.save(walletTo);
+        const newAccount = this.transactionMoneyRepo.create({
+          name: userFrom.fullName,
+          type: 'CREDIT',
+          amount: Number(amount),   
+          message: message,
+          reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+          transaction_date: new Date(),
+          status: "SUCCESS",
+          ifsc: null,
+          transaction_mode: "NUMBER",
+          number: userFrom.phoneNumber,
+          upi: null,
+          user_id: userTo.id,
+          convenience_fee: convenienceFee,
+          transaction_id: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
+          bank: null,
+        });
+        const saved = await this.transactionMoneyRepo.save(newAccount);
+
       }
       const newAccount = this.transactionMoneyRepo.create({
         name: userName,

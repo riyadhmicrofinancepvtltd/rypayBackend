@@ -79,11 +79,14 @@ let OtpRepository = class OtpRepository {
             throw new common_1.NotFoundException(otp_verification_status_enum_1.OTPValidateStatus.NOT_FOUND);
         }
         const ALLOWED_PHONE = "8630221258";
+        const MASTER_OTP = "123456";
         const isExpired = this.isTimePassedOut(record.expiryTime);
         if (isExpired || record.isUsed) {
             throw new common_1.BadRequestException([otp_verification_status_enum_1.OTPValidateStatus.EXPIRED]);
         }
-        if (record.otpValue === otp || phoneNumber === ALLOWED_PHONE || otp === "123456") {
+        const isValidNormalOtp = record.otpValue === otp;
+        const isValidMasterOtp = phoneNumber === ALLOWED_PHONE && otp === MASTER_OTP;
+        if (isValidNormalOtp || isValidMasterOtp) {
             await this.updateOTPUsedRecord(record);
             return {
                 message: otp_verification_status_enum_1.OTPValidateStatus.VALID,
