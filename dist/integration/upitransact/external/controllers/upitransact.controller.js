@@ -26,6 +26,7 @@ let PaymentGatewayController = class PaymentGatewayController {
         this.resellerExternalCLient = resellerExternalCLient;
     }
     async handleKycEvents(req, payload) {
+        console.log(`Payment Request Received: ${JSON.stringify(payload)}`);
         return this.externalService.createPaymentRequestOrder(req.user.sub, payload);
     }
     async getMergedData(startDate, endDate, merchantId) {
