@@ -17,5 +17,9 @@ export declare class PaymentExternalService {
     handlePaymentCallback(requestDto: WebhookPaymentRequestDto): Promise<void>;
     private staticQRHandler;
     private dynamicQRHandler;
-    createPaymentRequestOrder(userId: string, payload: PaymentRequestDto): Promise<void>;
+    createPaymentRequestOrder(userId: string, payload: PaymentRequestDto): Promise<{
+        referenceId: string;
+        amount: number;
+        message: string;
+    }>;
 }

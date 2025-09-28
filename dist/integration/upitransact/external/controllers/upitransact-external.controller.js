@@ -22,6 +22,7 @@ let ExternalPaymentGatewayController = class ExternalPaymentGatewayController {
         this.externalService = externalService;
     }
     async handleKycEvents(payload) {
+        console.log(`Payment Callback Received==test=======>: ${JSON.stringify(payload)}`);
         return this.externalService.handlePaymentCallback(payload);
     }
 };

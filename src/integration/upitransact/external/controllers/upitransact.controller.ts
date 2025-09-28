@@ -19,7 +19,7 @@ export class PaymentGatewayController {
   
   @Post('payment/request')
   async handleKycEvents(@Req() req: any, @Body() payload: PaymentRequestDto) {
-    console.log(`Payment Request Received: ${JSON.stringify(payload)}`);
+    console.log(`Payment Request Received=======>: ${JSON.stringify(payload)}`);
     return this.externalService.createPaymentRequestOrder(req.user.sub, payload);
   }
 

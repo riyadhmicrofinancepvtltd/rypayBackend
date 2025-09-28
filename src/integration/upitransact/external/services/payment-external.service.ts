@@ -87,34 +87,34 @@ export class PaymentExternalService {
     }
 
     async createPaymentRequestOrder(userId: string, payload: PaymentRequestDto){
-    //     const user = await this.userRepository.findOne({where: {id: userId}});
-    //     if (!user) {
-    //         throw new UnauthorizedException('user does not have enough permission');
-    //     }
-    //     const description = payload.message ? payload.message : PaymentGatewayDescription;
-    //     const orderId = generateRef(12);
-    //     const order = {
-    //         order_id: orderId,
-    //         order_type: OrderType.PAYMENT_GATEWAY,
-    //         gateway_response: '',
-    //         amount: payload.amount,
-    //         status: OrderStatus.PENDING,
-    //         transaction_id: '',
-    //         user: user,
-    //         description: description,
-    //         payment_method: '',
-    //         paymentMode: 'UPI',
-    //         charges: 0,
-    //         respectiveUserName: `${user.firstName} ${user.lastName}`,
-    //         ifscNumber: "",
-    //         accountId: ""
-    //     }
-    //     const SavedOrder = this.orderRepository.create(order);
-    //     await this.orderRepository.save(SavedOrder);
-    //     return {
-    //         referenceId: SavedOrder.order_id,
-    //         amount: payload.amount,
-    //         message: description
-    //     }
+        const user = await this.userRepository.findOne({where: {id: userId}});
+        if (!user) {
+            throw new UnauthorizedException('user does not have enough permission');
+        }
+        const description = payload.message ? payload.message : PaymentGatewayDescription;
+        const orderId = generateRef(12);
+        const order = {
+            order_id: orderId,
+            order_type: OrderType.PAYMENT_GATEWAY,
+            gateway_response: '',
+            amount: payload.amount,
+            status: OrderStatus.PENDING,
+            transaction_id: '',
+            user: user,
+            description: description,
+            payment_method: '',
+            paymentMode: 'UPI',
+            charges: 0,
+            respectiveUserName: `${user.firstName} ${user.lastName}`,
+            ifscNumber: "",
+            accountId: ""
+        }
+        const SavedOrder = this.orderRepository.create(order);
+        await this.orderRepository.save(SavedOrder);
+        return {
+            referenceId: SavedOrder.order_id,
+            amount: payload.amount,
+            message: description
+        }
     }
 }

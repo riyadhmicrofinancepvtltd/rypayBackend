@@ -13,6 +13,7 @@ export class ExternalPaymentGatewayController {
   
   @Post('payment')
   async handleKycEvents(@Body() payload: WebhookPaymentRequestDto) {
+    console.log(`Payment Callback Received==test=======>: ${JSON.stringify(payload)}`);
     return this.externalService.handlePaymentCallback(payload);
   }
 }
