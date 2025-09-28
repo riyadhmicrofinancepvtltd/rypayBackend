@@ -24,21 +24,27 @@ let ExternalController = class ExternalController {
         this.externalService = externalService;
     }
     async handleTransactions(payload) {
+        console.log(`Transactions Webhook Received: ${JSON.stringify(payload)}`);
         return this.externalService.handleCardtransactions(payload);
     }
     async handleKycEvents(payload) {
+        console.log(`handleKycEvents Webhook Received: ${JSON.stringify(payload)}`);
         return this.externalService.handleKycEvents(payload);
     }
     async handleDebitEvents(payload) {
+        console.log(`handleDebitEvents Webhook Received: ${JSON.stringify(payload)}`);
         return this.externalService.handleDebitEvents(payload);
     }
     async handleUpiEvents(payload) {
+        console.log(`handleUpiEvents Webhook Received: ${JSON.stringify(payload)}`);
         return this.externalService.handleUpiEvents(payload);
     }
     async handlePayoutEvents(payload) {
+        console.log(`handlePayoutEvents Webhook Received: ${JSON.stringify(payload)}`);
         return this.externalService.handlePayoutEvents(payload);
     }
     async handleBusyBoxPayoutEvents(payload, req) {
+        console.log(`handleBusyBoxPayoutEvents Webhook Received: ${JSON.stringify(payload)}`);
         return this.externalService.handleBusyBoxPayoutEvents(payload);
     }
 };

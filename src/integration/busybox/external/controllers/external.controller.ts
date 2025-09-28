@@ -18,30 +18,35 @@ export class ExternalController {
   }
   @Post('transactions')
   async handleTransactions(@Body() payload: TransactionNotifyPayload) {
+    console.log(`Transactions Webhook Received: ${JSON.stringify(payload)}`);
     return this.externalService.handleCardtransactions(payload);
     //webhook processing logic
   }
 
   @Post('kyc-events')
   async handleKycEvents(@Body() payload: KycWebhookPayload) {
+    console.log(`handleKycEvents Webhook Received: ${JSON.stringify(payload)}`);
     return this.externalService.handleKycEvents(payload);
     // webhook processing logic
   }
 
   @Post('debit')
   async handleDebitEvents(@Body() payload: TransactionDto) {
+    console.log(`handleDebitEvents Webhook Received: ${JSON.stringify(payload)}`);
     return this.externalService.handleDebitEvents(payload);
     // webhook processing logic
   }
 
   @Post('upi')
   async handleUpiEvents(@Body() payload: TransactionDto) {
+    console.log(`handleUpiEvents Webhook Received: ${JSON.stringify(payload)}`);
     return this.externalService.handleUpiEvents(payload);
     // webhook processing logic
   }
 
   @Post('webhooks/payouts')
   async handlePayoutEvents(@Body() payload: TransactionDto) {
+    console.log(`handlePayoutEvents Webhook Received: ${JSON.stringify(payload)}`);
     return this.externalService.handlePayoutEvents(payload);
     // webhook processing logic
   }
@@ -53,6 +58,7 @@ export class ExternalController {
   // }
   @Post('webhooks/busybox')
   async handleBusyBoxPayoutEvents(@Body() payload: any, @Req() req: Request) {
+    console.log(`handleBusyBoxPayoutEvents Webhook Received: ${JSON.stringify(payload)}`);
     return this.externalService.handleBusyBoxPayoutEvents(payload);
   }
 }
