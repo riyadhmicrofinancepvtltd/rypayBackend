@@ -19,7 +19,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const order_entity_1 = require("../../../../core/entities/order.entity");
 const transactions_entity_1 = require("../../../../core/entities/transactions.entity");
 const user_entity_1 = require("../../../../core/entities/user.entity");
-const hash_util_1 = require("../../../../core/utils/hash.util");
 const external_constant_1 = require("../../../busybox/external/constants/external.constant");
 const wallet_service_1 = require("../../../../wallet/services/wallet.service");
 const typeorm_2 = require("typeorm");
@@ -92,35 +91,6 @@ let PaymentExternalService = PaymentExternalService_1 = class PaymentExternalSer
         };
     }
     async createPaymentRequestOrder(userId, payload) {
-        const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
-            throw new common_1.UnauthorizedException('user does not have enough permission');
-        }
-        const description = payload.message ? payload.message : external_constant_1.PaymentGatewayDescription;
-        const orderId = (0, hash_util_1.generateRef)(12);
-        const order = {
-            order_id: orderId,
-            order_type: order_entity_1.OrderType.PAYMENT_GATEWAY,
-            gateway_response: '',
-            amount: payload.amount,
-            status: order_entity_1.OrderStatus.PENDING,
-            transaction_id: '',
-            user: user,
-            description: description,
-            payment_method: '',
-            paymentMode: 'UPI',
-            charges: 0,
-            respectiveUserName: `${user.firstName} ${user.lastName}`,
-            ifscNumber: "",
-            accountId: ""
-        };
-        const SavedOrder = this.orderRepository.create(order);
-        await this.orderRepository.save(SavedOrder);
-        return {
-            referenceId: SavedOrder.order_id,
-            amount: payload.amount,
-            message: description
-        };
     }
 };
 exports.PaymentExternalService = PaymentExternalService;

@@ -6,11 +6,7 @@ export declare class PaymentGatewayController {
     private externalService;
     private resellerExternalCLient;
     constructor(externalService: PaymentExternalService, resellerExternalCLient: PaymentExternalClientService);
-    handleKycEvents(req: any, payload: PaymentRequestDto): Promise<{
-        referenceId: string;
-        amount: number;
-        message: string;
-    }>;
+    handleKycEvents(req: any, payload: PaymentRequestDto): Promise<void>;
     getMergedData(startDate: string, endDate: string, merchantId?: string): Promise<MergedDataResponseDTO>;
     getTransactionsData(startDate: string, endDate: string, merchantId?: string): Promise<TransactionHistoryDTO[]>;
 }
