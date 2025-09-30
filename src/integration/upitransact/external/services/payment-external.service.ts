@@ -81,7 +81,6 @@ export class PaymentExternalService {
                 reference: orderId }, user.id);
             order.status = OrderStatus.SUCCESS;
             order.transaction_id = requestDto.data.UTR;
-
             const newAccount = this.transactionMoneyRepo.create({
                 name: requestDto.data.payerName,
                 type: 'CREDIT',
