@@ -407,6 +407,9 @@ export class UsersService {
     if (userExists) {
       throw new BadRequestException(['User already exists']);
     }
+    if (userExists.aadharNumber == userRequestDto.aadharNumber) {
+      throw new BadRequestException(['Aadhar number already exists'])
+    }
 
     const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
     if (data.status === "SUCCESS") {
@@ -427,6 +430,7 @@ export class UsersService {
       throw new BadRequestException(["OTP is required"]);
     }
     const response = await this.rechargeClient.validateAadharOtp(userRequestDto.aadharNumber, userRequestDto.otp, userRequestDto.otpSessionId);
+    console.log("responsejjss", response?.aadhaarData?.fullName, userRequestDto?.fullName);
     if (response?.aadhaarData?.fullName !== userRequestDto?.fullName) {
       throw new BadRequestException(["Your name doesn't match with your Aadhar card. Please try again."]);
     }
@@ -868,7 +872,7 @@ export class UsersService {
 
   }
 
-  async getTransactionHistory(userId: string, page = 1, limit = 10,transactionMode?: string) {
+  async getTransactionHistory(userId: string, page = 1, limit = 10, transactionMode?: string) {
     console.log("UserId:", userId, "Page:", page, "Limit:", limit);
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
@@ -906,7 +910,7 @@ export class UsersService {
     transactionMode?: string,
   ) {
     console.log("UserId:", userId, "Page:", page, "Limit:", limit, "Mode:", transactionMode);
-  
+
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new BadRequestException(['user not found']);
@@ -922,7 +926,7 @@ export class UsersService {
       skip: (page - 1) * limit,
       take: limit,
     });
-  
+
     const totalPages = Math.ceil(totalItems / limit);
     return {
       success: true,
@@ -936,7 +940,7 @@ export class UsersService {
       },
     };
   }
-  
+
 
 
   async sendMoney(
@@ -992,7 +996,7 @@ export class UsersService {
         const newAccount = this.transactionMoneyRepo.create({
           name: userFrom.fullName,
           type: 'CREDIT',
-          amount: Number(amount),   
+          amount: Number(amount),
           message: message,
           reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
           transaction_date: new Date(),
@@ -1012,7 +1016,7 @@ export class UsersService {
       const newAccount = this.transactionMoneyRepo.create({
         name: userName,
         type: 'DEBIT',
-        amount: Number(amount),   
+        amount: Number(amount),
         message: message,
         reference: Math.floor(100000000000 + Math.random() * 900000000000).toString(),
         transaction_date: new Date(),
@@ -1027,13 +1031,13 @@ export class UsersService {
         bank: null,
       });
       const saved = await this.transactionMoneyRepo.save(newAccount);
-     
+
       return { success: true, message: "Money sent successfully." };
     }
     if (paymentMode === "upi") {
       const res = await this.rechargeClient.validateUPI(upiId);
-      if(res?.status !=="SUCCESS" && res?.upiData?.status !=="SUCCESS"){
-        return{
+      if (res?.status !== "SUCCESS" && res?.upiData?.status !== "SUCCESS") {
+        return {
           success: false,
           message: 'Invalid UPI ID. Please check and try again.',
         }
@@ -1113,15 +1117,15 @@ export class UsersService {
       return data;
     }
     if (paymentMode === "bank") {
-      const res = await this.rechargeClient.validateBank(accountNumber,ifsc);
-      if(res?.status==="FAILED" && res?.resText==="Invalid ifscCode"){
-        return{
+      const res = await this.rechargeClient.validateBank(accountNumber, ifsc);
+      if (res?.status === "FAILED" && res?.resText === "Invalid ifscCode") {
+        return {
           success: false,
           message: 'Invalid ifscCode. Please try again.',
         }
       }
-      if(res?.status !=="SUCCESS" && res?.beneficiaryData?.fetchStatus !=="SUCCESS"){
-        return{
+      if (res?.status !== "SUCCESS" && res?.beneficiaryData?.fetchStatus !== "SUCCESS") {
+        return {
           success: false,
           message: 'Invalid Account Number. Please try again.',
         }
@@ -1215,16 +1219,16 @@ export class UsersService {
       throw new BadRequestException(['user not found']);
     }
     const res = await this.rechargeClient.validateUPI(upiId);
-    if(res?.status !=="SUCCESS" && res?.upiData?.status !=="SUCCESS"){
-      return{
+    if (res?.status !== "SUCCESS" && res?.upiData?.status !== "SUCCESS") {
+      return {
         success: false,
         message: 'Invalid UPI ID. Please check and try again.',
       }
-    }else{
-      return{
+    } else {
+      return {
         success: true,
         message: 'UPI ID is valid.',
-        data:res?.upiData
+        data: res?.upiData
       }
     }
   }
@@ -1234,25 +1238,25 @@ export class UsersService {
       throw new BadRequestException(['user not found']);
     }
 
-    const res = await this.rechargeClient.validateBank(accountNumber,ifsc);
-      if(res?.status==="FAILED" && res?.resText==="Invalid ifscCode"){
-        return{
-          success: false,
-          message: 'Invalid ifscCode. Please try again.',
-        }
+    const res = await this.rechargeClient.validateBank(accountNumber, ifsc);
+    if (res?.status === "FAILED" && res?.resText === "Invalid ifscCode") {
+      return {
+        success: false,
+        message: 'Invalid ifscCode. Please try again.',
       }
-      if(res?.status !=="SUCCESS" && res?.beneficiaryData?.fetchStatus !=="SUCCESS"){
-        return{
-          success: false,
-          message: 'Invalid Account Number. Please try again.',
-        }
+    }
+    if (res?.status !== "SUCCESS" && res?.beneficiaryData?.fetchStatus !== "SUCCESS") {
+      return {
+        success: false,
+        message: 'Invalid Account Number. Please try again.',
       }
-   
-    else{
-      return{
+    }
+
+    else {
+      return {
         success: true,
         message: 'Account Number is valid.',
-        data:res?.beneficiaryData
+        data: res?.beneficiaryData
       }
     }
   }
@@ -1686,4 +1690,134 @@ export class UsersService {
       fileUrl: fileInfo.url
     }
   }
+
+  // async createVirtualAccountsForUsersWithoutVA() {
+
+  //   // 1️⃣ Fetch users who don't have a virtual account
+  //   const usersWithoutVA = await this.userRepository
+
+  //     .createQueryBuilder('u')
+  //     .leftJoin(VirtualAccount, 'va', 'va.userid = u.id::text')
+  //     .where('va.userid IS NULL')
+  //     .getMany();
+
+  //   console.log('Users without virtual account:', usersWithoutVA.length);
+  //   console.log("usersWithoutVAusersWithoutVAusersWithoutVA", usersWithoutVA)
+  //   const results = [];
+  //   const responseResult = []
+
+  //   for (const user of usersWithoutVA) {
+  //     try {
+  //       // Generate VA ID
+  //       const accountId = Math.floor(10000000 + Math.random() * 90000000).toString();
+  //       const transferPin = '123456';
+  //       const hashedPin = await bcrypt.hash(transferPin, this.saltRounds);
+
+  //       const busyBoxBaseUrl = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL');
+  //       const token = this.configService.get('BUSY_BOX_PAYOUT_API_TOKEN');
+  //       const url = `${busyBoxBaseUrl}/collect/va/create`;
+
+  //       // Prepare payload from user entity
+  //       const payload = {
+  //         customer_name: user.fullName,
+  //         vaId: accountId,
+  //         email: user.email,
+  //         mobile: user.phoneNumber,
+  //       };
+
+  //       // Call 3rd party API
+  //       const response = await firstValueFrom(
+  //         this.httpService.post(url, payload, {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         }),
+  //       );
+
+  //       const data = response.data;
+  //       responseResult.push(data);
+
+
+  //       // Save in DB
+  //       const newAccount = this.virtualAccountRepo.create({
+  //         accountid: data.data.accountId,
+  //         accountnumber: data.data.accountNumber,
+  //         ifsccode: data.data.ifscCode,
+  //         status: data.data.status || 'ACTIVE',
+  //         userid: user.id,
+  //         number: user.phoneNumber,
+  //         transfer_pin: hashedPin,
+  //       });
+
+  //       await this.virtualAccountRepo.save(newAccount);
+
+  //       results.push({
+  //         userId: user.id,
+  //         phone: user.phoneNumber,
+  //         status: 'success',
+  //       });
+
+  //       console.log("respibnserss", responseResult)
+  //       console.log(`Virtual account created for user ${user.id}`);
+  //     } catch (error) {
+  //       console.error(`Failed to create VA for user ${user.id}:`, error.message || error);
+  //       console.log("respibnserss", responseResult)
+  //       responseResult.push(error)
+  //       results.push({
+  //         userId: user.id,
+  //         phone: user.phoneNumber,
+  //         status: 'failed',
+  //         reason: error.response?.data || error.message,
+  //       });
+  //     }
+  //   }
+
+  //   return results;
+  // }
+
+  // async MergeAccountsForUsersWithoutVA() {
+
+  //   // 1️⃣ Fetch users who don't have a virtual account
+  //   const usersWithoutVA = await this.userRepository
+
+  //     .createQueryBuilder('u')
+  //     .where('u.full_name IS NULL')
+  //     .getMany();
+
+  //   console.log('Users without virtual account:', usersWithoutVA.length);
+  //   console.log("usersWithoutVAusersWithoutVAusersWithoutVA", usersWithoutVA)
+  //   const results = [];
+  //   const responseResult = []
+
+  //   for (const user of usersWithoutVA) {
+  //     try {
+  //       // Generate VA ID
+  //       user.fullName = user.firstName + " " + user.lastName;
+
+
+  //       // Save in DB
+  //       await this.userRepository.save(user)
+
+  //       results.push(user)
+  //       // await this.virtualAccountRepo.save(newAccount);
+
+
+  //       console.log("respibnserss", responseResult)
+  //       console.log(`Virtual account created for user ${user.id}`);
+  //     } catch (error) {
+  //       console.error(`Failed to create VA for user ${user.id}:`, error.message || error);
+  //       console.log("respibnserss", responseResult)
+  //       responseResult.push(error)
+  //       results.push({
+  //         userId: user.id,
+  //         phone: user.phoneNumber,
+  //         status: 'failed',
+  //         reason: error.response?.data || error.message,
+  //       });
+  //     }
+  //   }
+
+  //   return results;
+  // }
 }

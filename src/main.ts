@@ -7,12 +7,13 @@ import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { ValidationExceptionFilter } from './core/filters/exception-filters';
 import { AllExceptionsFilter } from './core/filters/all-exception-filters';
+import { UsersService } from './users/services/users.service';
 
 async function bootstrap() {
   process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
   });
-  
+ 
   process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   });  
@@ -38,5 +39,7 @@ async function bootstrap() {
   await app.listen(API_DEFAULT_PORT).then(() => {
     logger.log('server started');
   });
+  //   const scriptService = app.get(UsersService);
+  // await scriptService.MergeAccountsForUsersWithoutVA();
 }
 bootstrap();

@@ -337,6 +337,9 @@ let UsersService = class UsersService {
         if (userExists) {
             throw new common_1.BadRequestException(['User already exists']);
         }
+        if (userExists.aadharNumber == userRequestDto.aadharNumber) {
+            throw new common_1.BadRequestException(['Aadhar number already exists']);
+        }
         const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
         if (data.status === "SUCCESS") {
             return {
@@ -352,6 +355,7 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException(["OTP is required"]);
         }
         const response = await this.rechargeClient.validateAadharOtp(userRequestDto.aadharNumber, userRequestDto.otp, userRequestDto.otpSessionId);
+        console.log("responsejjss", response?.aadhaarData?.fullName, userRequestDto?.fullName);
         if (response?.aadhaarData?.fullName !== userRequestDto?.fullName) {
             throw new common_1.BadRequestException(["Your name doesn't match with your Aadhar card. Please try again."]);
         }
