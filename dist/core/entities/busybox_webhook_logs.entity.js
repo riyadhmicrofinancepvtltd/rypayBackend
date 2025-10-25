@@ -19,6 +19,7 @@ var Webhook_Type;
     Webhook_Type["DEBIT"] = "DEBIT";
     Webhook_Type["Payout"] = "PAYOUT";
     Webhook_Type["QRPayment"] = "QR_Payment";
+    Webhook_Type["UPI_COLLECTION"] = "UPI_COLLECTION";
 })(Webhook_Type || (exports.Webhook_Type = Webhook_Type = {}));
 let BusyBoxWebhookResponse = class BusyBoxWebhookResponse {
 };

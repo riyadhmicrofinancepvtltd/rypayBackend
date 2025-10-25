@@ -4,6 +4,21 @@ import { Merchant } from 'src/core/entities/merchant.entity';
 import { Card } from 'src/core/entities/card.entity';
 import { User } from 'src/core/entities/user.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
+export declare class VirtualAccountResponse {
+    accountNumber: string;
+    ifscCode: string;
+    operator: string;
+    status: string;
+    constructor(virtualAccount: any);
+}
+export declare class UPIIdResponse {
+    vpaId: string;
+    upiId: string;
+    accountNumber: string;
+    status: string;
+    upiQr?: string;
+    constructor(upi: any);
+}
 export declare class CardResponse {
     cardId: string;
     lastFourDigit: string;
@@ -41,6 +56,8 @@ export declare class UserResponse {
     referrelCode: String;
     accountDetails: AccountResponse;
     merchant: Merchant;
+    virtualAccounts?: VirtualAccountResponse[];
+    upiIds?: UPIIdResponse[];
     constructor(user: User);
 }
 export declare class AddressDto {

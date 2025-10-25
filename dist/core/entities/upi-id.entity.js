@@ -9,54 +9,66 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VirtualAccount = void 0;
+exports.UPIIds = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
-let VirtualAccount = class VirtualAccount {
+let UPIIds = class UPIIds {
 };
-exports.VirtualAccount = VirtualAccount;
+exports.UPIIds = UPIIds;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'id' }),
     __metadata("design:type", Number)
-], VirtualAccount.prototype, "id", void 0);
+], UPIIds.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ unique: true }),
     __metadata("design:type", String)
-], VirtualAccount.prototype, "accountid", void 0);
+], UPIIds.prototype, "accountid", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], VirtualAccount.prototype, "accountnumber", void 0);
+], UPIIds.prototype, "accountnumber", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], VirtualAccount.prototype, "ifsccode", void 0);
+], UPIIds.prototype, "vpaId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], UPIIds.prototype, "ifsccode", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 'ACTIVE' }),
     __metadata("design:type", String)
-], VirtualAccount.prototype, "status", void 0);
+], UPIIds.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
-], VirtualAccount.prototype, "createon", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], VirtualAccount.prototype, "userid", void 0);
+], UPIIds.prototype, "createon", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], VirtualAccount.prototype, "number", void 0);
+], UPIIds.prototype, "userid", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], VirtualAccount.prototype, "transfer_pin", void 0);
+], UPIIds.prototype, "upiId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.virtualAccounts, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], UPIIds.prototype, "number", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], UPIIds.prototype, "transfer_pin", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], UPIIds.prototype, "upiQr", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.upiIds, { onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'userid' }),
     __metadata("design:type", user_entity_1.User)
-], VirtualAccount.prototype, "user", void 0);
-exports.VirtualAccount = VirtualAccount = __decorate([
-    (0, typeorm_1.Entity)('virtual_accounts')
-], VirtualAccount);
-//# sourceMappingURL=virtual-account.entity.js.map
+], UPIIds.prototype, "user", void 0);
+exports.UPIIds = UPIIds = __decorate([
+    (0, typeorm_1.Entity)('upi_ids')
+], UPIIds);
+//# sourceMappingURL=upi-id.entity.js.map

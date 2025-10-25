@@ -8,6 +8,10 @@ export declare class UploadFileService {
         url: string;
         key: string;
     }>;
+    generateAndUploadUpiQR(upi: string): Promise<{
+        key: string;
+        url: string;
+    }>;
     getPresignedSignedUrl(key: string): Promise<{
         url: string;
     }>;

@@ -7,7 +7,7 @@ import { User } from 'src/core/entities/user.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 import { KycVerificationStatusResponse } from '../dto/kyc-status.dto';
 import { PhoneNumberExists } from '../dto/phone-number-exists.dto';
-import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto,ToContactRequestDto,SendMoneyRequestDto,CreateOrderRequestDto,PaymentStatusRequestDto,ScratchRewardRequestDto,upiValidateRequestDto,bankValidateRequestDto } from '../dto/pin-request.dto';
+import { PinRequestDto, UpdateForgotPin, TransactionPinRequestDto, UpdateTransactionPinDto, deleteUserAccountDto, ToContactRequestDto, SendMoneyRequestDto, CreateOrderRequestDto, PaymentStatusRequestDto, ScratchRewardRequestDto, upiValidateRequestDto, bankValidateRequestDto } from '../dto/pin-request.dto';
 import { VirtualAccountRequestDto } from "../dto/virtual-account-request.dto"
 import { ChangeTransferPinDto } from "../dto/virtual-account-request.dto"
 import { UpdateKycDetailUploadDto } from '../dto/user-kyc-upload.dto';
@@ -17,6 +17,7 @@ import { ValidateAadharDto } from '../dto/validate-aadhar.dto';
 import { UploadFileService } from '../services/updaload-file.service';
 import { UsersService } from '../services/users.service';
 import { StaticQRDTO } from '../dto/static-qr.dto';
+import { GenerateUPIRequestDto } from '../dto/generate-upi.dto';
 
 @Controller('user')
 @ApiTags('User')
@@ -470,6 +471,7 @@ export class UsersController {
     let data = await this.userService.createVirtualAccount(req.user.sub, virtualRequest.customer_name, virtualRequest.email, virtualRequest.phoneNumber, virtualRequest.transferPin);
     return data;
   }
+
   @Get('get-virtual-account')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -527,38 +529,38 @@ export class UsersController {
     return await this.userService.verifyToContact(req.user.sub, pinRequest.phoneNumber);
   }
 
-  
-@Get('transaction-history')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
-@HttpCode(HttpStatus.OK)
-async getTransactionHistory(
-  @Req() req: any,
-  @Query('page') page: number = 1,
-  @Query('limit') limit: number = 10,
-  @Query('transactionMode') transactionMode?: string, 
-) {
-  return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit),transactionMode);
-}
+
+  @Get('transaction-history')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getTransactionHistory(
+    @Req() req: any,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('transactionMode') transactionMode?: string,
+  ) {
+    return await this.userService.getTransactionHistory(req.user.sub, Number(page), Number(limit), transactionMode);
+  }
 
 
-@Get('recent-transaction')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
-@HttpCode(HttpStatus.OK)
-async getRecentTransaction(
-  @Req() req: any,
-  @Query('page') page: number = 1,
-  @Query('limit') limit: number = 10,
-  @Query('transactionMode') transactionMode?: string,   
-) {
-  return await this.userService.getRecentTransaction(
-    req.user.sub,
-    Number(page),
-    Number(limit),
-    transactionMode,
-  );
-}
+  @Get('recent-transaction')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getRecentTransaction(
+    @Req() req: any,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('transactionMode') transactionMode?: string,
+  ) {
+    return await this.userService.getRecentTransaction(
+      req.user.sub,
+      Number(page),
+      Number(limit),
+      transactionMode,
+    );
+  }
 
 
   @Post('send-money')
@@ -584,8 +586,8 @@ async getRecentTransaction(
       pinRequest.userName,
       pinRequest.convenienceFee
     );
-  }  
-  
+  }
+
   @Post('upi-verify')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -594,7 +596,7 @@ async getRecentTransaction(
     @Req() req: any,
     @Body() upiRequest: upiValidateRequestDto,
   ) {
-    return await this.userService.upiValidate(req.user.sub,upiRequest.upiId);
+    return await this.userService.upiValidate(req.user.sub, upiRequest.upiId);
   }
 
   @Post('bank-verify')
@@ -605,7 +607,7 @@ async getRecentTransaction(
     @Req() req: any,
     @Body() bankRequest: bankValidateRequestDto,
   ) {
-    return await this.userService.bankValidate(req.user.sub,bankRequest.ifsc,bankRequest.accountNumber);
+    return await this.userService.bankValidate(req.user.sub, bankRequest.ifsc, bankRequest.accountNumber);
   }
 
 
@@ -618,7 +620,7 @@ async getRecentTransaction(
     @Req() req: any,
     @Body() rewardRequest: ScratchRewardRequestDto,
   ) {
-    return await this.userService.scratchReward(req.user.sub,rewardRequest);
+    return await this.userService.scratchReward(req.user.sub, rewardRequest);
   }
 
   @Get('get-reward-history')
@@ -641,7 +643,7 @@ async getRecentTransaction(
     @Req() req: any,
     @Body() pinRequest: CreateOrderRequestDto,
   ) {
-    return await this.userService.createOrder(req.user.sub,pinRequest);
+    return await this.userService.createOrder(req.user.sub, pinRequest);
   }
 
   @Post('verify-payment')
@@ -652,7 +654,7 @@ async getRecentTransaction(
     @Req() req: any,
     @Body() statusRequest: PaymentStatusRequestDto,
   ) {
-    return await this.userService.checkPaymentStatus(req.user.sub,statusRequest);
+    return await this.userService.checkPaymentStatus(req.user.sub, statusRequest);
   }
   //
 
@@ -855,5 +857,27 @@ async getRecentTransaction(
     return {
       success: !!fileData
     };
+  }
+
+
+  @Get('create-upi')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Endpoint to create UPI id' })
+  @HttpCode(HttpStatus.OK)
+  async createUPIId(
+    @Req() req: any,
+  ): Promise<{ message: string; }> {
+    let data = await this.userService.createUPIId(req);
+    return data;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('upi-info')
+  @ApiOperation({ summary: 'Endpoint to get UPI info' })
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getUpiInfo(@Req() req: any): Promise<any> {
+    return await this.userService.getUserUpiInfo(req.user.sub);
   }
 }

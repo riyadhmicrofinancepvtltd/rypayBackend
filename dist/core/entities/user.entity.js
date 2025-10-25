@@ -23,6 +23,8 @@ const notification_entity_1 = require("./notification.entity");
 const loan_entity_1 = require("./loan.entity");
 const money_request_entity_1 = require("./money-request.entity");
 const coins_entity_1 = require("./coins.entity");
+const upi_id_entity_1 = require("./upi-id.entity");
+const virtual_account_entity_1 = require("./virtual-account.entity");
 let User = class User {
 };
 exports.User = User;
@@ -173,6 +175,14 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => money_request_entity_1.MoneyRequest, (moneyRequest) => moneyRequest.user),
     __metadata("design:type", Array)
 ], User.prototype, "moneyRequest", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => upi_id_entity_1.UPIIds, (upi) => upi.user),
+    __metadata("design:type", Array)
+], User.prototype, "upiIds", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => virtual_account_entity_1.VirtualAccount, (va) => va.user),
+    __metadata("design:type", Array)
+], User.prototype, "virtualAccounts", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)({ name: 'users' })
 ], User);

@@ -7,6 +7,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import * as QRCode from 'qrcode';
+
 
 @Injectable()
 export class UploadFileService {
@@ -30,7 +32,7 @@ export class UploadFileService {
       forcePathStyle: true,
     });
   }
-  async uploadSingleFile( file: Express.Multer.File ) {
+  async uploadSingleFile(file: Express.Multer.File) {
     try {
       const key = `${uuidv4()}`;
       const command = new PutObjectCommand({
@@ -53,6 +55,26 @@ export class UploadFileService {
     }
   }
 
+  async generateAndUploadUpiQR(upi: string): Promise<{ key: string; url: string }> {
+    // 1️⃣ Generate QR code buffer
+    const qrBuffer = await QRCode.toBuffer(upi);
+
+    // 2️⃣ Upload to S3 (same as your uploadSingleFile)
+    const key = `${uuidv4()}.png`;
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+      Body: qrBuffer,
+      ContentType: 'image/png',
+      ACL: 'private',
+    });
+    await this.client.send(command);
+
+    // 3️⃣ Get presigned URL
+    const url = (await this.getPresignedSignedUrl(key)).url;
+
+    return { key, url };
+  }
 
   async getPresignedSignedUrl(key: string) {
     try {

@@ -8,15 +8,17 @@ import { WalletService } from 'src/wallet/services/wallet.service';
 import { KycWebhookPayload } from '../interfaces/kyc-webhook-payload.interface';
 import { UsersService } from 'src/users/services/users.service';
 import { TransactionDto } from '../interfaces/upi-transaction-payload.dto';
+import { UPICollectionsTransactionMoney } from 'src/core/entities/upi-collections-transactions.entity';
 export declare class ExternalService {
     private busyBoxWebHookRepo;
     private walletRepository;
     private virtualAccountRepo;
     private transactionMoneyRepo;
+    private upiCollectionsTransactionRepo;
     private walletService;
     private userService;
     private readonly logger;
-    constructor(busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, transactionMoneyRepo: Repository<TransactionMoney>, walletService: WalletService, userService: UsersService);
+    constructor(busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, transactionMoneyRepo: Repository<TransactionMoney>, upiCollectionsTransactionRepo: Repository<UPICollectionsTransactionMoney>, walletService: WalletService, userService: UsersService);
     handleCardtransactions(payload: TransactionNotifyPayload): Promise<{
         message: string;
     }>;
@@ -32,7 +34,13 @@ export declare class ExternalService {
     handleBusyBoxPayoutEvents(payload: any): Promise<{
         message: string;
     }>;
+    handleUPICollectionsWebhook(payload: any): Promise<{
+        message: string;
+    }>;
     handleDebitEvents(payload: TransactionDto): Promise<{
+        message: string;
+    }>;
+    handleUPIPayoutCallbacks(payload: any): Promise<{
         message: string;
     }>;
 }

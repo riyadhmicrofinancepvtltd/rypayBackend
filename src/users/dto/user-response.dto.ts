@@ -7,6 +7,57 @@ import { User } from 'src/core/entities/user.entity';
 import { Wallet } from 'src/core/entities/wallet.entity';
 import { KycVerificationStatus } from 'src/core/enum/kyc-verification-status.enum';
 
+
+export class VirtualAccountResponse {
+  @ApiProperty()
+  accountNumber: string;
+
+  @ApiProperty()
+  ifscCode: string;
+
+  @ApiProperty()
+  operator: string;
+
+  @ApiProperty()
+  status: string;
+
+  constructor(virtualAccount: any) {
+    if (virtualAccount) {
+      this.accountNumber = virtualAccount.accountNumber;
+      this.ifscCode = virtualAccount.ifscCode;
+      this.operator = virtualAccount.operator;
+      this.status = virtualAccount.status;
+    }
+  }
+}
+
+export class UPIIdResponse {
+  @ApiProperty()
+  vpaId: string;
+
+  @ApiProperty()
+  upiId: string;
+
+  @ApiProperty()
+  accountNumber: string;
+
+  @ApiProperty()
+  status: string;
+
+  @ApiProperty({ required: false })
+  upiQr?: string;
+
+  constructor(upi: any) {
+    if (upi) {
+      this.vpaId = upi.vpaId;
+      this.upiId = upi.upiId;
+      this.accountNumber = upi.accountnumber;
+      this.status = upi.status;
+      this.upiQr = upi.upiQr || null;
+    }
+  }
+}
+
 export class CardResponse {
   @ApiProperty()
   cardId: string;
@@ -114,6 +165,12 @@ export class UserResponse {
   @ApiProperty()
   merchant: Merchant;
 
+  @ApiProperty({ type: [VirtualAccountResponse], required: false })
+  virtualAccounts?: VirtualAccountResponse[];
+
+  @ApiProperty({ type: [UPIIdResponse], required: false })
+  upiIds?: UPIIdResponse[];
+
   constructor(user: User) {
     this.userid = user.id;
     this.firstName = user.firstName;
@@ -134,6 +191,12 @@ export class UserResponse {
     this.cardDetails = new CardResponse(user.card);
     this.accountDetails = new AccountResponse(user);
     this.referrelCode = user.referralCode;
+    // new relations
+    this.virtualAccounts = user.virtualAccounts?.map(
+      (v) => new VirtualAccountResponse(v),
+    ) || [];
+
+    this.upiIds = user.upiIds?.map((u) => new UPIIdResponse(u)) || [];
   }
 }
 
@@ -145,3 +208,6 @@ export class UserApiResponseDto {
   @ApiProperty()
   tokens: TokenResponse;
 }
+
+
+

@@ -29,6 +29,7 @@ import { ValidateAadharDto } from '../dto/validate-aadhar.dto';
 import { AadharResponse } from 'src/core/entities/aadhar-verification.entity';
 import { NotificationBridge } from 'src/notifications/services/notification-bridge';
 import { StaticQRDTO } from '../dto/static-qr.dto';
+import { UPIIds } from 'src/core/entities/upi-id.entity';
 export declare class UsersService {
     private tokenService;
     private readonly httpService;
@@ -52,8 +53,9 @@ export declare class UsersService {
     private transactionMoneyRepo;
     private aadharResponseRepo;
     private documentRepository;
+    private upiIdsRepository;
     private readonly saltRounds;
-    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, payoutService: PayoutService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, rewardRepo: Repository<Reward>, transactionRepo: Repository<Transaction>, transactionMoneyRepo: Repository<TransactionMoney>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>);
+    constructor(tokenService: TokenService, httpService: HttpService, configService: ConfigService, walletService: WalletService, merchantClientService: MerchantClientService, cardService: CardsService, payoutService: PayoutService, _connection: DataSource, uploadFileService: UploadFileService, otpFlowService: OtpFlowService, otpRepository: OtpRepository, rechargeClient: RechargeClientService, walletBridge: WalletBridge, notificationBridge: NotificationBridge, userRepository: Repository<User>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, rewardRepo: Repository<Reward>, transactionRepo: Repository<Transaction>, transactionMoneyRepo: Repository<TransactionMoney>, aadharResponseRepo: Repository<AadharResponse>, documentRepository: Repository<UserDocument>, upiIdsRepository: Repository<UPIIds>);
     registerUser(userRequestDto: UserRequestDto): Promise<UserResponse>;
     registerUserNew(userRequestDto: UserRequestDto): Promise<UserResponse>;
     validateRefferelCode(referrelCode: string | null, queryRunner: QueryRunner): Promise<User>;
@@ -215,5 +217,14 @@ export declare class UsersService {
     updateStaticQR(userId: string, merchantId: string, file: Express.Multer.File): Promise<{
         message: string;
         fileUrl: string;
+    }>;
+    createUPIId(req: any): Promise<any>;
+    getUserUpiInfo(userId: string): Promise<{
+        success: boolean;
+        data: {
+            upiId: string;
+            qrUrl: string;
+            status: string;
+        };
     }>;
 }

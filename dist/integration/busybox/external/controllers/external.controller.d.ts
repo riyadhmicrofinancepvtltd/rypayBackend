@@ -21,7 +21,10 @@ export declare class ExternalController {
     handlePayoutEvents(payload: TransactionDto): Promise<{
         message: string;
     }>;
-    handleBusyBoxPayoutEvents(payload: any, req: Request): Promise<{
+    handleBusyBoxPayoutEvents(payload: TransactionDto): Promise<{
+        message: string;
+    }>;
+    handleBusyBoxUPICollectionPayoutEvents(payload: any, req: Request): Promise<{
         message: string;
     }>;
 }

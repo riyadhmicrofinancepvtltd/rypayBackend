@@ -15,6 +15,7 @@ const config_1 = require("@nestjs/config");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const uuid_1 = require("uuid");
 const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
+const QRCode = require("qrcode");
 let UploadFileService = class UploadFileService {
     constructor(configService) {
         this.configService = configService;
@@ -54,6 +55,20 @@ let UploadFileService = class UploadFileService {
         catch (error) {
             throw new common_1.InternalServerErrorException(error);
         }
+    }
+    async generateAndUploadUpiQR(upi) {
+        const qrBuffer = await QRCode.toBuffer(upi);
+        const key = `${(0, uuid_1.v4)()}.png`;
+        const command = new client_s3_1.PutObjectCommand({
+            Bucket: this.bucketName,
+            Key: key,
+            Body: qrBuffer,
+            ContentType: 'image/png',
+            ACL: 'private',
+        });
+        await this.client.send(command);
+        const url = (await this.getPresignedSignedUrl(key)).url;
+        return { key, url };
     }
     async getPresignedSignedUrl(key) {
         try {

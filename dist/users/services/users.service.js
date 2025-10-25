@@ -48,8 +48,9 @@ const updaload_file_service_1 = require("./updaload-file.service");
 const recharge_client_service_1 = require("../../integration/a1topup/external-system-client/recharge/recharge-client.service");
 const aadhar_verification_entity_1 = require("../../core/entities/aadhar-verification.entity");
 const notification_bridge_1 = require("../../notifications/services/notification-bridge");
+const upi_id_entity_1 = require("../../core/entities/upi-id.entity");
 let UsersService = class UsersService {
-    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, payoutService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, rewardRepo, transactionRepo, transactionMoneyRepo, aadharResponseRepo, documentRepository) {
+    constructor(tokenService, httpService, configService, walletService, merchantClientService, cardService, payoutService, _connection, uploadFileService, otpFlowService, otpRepository, rechargeClient, walletBridge, notificationBridge, userRepository, walletRepository, virtualAccountRepo, rewardRepo, transactionRepo, transactionMoneyRepo, aadharResponseRepo, documentRepository, upiIdsRepository) {
         this.tokenService = tokenService;
         this.httpService = httpService;
         this.configService = configService;
@@ -72,6 +73,7 @@ let UsersService = class UsersService {
         this.transactionMoneyRepo = transactionMoneyRepo;
         this.aadharResponseRepo = aadharResponseRepo;
         this.documentRepository = documentRepository;
+        this.upiIdsRepository = upiIdsRepository;
         this.saltRounds = 10;
     }
     async registerUser(userRequestDto) {
@@ -484,14 +486,20 @@ let UsersService = class UsersService {
         if (user.role !== user_role_enum_1.UserRole.ADMIN) {
             throw new common_1.ForbiddenException('User does not have enough permissions');
         }
-        const query = this.userRepository.createQueryBuilder('user');
-        query.where('user.role != :adminRole', { adminRole: user_role_enum_1.UserRole.ADMIN });
+        const query = this.userRepository.createQueryBuilder('user')
+            .leftJoinAndSelect('user.virtualAccounts', 'va')
+            .leftJoinAndSelect('user.upiIds', 'upi')
+            .where('user.role != :adminRole', { adminRole: user_role_enum_1.UserRole.ADMIN })
+            .andWhere('va.status = :vaStatus', { vaStatus: 'ACTIVE' })
+            .andWhere('upi.status = :upiStatus', { upiStatus: 'ACTIVE' });
         if (searchQuery) {
             query.andWhere(`(
           CONCAT(COALESCE(user.firstName, ''), ' ', COALESCE(user.lastName, '')) ILIKE :search OR
           user.firstName ILIKE :search OR
           user.lastName ILIKE :search OR
           user.phoneNumber ILIKE :search
+          va.accountnumber ILIKE :search OR
+          upi.upiId ILIKE :search
         )`, { search: `%${searchQuery}%` });
         }
         const users = await query.getMany();
@@ -568,7 +576,7 @@ let UsersService = class UsersService {
                 });
             }
             const virtualExist = await this.virtualAccountRepo.findOne({
-                where: { number: phoneNumber, userid: userId },
+                where: { number: phoneNumber, userid: Number(userId) },
             });
             if (virtualExist) {
                 throw new common_1.BadRequestException({
@@ -589,7 +597,7 @@ let UsersService = class UsersService {
                 accountnumber: data.data.accountNumber,
                 ifsccode: data.data.ifscCode,
                 status: data.data.status || 'ACTIVE',
-                userid: userId,
+                userid: Number(userId),
                 number: phoneNumber,
                 transfer_pin: hashedPin
             });
@@ -611,7 +619,7 @@ let UsersService = class UsersService {
         }
     }
     async getVirtualAccount(userId) {
-        const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+        const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
         if (!user) {
             return {
                 success: false,
@@ -633,7 +641,7 @@ let UsersService = class UsersService {
     }
     async changeTransferPin(userId, changeTransferPinDto) {
         try {
-            const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+            const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
             if (!user) {
                 throw new common_1.BadRequestException({
                     statusCode: 400,
@@ -689,7 +697,7 @@ let UsersService = class UsersService {
         await this.otpFlowService.requestOtpAppLockPin(user.phoneNumber);
     }
     async setTransactionLockPin(userId, newTransferPin) {
-        const user = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+        const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
         const newHashedPin = await bcrypt.hash(newTransferPin, 10);
         user.transfer_pin = newHashedPin;
         await this.virtualAccountRepo.save(user);
@@ -804,7 +812,7 @@ let UsersService = class UsersService {
                 throw new common_1.BadRequestException(['Rypay account not found']);
             }
             const userFrom = await this.userRepository.findOne({ where: { id: userId } });
-            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
             if (!isOldPinCorrect) {
                 throw new common_1.BadRequestException(['Incorrect PIN. Please try again.']);
@@ -873,7 +881,7 @@ let UsersService = class UsersService {
                     message: 'Invalid UPI ID. Please check and try again.',
                 };
             }
-            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
             if (!isOldPinCorrect) {
                 return {
@@ -958,7 +966,7 @@ let UsersService = class UsersService {
                     message: 'Invalid Account Number. Please try again.',
                 };
             }
-            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: userId } });
+            const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
             const isOldPinCorrect = await bcrypt.compare(transactionPIN, virtualAccount.transfer_pin);
             if (!isOldPinCorrect) {
                 return {
@@ -1458,6 +1466,92 @@ let UsersService = class UsersService {
             fileUrl: fileInfo.url
         };
     }
+    async createUPIId(req) {
+        let userId = req.user.sub;
+        const UserExist = await this.userRepository.findOne({
+            where: {
+                id: req.user.sub
+            }
+        });
+        if (!UserExist) {
+            throw new common_1.BadRequestException(['user not found']);
+        }
+        const vpaId = Math.floor(10000000 + Math.random() * 90000000).toString();
+        const busyBoxBaseUrl = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL');
+        const token = this.configService.get('BUSY_BOX_PAYOUT_API_TOKEN') || 'HnKFjVswJ8BhXRFzxf8pP6L1fDlhOrpzCs8S+VcGrl7xurg7iur3LfIsxCJE/ttiHm3cJbqxDKbj8fKxSeQIlcKZ/P/i7dnanAqyd1+O4FINU7n+W/QWg/ZBkfdZ0v+JqnnuGI2oXMOv7Z72WpzwnQ==';
+        const url = `${busyBoxBaseUrl}/collect/vpa/create`;
+        const payload = {
+            customer_name: UserExist.fullName,
+            vpaId: vpaId,
+            email: UserExist?.email,
+            mobile: UserExist?.phoneNumber,
+        };
+        try {
+            const upiIdExist = await this.upiIdsRepository.findOne({
+                where: { number: UserExist?.phoneNumber, userid: UserExist.id },
+            });
+            if (upiIdExist) {
+                throw new common_1.BadRequestException({
+                    success: false,
+                    message: 'Upi Id already created for this number and user.',
+                });
+            }
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            }));
+            let data = response.data;
+            const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;
+            const qr = await this.uploadFileService.generateAndUploadUpiQR(upiString);
+            const newAccount = this.upiIdsRepository.create({
+                accountid: data.data.accountId,
+                accountnumber: data.data.accountNumber,
+                status: data.data.status || 'ACTIVE',
+                userid: userId,
+                vpaId: vpaId,
+                number: UserExist?.phoneNumber,
+                upiId: data.data.accountNumber,
+                upiQr: qr.key,
+            });
+            const saved = await this.upiIdsRepository.save(newAccount);
+            return {
+                success: true,
+                message: 'UPI ID created successfully',
+                data: {
+                    upiId: saved.upiId,
+                    qrCode: qr.url,
+                },
+            };
+        }
+        catch (error) {
+            if (error instanceof common_1.BadRequestException) {
+                return {
+                    statusCode: 400,
+                    success: false,
+                    message: error.message,
+                };
+            }
+            const errMessage = error.response?.data || error.message;
+            console.error('Error creating upi id:', errMessage);
+            throw new common_1.InternalServerErrorException('Failed to create upi id');
+        }
+    }
+    async getUserUpiInfo(userId) {
+        const upiData = await this.upiIdsRepository.findOne({ where: { userid: userId } });
+        if (!upiData || !upiData.upiQr)
+            throw new common_1.BadRequestException('No UPI QR found');
+        const url = (await this.uploadFileService.getPresignedSignedUrl(upiData.upiQr)).url;
+        return {
+            success: true,
+            data: {
+                upiId: upiData.upiId,
+                qrUrl: url,
+                status: upiData.status,
+            },
+        };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
@@ -1470,6 +1564,7 @@ exports.UsersService = UsersService = __decorate([
     __param(19, (0, typeorm_1.InjectRepository)(transaction_money_entity_1.TransactionMoney)),
     __param(20, (0, typeorm_1.InjectRepository)(aadhar_verification_entity_1.AadharResponse)),
     __param(21, (0, typeorm_1.InjectRepository)(document_entity_1.UserDocument)),
+    __param(22, (0, typeorm_1.InjectRepository)(upi_id_entity_1.UPIIds)),
     __metadata("design:paramtypes", [token_service_1.TokenService,
         axios_1.HttpService,
         config_1.ConfigService,
@@ -1484,6 +1579,7 @@ exports.UsersService = UsersService = __decorate([
         recharge_client_service_1.RechargeClientService,
         wallet_queue_1.WalletBridge,
         notification_bridge_1.NotificationBridge,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

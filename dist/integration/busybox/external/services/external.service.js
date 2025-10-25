@@ -23,12 +23,14 @@ const typeorm_2 = require("typeorm");
 const transaction_money_entity_1 = require("../../../../core/entities/transaction-money.entity");
 const wallet_service_1 = require("../../../../wallet/services/wallet.service");
 const users_service_1 = require("../../../../users/services/users.service");
+const upi_collections_transactions_entity_1 = require("../../../../core/entities/upi-collections-transactions.entity");
 let ExternalService = ExternalService_1 = class ExternalService {
-    constructor(busyBoxWebHookRepo, walletRepository, virtualAccountRepo, transactionMoneyRepo, walletService, userService) {
+    constructor(busyBoxWebHookRepo, walletRepository, virtualAccountRepo, transactionMoneyRepo, upiCollectionsTransactionRepo, walletService, userService) {
         this.busyBoxWebHookRepo = busyBoxWebHookRepo;
         this.walletRepository = walletRepository;
         this.virtualAccountRepo = virtualAccountRepo;
         this.transactionMoneyRepo = transactionMoneyRepo;
+        this.upiCollectionsTransactionRepo = upiCollectionsTransactionRepo;
         this.walletService = walletService;
         this.userService = userService;
         this.logger = new common_1.Logger(ExternalService_1.name);
@@ -106,7 +108,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
             if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
                 const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
                 if (user) {
-                    let walletTo = await this.walletRepository.findOneBy({ user: { id: user.userid } });
+                    let walletTo = await this.walletRepository.findOneBy({ user: { id: String(user.userid) } });
                     walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
                     let savedWallet = await this.walletRepository.save(walletTo);
                 }
@@ -120,7 +122,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
                     status: "SUCCESS",
                     transaction_mode: "VIRTUAL_ACCOUNT",
                     ifsc: null,
-                    user_id: user?.userid,
+                    user_id: String(user?.userid),
                     convenience_fee: 0,
                     transaction_id: transactionModel?.additionalData?.txn_id,
                     bank: null,
@@ -131,6 +133,25 @@ let ExternalService = ExternalService_1 = class ExternalService {
         }
         catch (err) {
             console.log('❌ Error while handling BusyBox webhook:', err);
+            throw err;
+        }
+    }
+    async handleUPICollectionsWebhook(payload) {
+        try {
+            this.logger.log(payload);
+            const transactionModel = {
+                type: busybox_webhook_logs_entity_1.Webhook_Type.UPI_COLLECTION,
+                additionalData: payload,
+            };
+            await this.busyBoxWebHookRepo.save(transactionModel);
+            const newTxn = this.upiCollectionsTransactionRepo.create({
+                data: payload.data || {},
+            });
+            const saved = await this.upiCollectionsTransactionRepo.save(newTxn);
+            return { message: 'Success' };
+        }
+        catch (err) {
+            console.log('❌ Error processing UPI Collection webhook:', err.message);
             throw err;
         }
     }
@@ -150,6 +171,43 @@ let ExternalService = ExternalService_1 = class ExternalService {
             throw err;
         }
     }
+    async handleUPIPayoutCallbacks(payload) {
+        try {
+            const transactionModel = {
+                type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
+                additionalData: payload,
+            };
+            if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
+                const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
+                if (user) {
+                    let walletTo = await this.walletRepository.findOneBy({ user: { id: String(user.userid) } });
+                    walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
+                    let savedWallet = await this.walletRepository.save(walletTo);
+                }
+                const newAccount = this.transactionMoneyRepo.create({
+                    name: transactionModel?.additionalData?.remitter_name,
+                    type: 'CREDIT',
+                    amount: Number(transactionModel.additionalData?.amount),
+                    message: null,
+                    reference: transactionModel.additionalData?.rrn,
+                    transaction_date: new Date(),
+                    status: "SUCCESS",
+                    transaction_mode: "VIRTUAL_ACCOUNT",
+                    ifsc: null,
+                    user_id: String(user?.userid),
+                    convenience_fee: 0,
+                    transaction_id: transactionModel?.additionalData?.txn_id,
+                    bank: null,
+                });
+                const saved = await this.transactionMoneyRepo.save(newAccount);
+            }
+            return { message: 'Success' };
+        }
+        catch (err) {
+            console.log('❌ Error while handling BusyBox webhook:', err);
+            throw err;
+        }
+    }
 };
 exports.ExternalService = ExternalService;
 exports.ExternalService = ExternalService = ExternalService_1 = __decorate([
@@ -158,7 +216,9 @@ exports.ExternalService = ExternalService = ExternalService_1 = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallet)),
     __param(2, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
     __param(3, (0, typeorm_1.InjectRepository)(transaction_money_entity_1.TransactionMoney)),
+    __param(4, (0, typeorm_1.InjectRepository)(upi_collections_transactions_entity_1.UPICollectionsTransactionMoney)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

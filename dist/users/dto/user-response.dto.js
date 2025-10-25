@@ -9,13 +9,72 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserApiResponseDto = exports.AddressDto = exports.UserResponse = exports.AccountResponse = exports.CardResponse = void 0;
+exports.UserApiResponseDto = exports.AddressDto = exports.UserResponse = exports.AccountResponse = exports.CardResponse = exports.UPIIdResponse = exports.VirtualAccountResponse = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const token_response_dto_1 = require("../../auth/dto/token-response.dto");
 const address_entity_1 = require("../../core/entities/address.entity");
 const merchant_entity_1 = require("../../core/entities/merchant.entity");
 const wallet_entity_1 = require("../../core/entities/wallet.entity");
 const kyc_verification_status_enum_1 = require("../../core/enum/kyc-verification-status.enum");
+class VirtualAccountResponse {
+    constructor(virtualAccount) {
+        if (virtualAccount) {
+            this.accountNumber = virtualAccount.accountNumber;
+            this.ifscCode = virtualAccount.ifscCode;
+            this.operator = virtualAccount.operator;
+            this.status = virtualAccount.status;
+        }
+    }
+}
+exports.VirtualAccountResponse = VirtualAccountResponse;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], VirtualAccountResponse.prototype, "accountNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], VirtualAccountResponse.prototype, "ifscCode", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], VirtualAccountResponse.prototype, "operator", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], VirtualAccountResponse.prototype, "status", void 0);
+class UPIIdResponse {
+    constructor(upi) {
+        if (upi) {
+            this.vpaId = upi.vpaId;
+            this.upiId = upi.upiId;
+            this.accountNumber = upi.accountnumber;
+            this.status = upi.status;
+            this.upiQr = upi.upiQr || null;
+        }
+    }
+}
+exports.UPIIdResponse = UPIIdResponse;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UPIIdResponse.prototype, "vpaId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UPIIdResponse.prototype, "upiId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UPIIdResponse.prototype, "accountNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UPIIdResponse.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], UPIIdResponse.prototype, "upiQr", void 0);
 class CardResponse {
     constructor(card) {
         if (card) {
@@ -86,6 +145,8 @@ class UserResponse {
         this.cardDetails = new CardResponse(user.card);
         this.accountDetails = new AccountResponse(user);
         this.referrelCode = user.referralCode;
+        this.virtualAccounts = user.virtualAccounts?.map((v) => new VirtualAccountResponse(v)) || [];
+        this.upiIds = user.upiIds?.map((u) => new UPIIdResponse(u)) || [];
     }
 }
 exports.UserResponse = UserResponse;
@@ -181,6 +242,14 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", merchant_entity_1.Merchant)
 ], UserResponse.prototype, "merchant", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [VirtualAccountResponse], required: false }),
+    __metadata("design:type", Array)
+], UserResponse.prototype, "virtualAccounts", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [UPIIdResponse], required: false }),
+    __metadata("design:type", Array)
+], UserResponse.prototype, "upiIds", void 0);
 class AddressDto {
 }
 exports.AddressDto = AddressDto;

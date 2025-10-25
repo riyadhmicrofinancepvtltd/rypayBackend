@@ -10,6 +10,8 @@ import { Notification } from './notification.entity';
 import { Loan } from './loan.entity';
 import { MoneyRequest } from './money-request.entity';
 import { CoinTransaction } from './coins.entity';
+import { UPIIds } from './upi-id.entity';
+import { VirtualAccount } from './virtual-account.entity';
 export declare class User {
     id: string;
     email: string;
@@ -45,4 +47,6 @@ export declare class User {
     mobileDevices: string[];
     loans: Loan[];
     moneyRequest: MoneyRequest[];
+    upiIds: UPIIds[];
+    virtualAccounts: VirtualAccount[];
 }

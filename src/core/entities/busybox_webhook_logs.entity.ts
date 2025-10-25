@@ -6,7 +6,8 @@ export enum Webhook_Type {
     UPI = 'UPI',
     DEBIT = 'DEBIT',
     Payout = 'PAYOUT',
-    QRPayment = 'QR_Payment'
+    QRPayment = 'QR_Payment',
+    UPI_COLLECTION = 'UPI_COLLECTION'
   }
 
 @Entity('busybox_webhook_responses')

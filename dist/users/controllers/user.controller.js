@@ -221,6 +221,13 @@ let UsersController = class UsersController {
             success: !!fileData
         };
     }
+    async createUPIId(req) {
+        let data = await this.userService.createUPIId(req);
+        return data;
+    }
+    async getUpiInfo(req) {
+        return await this.userService.getUserUpiInfo(req.user.sub);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -996,6 +1003,28 @@ __decorate([
     __metadata("design:paramtypes", [Object, Array]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateKYCDocument", null);
+__decorate([
+    (0, common_1.Get)('create-upi'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Endpoint to create UPI id' }),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "createUPIId", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('upi-info'),
+    (0, swagger_1.ApiOperation)({ summary: 'Endpoint to get UPI info' }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUpiInfo", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('user'),
     (0, swagger_1.ApiTags)('User'),

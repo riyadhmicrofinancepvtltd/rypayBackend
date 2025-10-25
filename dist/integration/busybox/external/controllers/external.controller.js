@@ -38,8 +38,11 @@ let ExternalController = class ExternalController {
     async handlePayoutEvents(payload) {
         return this.externalService.handlePayoutEvents(payload);
     }
-    async handleBusyBoxPayoutEvents(payload, req) {
+    async handleBusyBoxPayoutEvents(payload) {
         return this.externalService.handleBusyBoxPayoutEvents(payload);
+    }
+    async handleBusyBoxUPICollectionPayoutEvents(payload, req) {
+        return this.externalService.handleUPICollectionsWebhook(payload);
     }
 };
 exports.ExternalController = ExternalController;
@@ -81,11 +84,18 @@ __decorate([
 __decorate([
     (0, common_1.Post)('webhooks/busybox'),
     __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [upi_transaction_payload_dto_1.TransactionDto]),
+    __metadata("design:returntype", Promise)
+], ExternalController.prototype, "handleBusyBoxPayoutEvents", null);
+__decorate([
+    (0, common_1.Post)('webhooks/busybox-upi-collections'),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], ExternalController.prototype, "handleBusyBoxPayoutEvents", null);
+], ExternalController.prototype, "handleBusyBoxUPICollectionPayoutEvents", null);
 exports.ExternalController = ExternalController = __decorate([
     (0, common_1.Controller)('external'),
     (0, swagger_1.ApiTags)('External'),

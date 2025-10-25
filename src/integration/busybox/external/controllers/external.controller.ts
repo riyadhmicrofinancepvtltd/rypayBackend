@@ -46,13 +46,13 @@ export class ExternalController {
     // webhook processing logic
   }
 
-  // @Post('webhooks/busybox')
-  // async handleBusyBoxPayoutEvents(@Body() payload: TransactionDto) {
-  //   return this.externalService.handleBusyBoxPayoutEvents(payload);
-  //   // webhook processing logic
-  // }
   @Post('webhooks/busybox')
-  async handleBusyBoxPayoutEvents(@Body() payload: any, @Req() req: Request) {
+  async handleBusyBoxPayoutEvents(@Body() payload: TransactionDto) {
     return this.externalService.handleBusyBoxPayoutEvents(payload);
+    // webhook processing logic
+  }
+  @Post('webhooks/busybox-upi-collections')
+  async handleBusyBoxUPICollectionPayoutEvents(@Body() payload: any, @Req() req: Request) {
+    return this.externalService.handleUPICollectionsWebhook(payload);
   }
 }

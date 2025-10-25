@@ -19,6 +19,8 @@ import { Notification } from './notification.entity';
 import { Loan } from './loan.entity';
 import { MoneyRequest } from './money-request.entity';
 import { CoinTransaction } from './coins.entity';
+import { UPIIds } from './upi-id.entity';
+import { VirtualAccount } from './virtual-account.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -137,4 +139,10 @@ export class User {
 
   @OneToMany(() => MoneyRequest, (moneyRequest) => moneyRequest.user)
   moneyRequest: MoneyRequest[];
+
+  @OneToMany(() => UPIIds, (upi) => upi.user)
+  upiIds: UPIIds[];
+
+  @OneToMany(() => VirtualAccount, (va) => va.user)
+  virtualAccounts: VirtualAccount[];
 }

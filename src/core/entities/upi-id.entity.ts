@@ -2,11 +2,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('virtual_accounts')
-export class VirtualAccount {
+@Entity('upi_ids')
+export class UPIIds {
     @PrimaryGeneratedColumn({ name: 'id' })
     id: number;
-
 
     @Column({ unique: true })
     accountid: string;
@@ -15,6 +14,9 @@ export class VirtualAccount {
     accountnumber: string;
 
     @Column()
+    vpaId: string;
+
+    @Column({ nullable: true })
     ifsccode: string;
 
     @Column({ default: 'ACTIVE' })
@@ -24,16 +26,23 @@ export class VirtualAccount {
     createon: Date;
 
     @Column()
-    userid: number;
- 
+    userid: string;
+
+    @Column()
+    upiId: string;
+
     @Column()
     number: string;
 
-    @Column()
+
+    @Column({ nullable: true })
     transfer_pin: string;
 
-    // 🔹 Relationship to User
-    @ManyToOne(() => User, (user) => user.virtualAccounts, { onDelete: 'CASCADE' })
+    @Column({ nullable: true })
+    upiQr: string; // will store the S3 key (UUID)
+
+    @ManyToOne(() => User, (user) => user.upiIds, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userid' })
     user: User;
+
 }

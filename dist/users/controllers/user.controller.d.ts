@@ -197,4 +197,8 @@ export declare class UsersController {
     updateKYCDocument(req: any, userDocsInfo: UpdateKycDetailUploadDto[]): Promise<{
         success: boolean;
     }>;
+    createUPIId(req: any): Promise<{
+        message: string;
+    }>;
+    getUpiInfo(req: any): Promise<any>;
 }
