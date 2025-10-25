@@ -398,7 +398,8 @@ export class UsersService {
   async registerUserAndGenerateTokenNew(
     userRequestDto: UserRequestDto,
   ): Promise<UserApiResponseDto> {
-    if (userRequestDto.userType === UserRole.MERCHANT) {
+    try{
+ if (userRequestDto.userType === UserRole.MERCHANT) {
       if (!userRequestDto.merchantInfo.shopName) {
         throw new BadRequestException(["Shop name is required"]);
       }
@@ -411,7 +412,8 @@ export class UsersService {
     if (userExists) {
       throw new BadRequestException(['User already exists']);
     }
-    if (userExists.aadharNumber == userRequestDto.aadharNumber) {
+    console.log("userEjkdjkdxists", userExists, "usekjsksrRequestDto", userRequestDto)
+    if (userExists?.aadharNumber == userRequestDto?.aadharNumber) {
       throw new BadRequestException(['Aadhar number already exists'])
     }
 
@@ -425,6 +427,12 @@ export class UsersService {
       } as any;
     }
     throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
+    }catch(err){
+      console.log("Failed to send OTP. Please ensure your Aadhar number is valid and try again.",err.message);
+    throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
+
+    }
+   
   }
 
 

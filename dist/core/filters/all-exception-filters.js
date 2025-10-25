@@ -42,12 +42,13 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
             "/user/bank-verify"
         ];
         if (openUrls.includes(request.url)) {
-            console.log("mesaagege", message);
+            console.log("message", message);
             response.status(status).json({
                 statusCode: status,
                 success: false,
-                message: message?.message ? message?.message[0] : "Internal server error"
+                message: message?.message ?? message,
             });
+            return;
         }
         response.status(status).json({
             statusCode: status,

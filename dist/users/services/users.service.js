@@ -326,32 +326,39 @@ let UsersService = class UsersService {
         throw new common_1.InternalServerErrorException("Failed to issue card for the user");
     }
     async registerUserAndGenerateTokenNew(userRequestDto) {
-        if (userRequestDto.userType === user_role_enum_1.UserRole.MERCHANT) {
-            if (!userRequestDto.merchantInfo.shopName) {
-                throw new common_1.BadRequestException(["Shop name is required"]);
+        try {
+            if (userRequestDto.userType === user_role_enum_1.UserRole.MERCHANT) {
+                if (!userRequestDto.merchantInfo.shopName) {
+                    throw new common_1.BadRequestException(["Shop name is required"]);
+                }
             }
-        }
-        const userExists = await this.userRepository.findOne({
-            where: {
-                phoneNumber: userRequestDto.phoneNumber,
+            const userExists = await this.userRepository.findOne({
+                where: {
+                    phoneNumber: userRequestDto.phoneNumber,
+                }
+            });
+            if (userExists) {
+                throw new common_1.BadRequestException(['User already exists']);
             }
-        });
-        if (userExists) {
-            throw new common_1.BadRequestException(['User already exists']);
+            console.log("userEjkdjkdxists", userExists, "usekjsksrRequestDto", userRequestDto);
+            if (userExists?.aadharNumber == userRequestDto?.aadharNumber) {
+                throw new common_1.BadRequestException(['Aadhar number already exists']);
+            }
+            const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
+            console.log("djsjata", data);
+            if (data.status === "SUCCESS") {
+                return {
+                    success: true,
+                    message: "OTP has been sent successfully to your registered mobile number.",
+                    sessionId: data.aadhaarData?.otpSessionId
+                };
+            }
+            throw new common_1.BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
         }
-        if (userExists.aadharNumber == userRequestDto.aadharNumber) {
-            throw new common_1.BadRequestException(['Aadhar number already exists']);
+        catch (err) {
+            console.log("Failed to send OTP. Please ensure your Aadhar number is valid and try again.", err.message);
+            throw new common_1.BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
         }
-        const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
-        console.log("djsjata", data);
-        if (data.status === "SUCCESS") {
-            return {
-                success: true,
-                message: "OTP has been sent successfully to your registered mobile number.",
-                sessionId: data.aadhaarData?.otpSessionId
-            };
-        }
-        throw new common_1.BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
     }
     async aadhaarVerifyOtp(userRequestDto) {
         if (!userRequestDto.otp) {

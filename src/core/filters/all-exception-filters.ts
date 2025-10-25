@@ -49,14 +49,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
       "/user/bank-verify"
     ];
     if (openUrls.includes(request.url)) {
-      console.log("mesaagege", message)
+      console.log("message", message);
       response.status(status).json({
         statusCode: status,
         success: false,
-        message: message?.message?message?.message[0]:"Internal server error"
+        message: (message as any)?.message ?? message,
       });
+      return; // 👈 stops execution so the next response isn't sent
     }
-    
+
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
