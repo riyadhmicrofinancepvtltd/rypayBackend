@@ -34,12 +34,14 @@ import { WalletBridge } from 'src/wallet/services/wallet.queue';
 import { BullModule } from '@nestjs/bull';
 import { CoinsModule } from 'src/coins/coins.module';
 import { AadharResponse } from 'src/core/entities/aadhar-verification.entity';
+import { UPIIds } from 'src/core/entities/upi-id.entity';
+import { UPICollectionsTransactionMoney } from 'src/core/entities/upi-collections-transactions.entity';
 
 @Global()
 @Module({
   imports: [
     JwtModule.register({ global: true }),
-    TypeOrmModule.forFeature([User,VirtualAccount,Reward,TransactionMoney, RefreshToken, OtpInfo, Wallet, Transaction, Order, UserDocument, AadharResponse]),
+    TypeOrmModule.forFeature([User,VirtualAccount,Reward,TransactionMoney, RefreshToken, OtpInfo, Wallet, Transaction, Order, UserDocument, AadharResponse, UPIIds, UPICollectionsTransactionMoney]),
     PdfModule,
     CacheModule.register(),
     HttpModule,

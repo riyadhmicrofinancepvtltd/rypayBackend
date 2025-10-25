@@ -25,12 +25,13 @@ import { OtpInfo } from 'src/core/entities/otp-info.entity';
 import { AadharResponse } from 'src/core/entities/aadhar-verification.entity';
 import { BullModule } from '@nestjs/bull';
 import { NotificationBridge } from 'src/notifications/services/notification-bridge';
+import { UPIIds } from 'src/core/entities/upi-id.entity';
 
 
 @Module({
   imports: [AuthModule,
     BullModule.registerQueue({name: 'notification'}),
-     HttpModule, IntegrationModule, CardsModule, WalletModule, ConfigModule, forwardRef(() => WalletModule), TypeOrmModule.forFeature([User,Transaction,TransactionMoney,VirtualAccount,Reward,Wallet, UserDocument, OtpInfo, AadharResponse])],
+     HttpModule, IntegrationModule, CardsModule, WalletModule, ConfigModule, forwardRef(() => WalletModule), TypeOrmModule.forFeature([User,Transaction,TransactionMoney,VirtualAccount,Reward,Wallet, UserDocument, OtpInfo, AadharResponse, UPIIds])],
   providers: [UsersService, ConfigService, NotificationBridge, UploadFileService, OtpFlowService, SmsClientService, MailService, OtpRepository],
   controllers: [UsersController],
   exports: [UsersService, UploadFileService],

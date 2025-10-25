@@ -343,6 +343,7 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException(['Aadhar number already exists']);
         }
         const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
+        console.log("djsjata", data);
         if (data.status === "SUCCESS") {
             return {
                 success: true,

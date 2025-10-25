@@ -57,6 +57,8 @@ const upitransact_external_controller_1 = require("./upitransact/external/contro
 const upitransact_controller_1 = require("./upitransact/external/controllers/upitransact.controller");
 const payment_external_service_1 = require("./upitransact/external/services/payment-external.service");
 const payment_external_client_service_1 = require("./upitransact/external-system-client/payment-external-client.service");
+const upi_id_entity_1 = require("../core/entities/upi-id.entity");
+const upi_collections_transactions_entity_1 = require("../core/entities/upi-collections-transactions.entity");
 let IntegrationModule = class IntegrationModule {
 };
 exports.IntegrationModule = IntegrationModule;
@@ -72,7 +74,7 @@ exports.IntegrationModule = IntegrationModule = __decorate([
             axios_1.HttpModule, config_1.ConfigModule,
             notifications_module_1.NotificationsModule,
             coins_module_1.CoinsModule,
-            typeorm_1.TypeOrmModule.forFeature([wallet_entity_1.Wallet, user_entity_1.User, virtual_account_entity_1.VirtualAccount, rewards_entity_1.Reward, transaction_money_entity_1.TransactionMoney, order_entity_1.Order, transactions_entity_1.Transaction, card_entity_1.Card, busybox_webhook_logs_entity_1.BusyBoxWebhookResponse, webhook_entity_1.WebhookResponse, document_entity_1.UserDocument, otp_info_entity_1.OtpInfo, aadhar_verification_entity_1.AadharResponse])
+            typeorm_1.TypeOrmModule.forFeature([wallet_entity_1.Wallet, user_entity_1.User, virtual_account_entity_1.VirtualAccount, rewards_entity_1.Reward, transaction_money_entity_1.TransactionMoney, order_entity_1.Order, transactions_entity_1.Transaction, card_entity_1.Card, busybox_webhook_logs_entity_1.BusyBoxWebhookResponse, webhook_entity_1.WebhookResponse, document_entity_1.UserDocument, otp_info_entity_1.OtpInfo, aadhar_verification_entity_1.AadharResponse, upi_id_entity_1.UPIIds, upi_collections_transactions_entity_1.UPICollectionsTransactionMoney])
         ],
         providers: [
             merchant_client_service_1.MerchantClientService,

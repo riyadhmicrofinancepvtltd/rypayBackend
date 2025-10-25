@@ -43,6 +43,8 @@ const wallet_queue_1 = require("../wallet/services/wallet.queue");
 const bull_1 = require("@nestjs/bull");
 const coins_module_1 = require("../coins/coins.module");
 const aadhar_verification_entity_1 = require("../core/entities/aadhar-verification.entity");
+const upi_id_entity_1 = require("../core/entities/upi-id.entity");
+const upi_collections_transactions_entity_1 = require("../core/entities/upi-collections-transactions.entity");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -51,7 +53,7 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             jwt_1.JwtModule.register({ global: true }),
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, virtual_account_entity_1.VirtualAccount, rewards_entity_1.Reward, transaction_money_entity_1.TransactionMoney, refresh_token_entity_1.RefreshToken, otp_info_entity_1.OtpInfo, wallet_entity_1.Wallet, transactions_entity_1.Transaction, order_entity_1.Order, document_entity_1.UserDocument, aadhar_verification_entity_1.AadharResponse]),
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, virtual_account_entity_1.VirtualAccount, rewards_entity_1.Reward, transaction_money_entity_1.TransactionMoney, refresh_token_entity_1.RefreshToken, otp_info_entity_1.OtpInfo, wallet_entity_1.Wallet, transactions_entity_1.Transaction, order_entity_1.Order, document_entity_1.UserDocument, aadhar_verification_entity_1.AadharResponse, upi_id_entity_1.UPIIds, upi_collections_transactions_entity_1.UPICollectionsTransactionMoney]),
             pdf_module_1.PdfModule,
             cache_manager_1.CacheModule.register(),
             axios_1.HttpModule,

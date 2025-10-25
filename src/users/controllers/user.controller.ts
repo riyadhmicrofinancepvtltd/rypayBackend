@@ -51,7 +51,7 @@ export class UsersController {
     status: HttpStatus.CREATED,
     type: UserApiResponseDto,
     description: 'The record has been successfully created.',
-  })
+  }) 
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Forbidden.',

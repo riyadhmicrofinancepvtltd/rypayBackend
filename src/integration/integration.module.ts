@@ -48,6 +48,8 @@ import { ExternalPaymentGatewayController } from './upitransact/external/control
 import { PaymentGatewayController } from './upitransact/external/controllers/upitransact.controller';
 import { PaymentExternalService } from './upitransact/external/services/payment-external.service';
 import { PaymentExternalClientService } from './upitransact/external-system-client/payment-external-client.service';
+import { UPIIds } from 'src/core/entities/upi-id.entity';
+import { UPICollectionsTransactionMoney } from 'src/core/entities/upi-collections-transactions.entity';
 
 @Module({
   imports: [
@@ -60,7 +62,7 @@ import { PaymentExternalClientService } from './upitransact/external-system-clie
     HttpModule, ConfigModule,
     NotificationsModule,
     CoinsModule,
-    TypeOrmModule.forFeature([Wallet, User,VirtualAccount,Reward,TransactionMoney, Order, Transaction, Card, BusyBoxWebhookResponse, WebhookResponse, UserDocument, OtpInfo, AadharResponse])
+    TypeOrmModule.forFeature([Wallet, User,VirtualAccount,Reward,TransactionMoney, Order, Transaction, Card, BusyBoxWebhookResponse, WebhookResponse, UserDocument, OtpInfo, AadharResponse,UPIIds, UPICollectionsTransactionMoney])
   ],
   providers: [
     MerchantClientService,
@@ -85,6 +87,7 @@ import { PaymentExternalClientService } from './upitransact/external-system-clie
     MailService,
     WalletBridge,
     OtpRepository
+    
   ],
   controllers: [ExternalController, PayoutController, RechargeExternalController, SseController, PaymentGatewayController, ExternalPaymentGatewayController],
   exports: [
