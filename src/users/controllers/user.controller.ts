@@ -860,11 +860,11 @@ export class UsersController {
   }
 
 
-  @Get('create-upi')
-  @UseGuards(JwtAuthGuard)
+  @Post('create-upi')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Endpoint to create UPI id' })
   @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
   async createUPIId(
     @Req() req: any,
   ): Promise<{ message: string; }> {

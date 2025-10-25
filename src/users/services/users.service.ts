@@ -1877,6 +1877,8 @@ export class UsersService {
           message: 'Upi Id already created for this number and user.',
         });
       }
+            console.log("RESRSFSsjsj")
+
       const response = await firstValueFrom(
         this.httpService.post(url, payload, {
           headers: {
@@ -1885,7 +1887,8 @@ export class UsersService {
           },
         })
       );
-      // const hashedPin = await bcrypt.hash(transferPin, this.saltRounds);
+      // const hashedPin = await bcry"pt.hash(transferPin, this.saltRounds);
+      console.log("RESRSFS",response.data)
       let data = response.data;
       // ✅ Generate QR Code for the UPI ID
       const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;

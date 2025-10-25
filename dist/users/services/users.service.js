@@ -1504,12 +1504,14 @@ let UsersService = class UsersService {
                     message: 'Upi Id already created for this number and user.',
                 });
             }
+            console.log("RESRSFSsjsj");
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             }));
+            console.log("RESRSFS", response.data);
             let data = response.data;
             const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;
             const qr = await this.uploadFileService.generateAndUploadUpiQR(upiString);
