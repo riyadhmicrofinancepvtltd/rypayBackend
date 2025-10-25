@@ -398,41 +398,41 @@ export class UsersService {
   async registerUserAndGenerateTokenNew(
     userRequestDto: UserRequestDto,
   ): Promise<UserApiResponseDto> {
-    try{
- if (userRequestDto.userType === UserRole.MERCHANT) {
-      if (!userRequestDto.merchantInfo.shopName) {
-        throw new BadRequestException(["Shop name is required"]);
+    try {
+      if (userRequestDto.userType === UserRole.MERCHANT) {
+        if (!userRequestDto.merchantInfo.shopName) {
+          throw new BadRequestException(["Shop name is required"]);
+        }
       }
-    }
-    const userExists = await this.userRepository.findOne({
-      where: {
-        phoneNumber: userRequestDto.phoneNumber,
+      const userExists = await this.userRepository.findOne({
+        where: {
+          phoneNumber: userRequestDto.phoneNumber,
+        }
+      });
+      if (userExists) {
+        throw new BadRequestException(['User already exists']);
       }
-    });
-    if (userExists) {
-      throw new BadRequestException(['User already exists']);
-    }
-    console.log("userEjkdjkdxists", userExists, "usekjsksrRequestDto", userRequestDto)
-    if (userExists?.aadharNumber == userRequestDto?.aadharNumber) {
-      throw new BadRequestException(['Aadhar number already exists'])
+      console.log("userEjkdjkdxists", userExists, "usekjsksrRequestDto", userRequestDto)
+      if (userExists?.aadharNumber == userRequestDto?.aadharNumber) {
+        throw new BadRequestException(['Aadhar number already exists'])
+      }
+
+      const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
+      console.log("djsjata", data);
+      if (data.status === "SUCCESS") {
+        return {
+          success: true,
+          message: "OTP has been sent successfully to your registered mobile number.",
+          sessionId: data.aadhaarData?.otpSessionId
+        } as any;
+      }
+      throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
+    } catch (err) {
+      console.log("Failed to send OTP. Please ensure your Aadhar number is valid and try again.", err.message);
+      throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
+
     }
 
-    const data = await this.rechargeClient.requestAadharOtp(userRequestDto.aadharNumber);
-    console.log("djsjata", data);
-    if (data.status === "SUCCESS") {
-      return {
-        success: true,
-        message: "OTP has been sent successfully to your registered mobile number.",
-        sessionId: data.aadhaarData?.otpSessionId
-      } as any;
-    }
-    throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
-    }catch(err){
-      console.log("Failed to send OTP. Please ensure your Aadhar number is valid and try again.",err.message);
-    throw new BadRequestException(['Failed to send OTP. Please ensure your Aadhar number is valid and try again.']);
-
-    }
-   
   }
 
 
@@ -752,7 +752,7 @@ export class UsersService {
   }
   //getVirtualAccount
   async getVirtualAccount(userId: string): Promise<any> {
-    const user = await this.virtualAccountRepo.findOne({ where: { userid:Number(userId) } });
+    const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
     if (!user) {
       return {
         success: false,
@@ -777,7 +777,7 @@ export class UsersService {
     changeTransferPinDto: ChangeTransferPinDto
   ): Promise<any> {
     try {
-      const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId )} });
+      const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
       if (!user) {
         throw new BadRequestException({
           statusCode: 400,
@@ -838,7 +838,7 @@ export class UsersService {
   }
 
   async setTransactionLockPin(userId: string, newTransferPin: string): Promise<void> {
-    const user = await this.virtualAccountRepo.findOne({ where: { userid:Number( userId) } });
+    const user = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
     const newHashedPin = await bcrypt.hash(newTransferPin, 10);
     user.transfer_pin = newHashedPin;
     await this.virtualAccountRepo.save(user);
@@ -988,7 +988,7 @@ export class UsersService {
         throw new BadRequestException(['Rypay account not found']);
       }
       const userFrom = await this.userRepository.findOne({ where: { id: userId } });
-      const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid:Number( userId) } });
+      const virtualAccount = await this.virtualAccountRepo.findOne({ where: { userid: Number(userId) } });
       const isOldPinCorrect = await bcrypt.compare(
         transactionPIN,
         virtualAccount.transfer_pin,
@@ -1877,7 +1877,7 @@ export class UsersService {
           message: 'Upi Id already created for this number and user.',
         });
       }
-            console.log("RESRSFSsjsj")
+      console.log("RESRSFSsjsj", url, "payloadss", payload)
 
       const response = await firstValueFrom(
         this.httpService.post(url, payload, {
@@ -1888,7 +1888,7 @@ export class UsersService {
         })
       );
       // const hashedPin = await bcry"pt.hash(transferPin, this.saltRounds);
-      console.log("RESRSFS",response.data)
+      console.log("RESRSFS", response.data)
       let data = response.data;
       // ✅ Generate QR Code for the UPI ID
       const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;

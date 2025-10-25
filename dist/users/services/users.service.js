@@ -1504,7 +1504,7 @@ let UsersService = class UsersService {
                     message: 'Upi Id already created for this number and user.',
                 });
             }
-            console.log("RESRSFSsjsj");
+            console.log("RESRSFSsjsj", url, "payloadss", payload);
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(url, payload, {
                 headers: {
                     Authorization: `Bearer ${token}`,
