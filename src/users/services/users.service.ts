@@ -1904,6 +1904,11 @@ export class UsersService {
         upiQr: qr.key,
       });
       const saved = await this.upiIdsRepository.save(newAccount);
+      if(response.data.status != "SUCCESS"){
+        console.log("Failed to generate upi", response.data)
+        throw new BadRequestException(["Failed to generate upi"])
+
+      }
       return {
         success: true,
         message: 'UPI ID created successfully',
