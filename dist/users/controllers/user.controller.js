@@ -156,6 +156,7 @@ let UsersController = class UsersController {
         return await this.userService.getRecentTransaction(req.user.sub, Number(page), Number(limit), transactionMode);
     }
     async sendMoney(req, pinRequest) {
+        console.log("Send Money Request::", pin_request_dto_1.SendMoneyRequestDto);
         return await this.userService.sendMoney(req.user.sub, pinRequest.paymentMode, pinRequest.amount, pinRequest.transactionPIN, pinRequest.number, pinRequest.upiId, pinRequest.upiUserName, pinRequest.message, pinRequest.accountNumber, pinRequest.ifsc, pinRequest.mode, pinRequest.userName, pinRequest.convenienceFee);
     }
     async upiValidate(req, upiRequest) {

@@ -571,6 +571,7 @@ export class UsersController {
     @Req() req: any,
     @Body() pinRequest: SendMoneyRequestDto,
   ) {
+    console.log("Send Money Request::", SendMoneyRequestDto);
     return await this.userService.sendMoney(
       req.user.sub,
       pinRequest.paymentMode,
