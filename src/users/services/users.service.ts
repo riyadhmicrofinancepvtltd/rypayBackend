@@ -1080,7 +1080,9 @@ export class UsersService {
         message: message,
         convenienceFee: convenienceFee,
       } as any
+      console.log("Payloadupi(send-money)", payload, "userId", userId);
       const data = await this.payoutService.payoutUPINew(userId, payload);
+      console.log("PayoutUPINew Response(send-money)", data);
       if (data?.referenceId) {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
@@ -1170,8 +1172,9 @@ export class UsersService {
         userName: userName,
         convenienceFee: convenienceFee,
       } as any
-
+console.log("Payloadbank(send-money)", payload, "userId", userId);
       const data = await this.payoutService.payoutAccountNew(userId, payload);
+      console.log("PayoutAccountNew Response(send-money)", data);
       if (data?.referenceId) {
         const newAccount = this.transactionMoneyRepo.create({
           name: userName,
