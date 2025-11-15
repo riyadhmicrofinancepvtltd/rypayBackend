@@ -25,10 +25,10 @@ export class PayoutService {
         UPI: 10000,
         Payout: 25000,
     };
-    
+
     private readonly MONTHLY_LIMIT = {
-    UPI: 100000,
-    Payout: 200000,
+        UPI: 100000,
+        Payout: 200000,
     };
     constructor(
         private walletService: WalletService,
@@ -38,7 +38,7 @@ export class PayoutService {
         @InjectRepository(Transaction) private transactionRepository: Repository<Transaction>
 
     ) {
-       this.logger =  new Logger(PayoutService.name)
+        this.logger = new Logger(PayoutService.name)
     }
 
     async payoutAccount(userId: string, requestDto: AccountPayoutPayload) {
@@ -56,7 +56,7 @@ export class PayoutService {
         if (response.status === 'FAILURE') {
             throw new BadRequestException(response.message)
         }
-        const user = await this.userRepository.findOne({where: {id: userId}});
+        const user = await this.userRepository.findOne({ where: { id: userId } });
         const maskedAccount = maskAccount(requestBody.account_number);
         const description = requestDto.message ? requestDto.message : PayoutDescription.replace('{maskedAccount}', maskedAccount);
         const orderId = generateRef(12);
@@ -80,13 +80,15 @@ export class PayoutService {
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
 
-        await this.walletService.processRechargePayment({amount: requestDto.amount,
-             receiverId: requestDto.accountNumber,
-             serviceUsed: serviceUsed,
-             charges: payoutCharges,
-             description: description,
-             status: TransactionStatus.PENDING,
-             reference: orderId }, userId);
+        await this.walletService.processRechargePayment({
+            amount: requestDto.amount,
+            receiverId: requestDto.accountNumber,
+            serviceUsed: serviceUsed,
+            charges: payoutCharges,
+            description: description,
+            status: TransactionStatus.PENDING,
+            reference: orderId
+        }, userId);
 
         return {
             referenceId: SavedOrder.order_id,
@@ -154,12 +156,12 @@ export class PayoutService {
     }
 
     async validatePayout(userId: string, amount: number, serviceUsed: string) {
-        const user = await this.userRepository.findOne({where: {id: userId}});
+        const user = await this.userRepository.findOne({ where: { id: userId } });
         const poolBalance = +(await this.payloutClientService.getPoolBalance()).balance;
         if (!user) {
             throw new ForbiddenException('User does not exist')
         }
-        const wallet = await this.walletService.getWallet({user: {id: userId}});
+        const wallet = await this.walletService.getWallet({ user: { id: userId } });
         if (wallet.balance < amount) {
             throw new BadRequestException('Insufficient Balance')
         }
@@ -169,12 +171,12 @@ export class PayoutService {
         await this.validateTransactionLimit(userId, amount, serviceUsed);
     }
     async validatePayoutNew(userId: string, amount: number, serviceUsed: string) {
-        const user = await this.userRepository.findOne({where: {id: userId}});
+        const user = await this.userRepository.findOne({ where: { id: userId } });
         const poolBalance = +(await this.payloutClientService.getPoolBalance()).balance;
         if (!user) {
             throw new ForbiddenException('User does not exist')
         }
-        const wallet = await this.walletService.getWallet({user: {id: userId}});
+        const wallet = await this.walletService.getWallet({ user: { id: userId } });
         if (wallet.balance < amount) {
             throw new BadRequestException(['Insufficient Balance'])
         }
@@ -183,7 +185,7 @@ export class PayoutService {
         }
         await this.validateTransactionLimit(userId, amount, serviceUsed);
     }
-    
+
     async validateTransactionLimit(userId: string, amount: number, serviceUsed: string) {
 
         // Get start of day and month timestamps
@@ -194,22 +196,22 @@ export class PayoutService {
         // Fetch total transactions for today and this month
         const [dailyTotal, monthlyTotal] = await Promise.all([
             this.transactionRepository
-            .createQueryBuilder('t')
-            .where('t.userId = :userId', { userId: userId })
-            .andWhere('t.serviceUsed = :serviceUsed', { serviceUsed })
-            .andWhere('t.type = :transactionType', { transactionType: 'DEBIT' })
-            .andWhere('t.createdAt >= :startOfDay', { startOfDay })
-            .select('COALESCE(SUM(t.amount), 0)', 'total')
-            .getRawOne(),
+                .createQueryBuilder('t')
+                .where('t.userId = :userId', { userId: userId })
+                .andWhere('t.serviceUsed = :serviceUsed', { serviceUsed })
+                .andWhere('t.type = :transactionType', { transactionType: 'DEBIT' })
+                .andWhere('t.createdAt >= :startOfDay', { startOfDay })
+                .select('COALESCE(SUM(t.amount), 0)', 'total')
+                .getRawOne(),
 
             this.transactionRepository
-            .createQueryBuilder('t')
-            .where('t.userId = :userId', { userId: userId })
-            .andWhere('t.serviceUsed = :serviceUsed', { serviceUsed })
-            .andWhere('t.type = :transactionType', { transactionType: 'DEBIT' })
-            .andWhere('t.createdAt >= :startOfMonth', { startOfMonth })
-            .select('COALESCE(SUM(t.amount), 0)', 'total')
-            .getRawOne(),
+                .createQueryBuilder('t')
+                .where('t.userId = :userId', { userId: userId })
+                .andWhere('t.serviceUsed = :serviceUsed', { serviceUsed })
+                .andWhere('t.type = :transactionType', { transactionType: 'DEBIT' })
+                .andWhere('t.createdAt >= :startOfMonth', { startOfMonth })
+                .select('COALESCE(SUM(t.amount), 0)', 'total')
+                .getRawOne(),
         ]);
 
         const dailySpent = parseFloat(dailyTotal?.total || '0');
@@ -239,7 +241,7 @@ export class PayoutService {
         if (response.status === 'FAILURE') {
             throw new BadRequestException(response.message)
         }
-        const user = await this.userRepository.findOne({where: {id: userId}});
+        const user = await this.userRepository.findOne({ where: { id: userId } });
         const maskedAccount = maskAccount(requestBody.account_number);
         const description = requestDto.message ? requestDto.message : PayoutDescription.replace('{maskedAccount}', maskedAccount);
         const orderId = generateRef(12);
@@ -261,12 +263,14 @@ export class PayoutService {
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
 
-        await this.walletService.processRechargePayment({amount: requestDto.amount,
-             receiverId: requestDto.upiId,
-             serviceUsed: serviceUsed,
-             description: description,
-             status: TransactionStatus.PENDING,
-             reference: orderId }, userId);
+        await this.walletService.processRechargePayment({
+            amount: requestDto.amount,
+            receiverId: requestDto.upiId,
+            serviceUsed: serviceUsed,
+            description: description,
+            status: TransactionStatus.PENDING,
+            reference: orderId
+        }, userId);
         return {
             referenceId: SavedOrder.order_id,
             amount: +response.amount,
@@ -285,11 +289,11 @@ export class PayoutService {
             mode: serviceUsed
         }
         const response = (await this.payloutClientService.payoutUsingUPI(requestBody));
-
+        console.log("PayoutUPINew Response===>", response);
         if (response.status === 'FAILURE') {
             throw new BadRequestException(response.message)
         }
-        const user = await this.userRepository.findOne({where: {id: userId}});
+        const user = await this.userRepository.findOne({ where: { id: userId } });
         const maskedAccount = maskAccount(requestBody.account_number);
         const description = requestDto.message ? requestDto.message : PayoutDescription.replace('{maskedAccount}', maskedAccount);
         const orderId = generateRef(12);
@@ -311,13 +315,15 @@ export class PayoutService {
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
 
-        await this.walletService.processRechargePaymentNew({amount: requestDto.amount,
-             receiverId: requestDto.upiId,
-             serviceUsed: serviceUsed,
-             description: description,
-             convenienceFee: requestDto.convenienceFee,
-             status: TransactionStatus.PENDING,
-             reference: orderId }, userId);
+        await this.walletService.processRechargePaymentNew({
+            amount: requestDto.amount,
+            receiverId: requestDto.upiId,
+            serviceUsed: serviceUsed,
+            description: description,
+            convenienceFee: requestDto.convenienceFee,
+            status: TransactionStatus.PENDING,
+            reference: orderId
+        }, userId);
         return {
             referenceId: SavedOrder.order_id,
             amount: +response.amount,
@@ -339,19 +345,19 @@ export class PayoutService {
                 nameInBank: data.NameInBank
             };
         }
-        else if(data.resp_code === "E0404") {
+        else if (data.resp_code === "E0404") {
             throw new NotFoundException(data.message);
         }
         throw new BadRequestException(data.message);
     }
 
     async verifyUpi(verifyDto: VerifyUpiRequestDTO) {
-        console.log("verifyDto====>",verifyDto);
+        console.log("verifyDto====>", verifyDto);
         const payload: IVerifyUPIRequestDTO = {
             upi_vpa: verifyDto.upiId
         }
         const data = await this.payloutClientService.verifyUpi(payload)
-        console.log("data====>",data);
+        console.log("data====>", data);
         if (data.resp_code === "S0200") {
             return <VerifyAccountResponseDTO>{
                 message: data.message,
@@ -359,7 +365,7 @@ export class PayoutService {
                 ifscCode: data.ifsc_code,
                 nameInBank: data.NameInBank
             };
-        } else if(data.resp_code === "E0404") {
+        } else if (data.resp_code === "E0404") {
             throw new NotFoundException(data.message);
         }
         throw new BadRequestException(data.message);

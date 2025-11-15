@@ -79,13 +79,15 @@ let PayoutService = PayoutService_1 = class PayoutService {
         };
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
-        await this.walletService.processRechargePayment({ amount: requestDto.amount,
+        await this.walletService.processRechargePayment({
+            amount: requestDto.amount,
             receiverId: requestDto.accountNumber,
             serviceUsed: serviceUsed,
             charges: payoutCharges,
             description: description,
             status: transactions_entity_1.TransactionStatus.PENDING,
-            reference: orderId }, userId);
+            reference: orderId
+        }, userId);
         return {
             referenceId: SavedOrder.order_id,
             amount: +response.amount,
@@ -240,12 +242,14 @@ let PayoutService = PayoutService_1 = class PayoutService {
         };
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
-        await this.walletService.processRechargePayment({ amount: requestDto.amount,
+        await this.walletService.processRechargePayment({
+            amount: requestDto.amount,
             receiverId: requestDto.upiId,
             serviceUsed: serviceUsed,
             description: description,
             status: transactions_entity_1.TransactionStatus.PENDING,
-            reference: orderId }, userId);
+            reference: orderId
+        }, userId);
         return {
             referenceId: SavedOrder.order_id,
             amount: +response.amount,
@@ -262,6 +266,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
             mode: serviceUsed
         };
         const response = (await this.payloutClientService.payoutUsingUPI(requestBody));
+        console.log("PayoutUPINew Response===>", response);
         if (response.status === 'FAILURE') {
             throw new common_1.BadRequestException(response.message);
         }
@@ -286,13 +291,15 @@ let PayoutService = PayoutService_1 = class PayoutService {
         };
         const SavedOrder = this.orderRepository.create(order);
         this.orderRepository.save(SavedOrder);
-        await this.walletService.processRechargePaymentNew({ amount: requestDto.amount,
+        await this.walletService.processRechargePaymentNew({
+            amount: requestDto.amount,
             receiverId: requestDto.upiId,
             serviceUsed: serviceUsed,
             description: description,
             convenienceFee: requestDto.convenienceFee,
             status: transactions_entity_1.TransactionStatus.PENDING,
-            reference: orderId }, userId);
+            reference: orderId
+        }, userId);
         return {
             referenceId: SavedOrder.order_id,
             amount: +response.amount,
