@@ -596,13 +596,14 @@ export class UsersService {
     if (user.role !== UserRole.ADMIN) {
       throw new ForbiddenException('User does not have enough permissions');
     }
+    console.log("searchQuery", searchQuery);
     const query = this.userRepository.createQueryBuilder('user')
       .leftJoinAndSelect('user.virtualAccounts', 'va')  // join virtual accounts
       .leftJoinAndSelect('user.upiIds', 'upi')
 
       .where('user.role != :adminRole', { adminRole: UserRole.ADMIN })
       .andWhere('va.status = :vaStatus', { vaStatus: 'ACTIVE' })
-      .andWhere('upi.status = :upiStatus', { upiStatus: 'ACTIVE' });
+      // .andWhere('upi.status = :upiStatus', { upiStatus: 'ACTIVE' });
 
     if (searchQuery) {
       query.andWhere(
@@ -617,7 +618,7 @@ export class UsersService {
         { search: `%${searchQuery}%` },
       );
     }
-
+console.log("query",JSON.stringify(query.getQueryAndParameters()));
     const users = await query.getMany();
     return users.map(user => new UserResponse(user));
   }
