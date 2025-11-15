@@ -10,6 +10,7 @@ exports.CoreModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
+const bull_1 = require("@nestjs/bull");
 let CoreModule = class CoreModule {
 };
 exports.CoreModule = CoreModule;
@@ -42,7 +43,14 @@ exports.CoreModule = CoreModule = __decorate([
                 }),
                 inject: [config_1.ConfigService],
             }),
+            bull_1.BullModule.forRoot({
+                redis: {
+                    host: process.env.REDIS_HOST || 'localhost',
+                    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+                },
+            }),
         ],
+        exports: [typeorm_1.TypeOrmModule, bull_1.BullModule],
     })
 ], CoreModule);
 //# sourceMappingURL=core.module.js.map

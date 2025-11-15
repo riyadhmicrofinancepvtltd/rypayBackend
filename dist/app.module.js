@@ -30,6 +30,7 @@ const loans_module_1 = require("./loans/loans.module");
 const money_request_module_1 = require("./money-request/money-request.module");
 const coins_module_1 = require("./coins/coins.module");
 const subscriptions_module_1 = require("./subscriptions/subscriptions.module");
+const queue_module_1 = require("./queue/queue.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,6 +38,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             core_module_1.CoreModule,
+            queue_module_1.QueueModule,
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(__dirname, '..', 'assets'),
                 serveRoot: '/assets/',

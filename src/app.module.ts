@@ -21,10 +21,12 @@ import { LoansModule } from './loans/loans.module';
 import { MoneyRequestModule } from './money-request/money-request.module';
 import { CoinsModule } from './coins/coins.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
     CoreModule,
+    QueueModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'assets'),
       serveRoot: '/assets/',

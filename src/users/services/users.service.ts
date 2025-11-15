@@ -1862,7 +1862,7 @@ export class UsersService {
     const payload = {
       customer_name: UserExist.fullName,
       vpaId: vpaId,
-      email: "sonuy9540@gmail.com",
+      email: UserExist.email,
       mobile: UserExist?.phoneNumber,
     };
     try {
