@@ -1492,11 +1492,11 @@ let UsersService = class UsersService {
         const vpaId = Math.floor(10000000 + Math.random() * 90000000).toString();
         const busyBoxBaseUrl = this.configService.get('BUSY_BOX_PAYOUT_API_BASE_URL');
         const token = this.configService.get('BUSY_BOX_PAYOUT_API_TOKEN') || 'HnKFjVswJ8BhXRFzxf8pP6L1fDlhOrpzCs8S+VcGrl7xurg7iur3LfIsxCJE/ttiHm3cJbqxDKbj8fKxSeQIlcKZ/P/i7dnanAqyd1+O4FINU7n+W/QWg/ZBkfdZ0v+JqnnuGI2oXMOv7Z72WpzwnQ==';
-        const url = `${busyBoxBaseUrl}/collect/vpa/create`;
+        const url = `${busyBoxBaseUrl}/collect/vpa/create-vpa`;
         const payload = {
             customer_name: UserExist.fullName,
             vpaId: vpaId,
-            email: "sonuy9540@gmail.com",
+            email: UserExist?.email,
             mobile: UserExist?.phoneNumber,
         };
         try {
