@@ -92,7 +92,9 @@ async generateAndUploadUpiQR(upi: string): Promise<{ key: string; url: string }>
       console.log("[QR] Buffer generated, size:", qrBuffer.length);
 
       // 2️⃣ Upload to S3
-      const key = `upi-qr/${uuidv4()}.png`;
+      // const key = `upi-qr/${uuidv4()}.png`;
+      const key = `${uuidv4()}.png`;
+
       console.log("[S3] Uploading to bucket:", this.bucketName, "key:", key);
 
       const command = new PutObjectCommand({

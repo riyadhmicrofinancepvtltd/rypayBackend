@@ -61,7 +61,7 @@ let UploadFileService = class UploadFileService {
             console.log("[QR] Generating QR code for UPI:", upi);
             const qrBuffer = await QRCode.toBuffer(upi);
             console.log("[QR] Buffer generated, size:", qrBuffer.length);
-            const key = `upi-qr/${(0, uuid_1.v4)()}.png`;
+            const key = `${(0, uuid_1.v4)()}.png`;
             console.log("[S3] Uploading to bucket:", this.bucketName, "key:", key);
             const command = new client_s3_1.PutObjectCommand({
                 Bucket: this.bucketName,
