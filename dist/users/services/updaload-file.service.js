@@ -32,6 +32,7 @@ let UploadFileService = class UploadFileService {
             },
             forcePathStyle: true,
         });
+        console.log('S3 Client initialized for bucket:', this.bucketName, "client", this.client);
     }
     async uploadSingleFile(file) {
         try {
