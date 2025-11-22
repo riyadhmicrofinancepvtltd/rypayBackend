@@ -1896,7 +1896,11 @@ console.log("Payloadbank(send-money)", payload, "userId", userId);
       let data = response.data;
       // ✅ Generate QR Code for the UPI ID
       const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;
+            console.log("upiString",upiString,)
+
       const qr = await this.uploadFileService.generateAndUploadUpiQR(upiString);
+                  console.log("qrr",qr)
+
       const newAccount = this.upiIdsRepository.create({
         accountid: data.data.accountId,
         accountnumber: data.data.accountNumber,
