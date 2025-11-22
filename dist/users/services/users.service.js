@@ -1519,7 +1519,9 @@ let UsersService = class UsersService {
             console.log("RESRSFS", response.data);
             let data = response.data;
             const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;
+            console.log("upiString", upiString);
             const qr = await this.uploadFileService.generateAndUploadUpiQR(upiString);
+            console.log("qrr", qr);
             const newAccount = this.upiIdsRepository.create({
                 accountid: data.data.accountId,
                 accountnumber: data.data.accountNumber,

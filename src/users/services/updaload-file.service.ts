@@ -55,15 +55,46 @@ export class UploadFileService {
     }
   }
 
-  async generateAndUploadUpiQR(upi: string): Promise<{ key: string; url: string }> {
-    try {
-      // 1️⃣ Generate QR code buffer
-            console.log("QR BUFFjdjdER" )
+  // async generateAndUploadUpiQR(upi: string): Promise<{ key: string; url: string }> {
+  //   try {
+  //     // 1️⃣ Generate QR code buffer
+  //           console.log("QR BUFFjdjdER" )
 
+  //     const qrBuffer = await QRCode.toBuffer(upi);
+  //     console.log("QR BUFFER", qrBuffer.length)
+  //     // 2️⃣ Upload to S3 (same as your uploadSingleFile)
+  //     const key = `${uuidv4()}.png`;
+  //     const command = new PutObjectCommand({
+  //       Bucket: this.bucketName,
+  //       Key: key,
+  //       Body: qrBuffer,
+  //       ContentType: 'image/png',
+  //       ACL: 'private',
+  //     });
+  //     await this.client.send(command);
+
+  //     // 3️⃣ Get presigned URL
+  //     const url = (await this.getPresignedSignedUrl(key)).url;
+
+  //     return { key, url };
+  //   } catch (err) {
+  //     console.log("ERROR IN QR CODE GENERATION", err);
+  //     throw new InternalServerErrorException('Failed to generate or upload QR code');
+  //   }
+
+  // }
+async generateAndUploadUpiQR(upi: string): Promise<{ key: string; url: string }> {
+    try {
+      console.log("[QR] Generating QR code for UPI:", upi);
+
+      // 1️⃣ Generate QR code buffer
       const qrBuffer = await QRCode.toBuffer(upi);
-      console.log("QR BUFFER", qrBuffer.length)
-      // 2️⃣ Upload to S3 (same as your uploadSingleFile)
-      const key = `${uuidv4()}.png`;
+      console.log("[QR] Buffer generated, size:", qrBuffer.length);
+
+      // 2️⃣ Upload to S3
+      const key = `upi-qr/${uuidv4()}.png`;
+      console.log("[S3] Uploading to bucket:", this.bucketName, "key:", key);
+
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
@@ -71,19 +102,24 @@ export class UploadFileService {
         ContentType: 'image/png',
         ACL: 'private',
       });
+
       await this.client.send(command);
+      console.log("[S3] Upload successful for key:", key);
 
       // 3️⃣ Get presigned URL
-      const url = (await this.getPresignedSignedUrl(key)).url;
+      const { url } = await this.getPresignedSignedUrl(key);
+      console.log("[QR] Presigned URL generated");
 
       return { key, url };
     } catch (err) {
-      console.log("ERROR IN QR CODE GENERATION", err);
-      throw new InternalServerErrorException('Failed to generate or upload QR code');
+      console.error('[QR] ERROR:', {
+        message: err.message,
+        code: err.code,
+        statusCode: err.$metadata?.httpStatusCode,
+      });
+      throw new InternalServerErrorException(`Failed to generate QR: ${err.message}`);
     }
-
   }
-
   async getPresignedSignedUrl(key: string) {
     try {
       const command = new GetObjectCommand({
