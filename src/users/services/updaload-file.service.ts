@@ -31,7 +31,8 @@ export class UploadFileService {
       },
       forcePathStyle: true,
     });
-    console.log('S3 Client initialized for bucket:', this.bucketName,"client", this.client);
+    console.log('S3 Client initialized for bucket:', { accessKeyId: this.configService.get('S3_ACCESS_KEY'),
+        secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY')});
   }
   async uploadSingleFile(file: Express.Multer.File) {
     try {
