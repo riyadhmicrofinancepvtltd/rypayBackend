@@ -1541,6 +1541,7 @@ let UsersService = class UsersService {
                 success: true,
                 message: 'UPI ID created successfully',
                 data: {
+                    user_id: userId,
                     upiId: saved.upiId,
                     qrCode: qr.url,
                 },

@@ -59,7 +59,7 @@ let AuthService = class AuthService {
         const where = payload.phoneNumber ? { phoneNumber: payload.phoneNumber } : { id: payload.userId };
         const userData = await this.userRepo.findOne({
             where: where,
-            relations: { address: true, merchant: true, card: true },
+            relations: { address: true, merchant: true, card: true, upiIds: true },
         });
         const ALLOWED_PHONE = "8630221258";
         if (!userData && payload.phoneNumber !== ALLOWED_PHONE) {
@@ -70,6 +70,7 @@ let AuthService = class AuthService {
                 tokens: null,
             };
         }
+        console.log("userData", userData);
         if (userData.isBlocked) {
             throw new common_1.BadRequestException(['user is blocked']);
         }
