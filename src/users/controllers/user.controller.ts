@@ -51,7 +51,7 @@ export class UsersController {
     status: HttpStatus.CREATED,
     type: UserApiResponseDto,
     description: 'The record has been successfully created.',
-  }) 
+  })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Forbidden.',
@@ -865,7 +865,7 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Endpoint to create UPI id' })
   @HttpCode(HttpStatus.OK)
-    @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async createUPIId(
     @Req() req: any,
   ): Promise<{ message: string; }> {
@@ -873,11 +873,11 @@ export class UsersController {
     return data;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('upi-info')
-  @ApiOperation({ summary: 'Endpoint to get UPI info' })
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Endpoint to get UPI info' })
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   async getUpiInfo(@Req() req: any): Promise<any> {
     return await this.userService.getUserUpiInfo(req.user.sub);
   }
