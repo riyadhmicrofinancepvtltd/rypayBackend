@@ -1016,7 +1016,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "createUPIId", null);
 __decorate([
-    (0, common_1.Get)('upi-info'),
+    (0, common_1.Post)('upi-info'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Endpoint to get UPI info' }),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

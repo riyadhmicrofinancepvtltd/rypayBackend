@@ -873,7 +873,7 @@ export class UsersController {
     return data;
   }
 
-  @Get('upi-info')
+  @Post('upi-info')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Endpoint to get UPI info' })
   @HttpCode(HttpStatus.OK)
