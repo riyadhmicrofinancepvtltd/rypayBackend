@@ -603,7 +603,7 @@ export class UsersService {
 
       .where('user.role != :adminRole', { adminRole: UserRole.ADMIN })
       .andWhere('va.status = :vaStatus', { vaStatus: 'ACTIVE' })
-      // .andWhere('upi.status = :upiStatus', { upiStatus: 'ACTIVE' });
+    // .andWhere('upi.status = :upiStatus', { upiStatus: 'ACTIVE' });
 
     if (searchQuery) {
       query.andWhere(
@@ -618,7 +618,7 @@ export class UsersService {
         { search: `%${searchQuery}%` },
       );
     }
-console.log("query",JSON.stringify(query.getQueryAndParameters()));
+    console.log("query", JSON.stringify(query.getQueryAndParameters()));
     const users = await query.getMany();
     return users.map(user => new UserResponse(user));
   }
@@ -1173,7 +1173,7 @@ console.log("query",JSON.stringify(query.getQueryAndParameters()));
         userName: userName,
         convenienceFee: convenienceFee,
       } as any
-console.log("Payloadbank(send-money)", payload, "userId", userId);
+      console.log("Payloadbank(send-money)", payload, "userId", userId);
       const data = await this.payoutService.payoutAccountNew(userId, payload);
       console.log("PayoutAccountNew Response(send-money)", data);
       if (data?.referenceId) {
@@ -1896,10 +1896,10 @@ console.log("Payloadbank(send-money)", payload, "userId", userId);
       let data = response.data;
       // ✅ Generate QR Code for the UPI ID
       const upiString = `upi://pay?pa=${data.data.accountNumber}&pn=${UserExist.fullName}`;
-            console.log("upiString",upiString,)
+      console.log("upiString", upiString,)
 
       const qr = await this.uploadFileService.generateAndUploadUpiQR(upiString);
-                  console.log("qrr",qr)
+      console.log("qrr", qr)
 
       const newAccount = this.upiIdsRepository.create({
         accountid: data.data.accountId,
@@ -1912,7 +1912,7 @@ console.log("Payloadbank(send-money)", payload, "userId", userId);
         upiQr: qr.key,
       });
       const saved = await this.upiIdsRepository.save(newAccount);
-      if(response.data.status != "SUCCESS"){
+      if (response.data.status != "SUCCESS") {
         console.log("Failed to generate upi", response.data)
         throw new BadRequestException(["Failed to generate upi"])
 
@@ -1927,30 +1927,40 @@ console.log("Payloadbank(send-money)", payload, "userId", userId);
         },
       };
     } catch (error) {
+      // if (error instanceof BadRequestException) {
+      //   return {
+      //     statusCode: 400,
+      //     success: false,
+      //     message: error.message,
+      //   };
+      // }
+      // const errMessage = error.response?.data || error.message;
+      // console.error('Error creating upi id:', errMessage);
+      // throw new InternalServerErrorException('Failed to create upi id');
+
       if (error instanceof BadRequestException) {
-        return {
-          statusCode: 400,
-          success: false,
-          message: error.message,
-        };
+        throw error;   // return actual 400 status
       }
+
       const errMessage = error.response?.data || error.message;
       console.error('Error creating upi id:', errMessage);
+
       throw new InternalServerErrorException('Failed to create upi id');
+
     }
   }
   async getUserUpiInfo(userId: string) {
     const upiData = await this.upiIdsRepository.findOne({ where: { userid: userId } });
     // if (!upiData || !upiData.upiQr) throw new BadRequestException('No UPI QR found');
-        if (!upiData || !upiData.upiQr){
-        return {
-      success: true,
-      data: {
-        upiId: null,
-        qrUrl: null,
-        status: "NOT CREATED",
-      },
-    };
+    if (!upiData || !upiData.upiQr) {
+      return {
+        success: true,
+        data: {
+          upiId: null,
+          qrUrl: null,
+          status: "NOT CREATED",
+        },
+      };
     }
 
     const url = (await this.uploadFileService.getPresignedSignedUrl(upiData.upiQr)).url;

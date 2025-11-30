@@ -1549,11 +1549,7 @@ let UsersService = class UsersService {
         }
         catch (error) {
             if (error instanceof common_1.BadRequestException) {
-                return {
-                    statusCode: 400,
-                    success: false,
-                    message: error.message,
-                };
+                throw error;
             }
             const errMessage = error.response?.data || error.message;
             console.error('Error creating upi id:', errMessage);
