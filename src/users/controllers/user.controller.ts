@@ -864,7 +864,7 @@ export class UsersController {
   @Post('create-upi')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Endpoint to create UPI id' })
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async createUPIId(
     @Req() req: any,
@@ -876,7 +876,7 @@ export class UsersController {
   @Post('upi-info')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Endpoint to get UPI info' })
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async getUpiInfo(@Req() req: any): Promise<any> {
     return await this.userService.getUserUpiInfo(req.user.sub);

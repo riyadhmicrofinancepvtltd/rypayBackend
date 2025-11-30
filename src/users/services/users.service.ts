@@ -1941,7 +1941,17 @@ console.log("Payloadbank(send-money)", payload, "userId", userId);
   }
   async getUserUpiInfo(userId: string) {
     const upiData = await this.upiIdsRepository.findOne({ where: { userid: userId } });
-    if (!upiData || !upiData.upiQr) throw new BadRequestException('No UPI QR found');
+    // if (!upiData || !upiData.upiQr) throw new BadRequestException('No UPI QR found');
+        if (!upiData || !upiData.upiQr){
+        return {
+      success: true,
+      data: {
+        upiId: null,
+        qrUrl: null,
+        status: "NOT CREATED",
+      },
+    };
+    }
 
     const url = (await this.uploadFileService.getPresignedSignedUrl(upiData.upiQr)).url;
     return {

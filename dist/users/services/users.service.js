@@ -1562,8 +1562,16 @@ let UsersService = class UsersService {
     }
     async getUserUpiInfo(userId) {
         const upiData = await this.upiIdsRepository.findOne({ where: { userid: userId } });
-        if (!upiData || !upiData.upiQr)
-            throw new common_1.BadRequestException('No UPI QR found');
+        if (!upiData || !upiData.upiQr) {
+            return {
+                success: true,
+                data: {
+                    upiId: null,
+                    qrUrl: null,
+                    status: "NOT CREATED",
+                },
+            };
+        }
         const url = (await this.uploadFileService.getPresignedSignedUrl(upiData.upiQr)).url;
         return {
             success: true,
