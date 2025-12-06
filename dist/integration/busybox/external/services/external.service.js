@@ -25,12 +25,13 @@ const wallet_service_1 = require("../../../../wallet/services/wallet.service");
 const users_service_1 = require("../../../../users/services/users.service");
 const upi_collections_transactions_entity_1 = require("../../../../core/entities/upi-collections-transactions.entity");
 let ExternalService = ExternalService_1 = class ExternalService {
-    constructor(busyBoxWebHookRepo, walletRepository, virtualAccountRepo, transactionMoneyRepo, upiCollectionsTransactionRepo, walletService, userService) {
+    constructor(busyBoxWebHookRepo, walletRepository, virtualAccountRepo, transactionMoneyRepo, upiCollectionsTransactionRepo, webHookRepo, walletService, userService) {
         this.busyBoxWebHookRepo = busyBoxWebHookRepo;
         this.walletRepository = walletRepository;
         this.virtualAccountRepo = virtualAccountRepo;
         this.transactionMoneyRepo = transactionMoneyRepo;
         this.upiCollectionsTransactionRepo = upiCollectionsTransactionRepo;
+        this.webHookRepo = webHookRepo;
         this.walletService = walletService;
         this.userService = userService;
         this.logger = new common_1.Logger(ExternalService_1.name);
@@ -101,6 +102,7 @@ let ExternalService = ExternalService_1 = class ExternalService {
     }
     async handleBusyBoxPayoutEvents(payload) {
         try {
+            await this.handlePaymentCallback(payload);
             const transactionModel = {
                 type: busybox_webhook_logs_entity_1.Webhook_Type.Payout,
                 additionalData: payload,
@@ -134,6 +136,22 @@ let ExternalService = ExternalService_1 = class ExternalService {
         catch (err) {
             console.log('❌ Error while handling BusyBox webhook:', err);
             throw err;
+        }
+    }
+    async handlePaymentCallback(requestDto) {
+        try {
+            const webHookResponse = this.webHookRepo.create({
+                type: busybox_webhook_logs_entity_1.Webhook_Type.UPI_COLLECTION,
+                additionalData: requestDto
+            });
+            console.log(`Payment Callback Received====33===>: ${JSON.stringify(requestDto)}`);
+            console.log("webHookResponse==77==>", webHookResponse);
+            await this.webHookRepo.save(webHookResponse);
+            return true;
+        }
+        catch (error) {
+            console.log("Errornin saving webhook");
+            return false;
         }
     }
     async handleUPICollectionsWebhook(payload) {
@@ -217,7 +235,9 @@ exports.ExternalService = ExternalService = ExternalService_1 = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(virtual_account_entity_1.VirtualAccount)),
     __param(3, (0, typeorm_1.InjectRepository)(transaction_money_entity_1.TransactionMoney)),
     __param(4, (0, typeorm_1.InjectRepository)(upi_collections_transactions_entity_1.UPICollectionsTransactionMoney)),
+    __param(5, (0, typeorm_1.InjectRepository)(busybox_webhook_logs_entity_1.BusyBoxWebhookResponse)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

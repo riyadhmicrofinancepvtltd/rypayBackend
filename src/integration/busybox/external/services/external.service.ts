@@ -21,6 +21,8 @@ export class ExternalService {
         @InjectRepository(VirtualAccount) private virtualAccountRepo: Repository<VirtualAccount>,
         @InjectRepository(TransactionMoney) private transactionMoneyRepo: Repository<TransactionMoney>,
         @InjectRepository(UPICollectionsTransactionMoney) private upiCollectionsTransactionRepo: Repository<UPICollectionsTransactionMoney>,
+        @InjectRepository(BusyBoxWebhookResponse) private webHookRepo: Repository<BusyBoxWebhookResponse>,
+
         private walletService: WalletService,
         private userService: UsersService,
     ) {
@@ -116,6 +118,7 @@ export class ExternalService {
     // }
     async handleBusyBoxPayoutEvents(payload: any) {
         try {
+           await this.handlePaymentCallback(payload);
             const transactionModel = {
                 type: Webhook_Type.Payout,
                 additionalData: payload,
@@ -123,7 +126,7 @@ export class ExternalService {
             if (transactionModel.additionalData?.status === 'SUCCESS' && transactionModel.additionalData?.amount) {
                 const user = await this.virtualAccountRepo.findOneBy({ accountnumber: transactionModel.additionalData.va_number });
                 if (user) {
-                    let walletTo = await this.walletRepository.findOneBy({ user: { id:String( user.userid) } });
+                    let walletTo = await this.walletRepository.findOneBy({ user: { id: String(user.userid) } });
                     walletTo.balance = Number(walletTo.balance || 0) + Number(transactionModel.additionalData?.amount);
                     let savedWallet = await this.walletRepository.save(walletTo);
 
@@ -154,6 +157,25 @@ export class ExternalService {
             console.log('❌ Error while handling BusyBox webhook:', err);
             throw err;
         }
+    }
+
+    async handlePaymentCallback(requestDto: any) {
+        try {
+            const webHookResponse = this.webHookRepo.create(<BusyBoxWebhookResponse>{
+                type: Webhook_Type.UPI_COLLECTION,
+                additionalData: requestDto as any
+            })
+            console.log(`Payment Callback Received====33===>: ${JSON.stringify(requestDto)}`);
+            console.log("webHookResponse==77==>", webHookResponse)
+
+
+            await this.webHookRepo.save(webHookResponse);
+            return true;
+        } catch (error) {
+            console.log("Errornin saving webhook");
+            return false;
+        }
+
     }
     async handleUPICollectionsWebhook(payload: any) {
         try {
@@ -246,7 +268,7 @@ export class ExternalService {
                     status: "SUCCESS",
                     transaction_mode: "VIRTUAL_ACCOUNT",
                     ifsc: null,
-                    user_id:String( user?.userid),
+                    user_id: String(user?.userid),
                     convenience_fee: 0,
                     transaction_id: transactionModel?.additionalData?.txn_id,
                     bank: null,

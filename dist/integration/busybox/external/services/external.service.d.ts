@@ -15,10 +15,11 @@ export declare class ExternalService {
     private virtualAccountRepo;
     private transactionMoneyRepo;
     private upiCollectionsTransactionRepo;
+    private webHookRepo;
     private walletService;
     private userService;
     private readonly logger;
-    constructor(busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, transactionMoneyRepo: Repository<TransactionMoney>, upiCollectionsTransactionRepo: Repository<UPICollectionsTransactionMoney>, walletService: WalletService, userService: UsersService);
+    constructor(busyBoxWebHookRepo: Repository<BusyBoxWebhookResponse>, walletRepository: Repository<Wallet>, virtualAccountRepo: Repository<VirtualAccount>, transactionMoneyRepo: Repository<TransactionMoney>, upiCollectionsTransactionRepo: Repository<UPICollectionsTransactionMoney>, webHookRepo: Repository<BusyBoxWebhookResponse>, walletService: WalletService, userService: UsersService);
     handleCardtransactions(payload: TransactionNotifyPayload): Promise<{
         message: string;
     }>;
@@ -34,6 +35,7 @@ export declare class ExternalService {
     handleBusyBoxPayoutEvents(payload: any): Promise<{
         message: string;
     }>;
+    handlePaymentCallback(requestDto: any): Promise<boolean>;
     handleUPICollectionsWebhook(payload: any): Promise<{
         message: string;
     }>;
