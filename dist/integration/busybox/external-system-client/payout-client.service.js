@@ -28,6 +28,7 @@ let PayoutClientService = class PayoutClientService {
             return response.data;
         }
         catch (error) {
+            console.log("errorr", error);
             throw error;
         }
     }

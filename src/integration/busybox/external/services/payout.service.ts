@@ -51,8 +51,9 @@ export class PayoutService {
             mobile: requestDto.mobile,
             mode: requestDto.mode
         }
+        console.log("reuqestbody",requestBody )
         const response = (await this.payloutClientService.payoutUsingAccount(requestBody));
-
+        console.log("responseresponse", response)
         if (response.status === 'FAILURE') {
             throw new BadRequestException(response.message)
         }
