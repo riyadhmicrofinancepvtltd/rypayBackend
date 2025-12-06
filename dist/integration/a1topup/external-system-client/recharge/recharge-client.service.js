@@ -188,11 +188,14 @@ let RechargeClientService = class RechargeClientService {
             ifscCode: ifscCode,
             accountNumber: accountNumber,
         };
+        console.log("resresbody", body);
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body));
+            console.log("resresbodyresponse", response);
             return response.data;
         }
         catch (error) {
+            console.log("resresbodyerror", error);
             this.logger.error('Aadhar eKYC request error :', error);
             throw error;
         }

@@ -109,6 +109,7 @@ export class PayoutClientService {
       );
       return response.data;
     } catch (error) {
+      console.log("verifyAccountverifyAccount", error)
       throw error;
     }
   }

@@ -71,9 +71,9 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
       );
-      
+
       // Return the response data
-      return response.data; 
+      return response.data;
     } catch (error) {
       this.logger.error('Outlet registration request error:', error);
       throw error;
@@ -92,9 +92,9 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
       );
-      
+
       // Return the response data
-      return response.data; 
+      return response.data;
     } catch (error) {
       this.logger.error('OTP verification request error:', error);
       throw error;
@@ -113,9 +113,9 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
       );
-      
+
       // Return the response data
-      return response.data; 
+      return response.data;
     } catch (error) {
       this.logger.error('Outlet status check request error:', error);
       throw error;
@@ -133,9 +133,9 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
       );
-      
+
       // Return the response data
-      return response.data; 
+      return response.data;
     } catch (error) {
       this.logger.error('AEPS supported bank list request error:', error);
       throw error;
@@ -154,9 +154,9 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
       );
-      
+
       // Return the response data
-      return response.data; 
+      return response.data;
     } catch (error) {
       this.logger.error('Outlet login request error:', error);
       throw error;
@@ -174,9 +174,9 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/transaction.php`, body)
       );
-      
+
       // Return the response data
-      return response.data; 
+      return response.data;
     } catch (error) {
       this.logger.error('AEPS MiniStatement request error:', error);
       throw error;
@@ -194,7 +194,7 @@ export class RechargeClientService {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/transaction.php`, body)
       );
-      
+
       // Return the response data
       return response.data;
     } catch (error) {
@@ -209,7 +209,7 @@ export class RechargeClientService {
       token: this.apiToken,
       aadhaarNumber: aadharNumber,
       transType: 'aadhaarSendOtp',
-      urid: urid.toString(), 
+      urid: urid.toString(),
     };
     try {
       const response = await firstValueFrom(
@@ -226,7 +226,7 @@ export class RechargeClientService {
     const body = {
       token: this.apiToken,
       upiId: upiId,
-      urid: urid.toString(), 
+      urid: urid.toString(),
       transType: 'upiName',
     };
     try {
@@ -243,17 +243,22 @@ export class RechargeClientService {
     const urid = Math.floor(100000000 + Math.random() * 900000000);
     const body = {
       token: this.apiToken,
-      urid: urid.toString(), 
+      urid: urid.toString(),
       transType: 'bankAccountValidate',
       ifscCode: ifscCode,
-      accountNumber:accountNumber,
+      accountNumber: accountNumber,
     };
+    console.log("resresbody", body)
+
     try {
       const response = await firstValueFrom(
         this.httpService.post(`${this.apiBaseUrl}/utility/transaction.php`, body)
       );
+      console.log("resresbodyresponse", response)
+
       return response.data;
     } catch (error) {
+      console.log("resresbodyerror", error)
       this.logger.error('Aadhar eKYC request error :', error);
       throw error;
     }
@@ -266,7 +271,7 @@ export class RechargeClientService {
       aadhaarNumber: aadharNumber,
       otp: otp,
       otpSessionId: sessionId,
-      transType:"aadhaarVerifyOtp",
+      transType: "aadhaarVerifyOtp",
       urid: urid.toString(),
     };
 

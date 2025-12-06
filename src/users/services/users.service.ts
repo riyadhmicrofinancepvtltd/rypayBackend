@@ -1262,6 +1262,7 @@ export class UsersService {
     }
 
     const res = await this.rechargeClient.validateBank(accountNumber, ifsc);
+    console.log("resres", res)
     if (res?.status === "FAILED" && res?.resText === "Invalid ifscCode") {
       return {
         success: false,

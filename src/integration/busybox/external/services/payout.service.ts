@@ -337,7 +337,10 @@ export class PayoutService {
             account_number: verifyDto.accountNumber,
             ifsc_code: verifyDto.ifscCode
         }
+        console.log("pajjyload",payload)
         const data = await this.payloutClientService.verifyAccount(payload)
+                console.log("datadata",payload)
+
         if (data.resp_code === "S0200") {
             return <VerifyAccountResponseDTO>{
                 message: data.message,

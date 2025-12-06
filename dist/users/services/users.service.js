@@ -1080,6 +1080,7 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException(['user not found']);
         }
         const res = await this.rechargeClient.validateBank(accountNumber, ifsc);
+        console.log("resres", res);
         if (res?.status === "FAILED" && res?.resText === "Invalid ifscCode") {
             return {
                 success: false,
